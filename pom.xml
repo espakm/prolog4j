@@ -43,8 +43,8 @@
     </developers>
     <scm>
         <url>https://dev.inf.unideb.hu/gf/project/prolog4j/scmsvn/</url>
-        <!--<connection></connection>
-        <developerConnection></developerConnection>-->
+        <connection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j</connection>
+        <developerConnection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j</developerConnection>
     </scm>
     <mailingLists>
         <mailingList>
