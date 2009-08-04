@@ -96,7 +96,7 @@ public class Solution<S> implements Iterable<S> {
 	}
 	
 	public S get() {
-		return get(argName(goalTerms.length - 2));
+		return this.<S>get(argName(goalTerms.length - 2));
 	}
 	
 	public <A> A get(String argName) {
@@ -181,7 +181,8 @@ public class Solution<S> implements Iterable<S> {
 			if (!hasNext())
 				throw new NoSuchElementException();
 			fetched = false;
-			return get(argName);
+			//	return get(argName);
+			return this.<E>get(argName);
 		}
 		
 		@Override
@@ -191,7 +192,8 @@ public class Solution<S> implements Iterable<S> {
 
 		@Override
 		public <A> A get(String argName) {
-			return Solution.this.get(argName);
+			//	return Solution.this.get(argName);
+			return (A) Solution.this.get(argName);
 		}
 
 		@Override
