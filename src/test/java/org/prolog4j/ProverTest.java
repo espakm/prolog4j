@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Prolog4JTest {
+public class ProverTest {
 
 	private static final Prover p = Prover.get();
 	static {
