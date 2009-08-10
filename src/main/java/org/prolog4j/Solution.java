@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -50,6 +51,29 @@ public class Solution<S> implements Iterable<S> {
 	}
 
 	/**
+	 * @param prolog
+	 * @param goalTerms
+	 * @param actualArgs
+	 */
+	Solution(Prolog prolog, Term[] goalTerms, Map<String, Object> actualArgs) {
+		this.prolog = prolog;
+		this.goalTerms = goalTerms;
+		for (String varName: actualArgs.keySet()) {
+			for (int i = 1; i < goalTerms.length; ++i) {
+				Var v = (Var) goalTerms[i];
+				String vName = v.getName();
+				if (vName.startsWith("J$") && vName.substring(2).equals(varName)) {
+					v.free();
+					prolog.unify(v, Terms.toTerm(actualArgs.get(varName)));
+					break;
+				}
+			}
+		}
+		solution = prolog.solve(goalTerms[0]);
+		success = solution.isSuccess();
+	}
+
+	/**
 	 * Creates a <tt>Solution</tt> object for traversing through the solutions
 	 * for a Prolog query.
 	 * 
@@ -58,7 +82,7 @@ public class Solution<S> implements Iterable<S> {
 	 * @param goal
 	 *            a Prolog goal
 	 */
-	public Solution(Prolog prolog, String goal) {
+	Solution(Prolog prolog, String goal) {
 		this.prolog = prolog;
 		Parser parser = new Parser(goal);
 		Term tGoal;
@@ -81,6 +105,15 @@ public class Solution<S> implements Iterable<S> {
 			this.goalTerms[i + 1] = terms.get(i);
 	}
 
+	Solution(Prolog engine, String goal, Object[] actualArgs) {
+		this(engine, Solution.goalTerms(goal, (1 << actualArgs.length) - 1),
+				actualArgs);
+	}
+
+	Solution(Prolog engine, String goal, int inputArgs, Object[] actualArgs) {
+		this(engine, goalTerms(goal, inputArgs), actualArgs);
+	}
+
 	/**
 	 * Returns whether there exists a solution or not. Does not depend on the
 	 * state of the traversal, only one solution should exist.
@@ -94,7 +127,7 @@ public class Solution<S> implements Iterable<S> {
 
 	@Override
 	public SolutionIterator<S> iterator() {
-		return new SolutionIteratorImpl<S>(argName(goalTerms.length - 2));
+		return new SolutionIteratorImpl<S>(varName(goalTerms.length - 2));
 	}
 
 	/**
@@ -117,16 +150,23 @@ public class Solution<S> implements Iterable<S> {
 		};
 	}
 
+	public <A> Iterable<A> on(final String variable, final Class<A> clazz) {
+		return new Iterable<A>() {
+			@Override
+			public java.util.Iterator<A> iterator() {
+				return new SolutionIteratorImpl<A>(capitalize(variable), clazz);
+			}
+		};
+	}
+
 	/**
-	 * @param argIndex
+	 * @param varIndex
 	 * @return
 	 */
-	private String argName(int argIndex) {
+	private String varName(int varIndex) {
 		// return ((Var) goalTerms[argIndex +
 		// 1]).getOriginalName().substring(2);
-		System.out.println(argIndex);
-		System.out.println(goalTerms[argIndex + 1]);
-		return ((Var) goalTerms[argIndex + 1]).getOriginalName();
+		return ((Var) goalTerms[varIndex + 1]).getOriginalName();
 	}
 
 	/**
@@ -149,7 +189,7 @@ public class Solution<S> implements Iterable<S> {
 	 * @return the value of the last variable occurring in the goal
 	 */
 	public S get() {
-		return this.<S> get(argName(goalTerms.length - 2));
+		return this.<S> get(varName(goalTerms.length - 2));
 	}
 
 	/**
@@ -220,7 +260,7 @@ public class Solution<S> implements Iterable<S> {
 		while (it.hasNext()) {
 			it.next();
 			for (int i = 0; i < collections.length; ++i)
-				collections[i].add(it.get(argName(i)));
+				collections[i].add(it.get(varName(i)));
 		}
 	}
 
@@ -271,6 +311,7 @@ public class Solution<S> implements Iterable<S> {
 		private String variable;
 		private boolean fetched = true;
 		private boolean hasNext = success;
+		private Class<E> clazz;
 
 		/**
 		 * Creates a new SolutionIteratorImpl object.
@@ -280,6 +321,11 @@ public class Solution<S> implements Iterable<S> {
 		 */
 		SolutionIteratorImpl(String variable) {
 			this.variable = capitalize(variable);
+		}
+
+		SolutionIteratorImpl(String variable, Class<E> clazz) {
+			this.variable = capitalize(variable);
+			this.clazz = clazz;
 		}
 
 		/**
@@ -309,8 +355,8 @@ public class Solution<S> implements Iterable<S> {
 			if (!hasNext())
 				throw new NoSuchElementException();
 			fetched = false;
-			// return get(argName);
-			return this.<E> get(variable);
+			return get(variable);
+			// return this.<E> get(variable);
 		}
 
 		@Override
@@ -319,14 +365,14 @@ public class Solution<S> implements Iterable<S> {
 		}
 
 		@Override
-		public <A> A get(String argName) {
-			// return Solution.this.get(argName);
-			return (A) Solution.this.get(argName);
+		public <A> A get(String variable) {
+			return Solution.this.get(variable);
+			// return (A) Solution.this.get(variable);
 		}
 
 		@Override
-		public <A> A get(String argName, Class<A> type) {
-			return Solution.this.get(argName, type);
+		public <A> A get(String variable, Class<A> type) {
+			return Solution.this.get(variable, type);
 		}
 
 	}
@@ -364,19 +410,19 @@ public class Solution<S> implements Iterable<S> {
 
 	/**
 	 * @param goal
-	 * @param argNames
+	 * @param variables
 	 * @return
 	 */
-	static Term[] goalTerms(String goal, String... argNames) {
-		int inputArgNumber = argNames.length;
+	static Term[] goalTerms(String goal, String... variables) {
+		int inputArgNumber = variables.length;
 		Term[] ruleTerms = new Term[inputArgNumber + 1];
 		Struct sGoal;
 		try {
 			Parser parser = new Parser(goal);
 			sGoal = (Struct) parser.nextTerm(false);
 			int index = 0;
-			for (int i = 0; i < argNames.length; ++i) {
-				Var argVar = new Var(argNames[i]);
+			for (int i = 0; i < variables.length; ++i) {
+				Var argVar = new Var(variables[i]);
 				Var arg = new Var("J$" + argVar.getOriginalName());
 				sGoal = new Struct(",", new Struct("=", argVar, arg), sGoal);
 				ruleTerms[++index] = arg;
@@ -388,4 +434,27 @@ public class Solution<S> implements Iterable<S> {
 		ruleTerms[0] = sGoal;
 		return ruleTerms;
 	}
+
+	public static Term[] goalTerms(String goal, Set<String> variables) {
+		int inputArgNumber = variables.size();
+		Term[] ruleTerms = new Term[inputArgNumber + 1];
+		Struct sGoal;
+		try {
+			Parser parser = new Parser(goal);
+			sGoal = (Struct) parser.nextTerm(false);
+			int index = 0;
+			for (String variable : variables) {
+				Var argVar = new Var(variable);
+				Var arg = new Var("J$" + argVar.getOriginalName());
+				sGoal = new Struct(",", new Struct("=", argVar, arg), sGoal);
+				ruleTerms[++index] = arg;
+			}
+			sGoal.resolveTerm();
+		} catch (InvalidTermException e) {
+			throw new RuntimeException(e);
+		}
+		ruleTerms[0] = sGoal;
+		return ruleTerms;
+	}
+
 }

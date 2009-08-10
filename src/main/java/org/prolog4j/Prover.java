@@ -1,5 +1,7 @@
 package org.prolog4j;
 
+import java.util.Map;
+
 import alice.tuprolog.InvalidLibraryException;
 import alice.tuprolog.InvalidTheoryException;
 import alice.tuprolog.Prolog;
@@ -39,7 +41,7 @@ public class Prover {
 		return GLOBAL;
 	}
 
-	protected final Prolog engine;
+	public final Prolog engine;
 
 	public Prover() {
 		engine = new Prolog();
@@ -64,7 +66,6 @@ public class Prover {
 	 * @return an object for traversing the solutions
 	 */
 	public <A> Solution<A> solve(String goal) {
-		System.out.println("Prover.solve() " + goal);
 		// return new Solution2<A>(engine, Solution2.goalTerms(goal, 0));
 		return new Solution<A>(engine, goal);
 	}
@@ -86,10 +87,8 @@ public class Prover {
 	 * @return an object for traversing the solutions
 	 */
 	@Deprecated
-	public <A> Solution<A> solve(String goal, int inputArgs,
-			Object... actualArgs) {
-		return new Solution<A>(engine, Solution.goalTerms(goal, inputArgs),
-				actualArgs);
+	protected <A> Solution<A> solve(String goal, int inputArgs, Object... actualArgs) {
+		return new Solution<A>(engine, goal, inputArgs, actualArgs);
 	}
 
 	/**
@@ -108,9 +107,7 @@ public class Prover {
 	 * @return an object for traversing the solutions
 	 */
 	public <A> Solution<A> solve(String goal, Object... actualArgs) {
-		return new Solution<A>(engine, Solution.goalTerms(goal,
-				(1 << actualArgs.length) - 1), actualArgs);
-		// return new Solution2<A>(engine, goal, actualArgs);
+		return new Solution<A>(engine, goal, actualArgs);
 	}
 
 	// public <A> Solution<A> solve(String goal, Map<String, Object> args) {
@@ -144,6 +141,25 @@ public class Prover {
 			Object[] actualArgs) {
 		return new Solution<A>(engine, Solution.goalTerms(goal, inputArgs),
 				actualArgs);
+	}
+
+	/**
+	 * Solves a Prolog goal and returns an object using which the individual
+	 * solutions can be iterated over. The second argument contains values bound
+	 * to variable names. These actual arguments will be bound to the variables
+	 * before solving the goal.
+	 * 
+	 * @param <A>
+	 *            the type of an element of the solutions
+	 * @param goal
+	 *            the Prolog goal
+	 * @param actualArgs
+	 *            variable->term bindings (input)
+	 * @return an object for traversing the solutions
+	 */
+	public <A> Solution<A> solve(String goal, Map<String, Object> actualArgs) {
+		return new Solution<A>(engine, Solution.goalTerms(goal, actualArgs
+				.keySet()), actualArgs);
 	}
 
 	/**
