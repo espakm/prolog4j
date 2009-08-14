@@ -43,8 +43,8 @@
     </developers>
     <scm>
         <url>https://dev.inf.unideb.hu/gf/project/prolog4j/scmsvn/</url>
-        <connection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j</connection>
-        <developerConnection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j</developerConnection>
+        <connection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk</connection>
+        <developerConnection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk</developerConnection>
     </scm>
     <mailingLists>
         <mailingList>
@@ -83,6 +83,16 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/tuprolog.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.5.8</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -101,6 +111,24 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
+            <!--plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <tasks>
+                        <echo>Removing slf4j-api's dummy StaticLoggerBinder and StaticMarkerBinder</echo>
+                        <delete dir="target/classes/org/prolog4j/impl"/>
+                    </tasks>
+                </configuration>
+            </plugin-->
         </plugins>
     </build>
     <reporting>

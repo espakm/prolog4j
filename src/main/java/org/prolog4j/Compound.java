@@ -1,11 +1,15 @@
 package org.prolog4j;
 
+import java.io.Serializable;
+
 /**
  * Represents a Prolog compound term. Prolog compound terms which cannot be
  * transformed to an instance of a term class will be converted to a
  * <tt>Compound</tt>.
  */
-public class Compound {
+public class Compound implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private final String functor;
 	private final Object[] args;

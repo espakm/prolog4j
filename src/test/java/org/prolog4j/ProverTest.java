@@ -18,7 +18,7 @@ public class ProverTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		p = Prover.get();
+		p = ProverFactory.getProver(ProverTest.class);
 		p.addTheory("mortal(X) :- human(X).", "human(socrates).",
 				"human(plato).");
 	}
