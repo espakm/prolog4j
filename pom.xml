@@ -177,10 +177,16 @@
             </plugin>
         </plugins>
     </reporting>
-    <!--<distributionManagement> 
-        <site>
-            <id>morse</id>
-            <url>scp://jeszy@morse.inf.unideb.hu/user/jeszy/public_html/${project.artifactId}</url>
-        </site>
-    </distributionManagement>-->
+    <distributionManagement>
+        <repository>
+            <id>archiva.internal</id>
+            <name>Internal Release Repository</name>
+            <url>http://localhost:8090/archiva/repository/internal/</url>
+        </repository>
+        <snapshotRepository>
+            <id>archiva.snapshots</id>
+            <name>Internal Snapshot Repository</name>
+            <url>http://localhost:8090/archiva/repository/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
