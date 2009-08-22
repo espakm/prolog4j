@@ -70,18 +70,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>it.unibo.tuProlog</groupId>
+            <artifactId>tuProlog</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
             <groupId>jtrolog</groupId>
             <artifactId>jtrolog</artifactId>
             <version>2.1</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/jTrolog2_1.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>tuprolog</groupId>
-            <artifactId>tuprolog</artifactId>
-            <version>2.1</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/tuprolog.jar</systemPath>
+            <!--scope>system</scope>
+            <systemPath>${basedir}/lib/jTrolog2_1.jar</systemPath-->
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -94,12 +92,29 @@
             <version>1.5.8</version>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>internal</id>
+            <name>Archiva Managed Internal Repository</name>
+            <!--url>http://dev.inf.unideb.hu:8090/archiva/repository/internal/</url-->
+            <url>http://localhost:8090/archiva/repository/internal/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    	<repository>
+    		<id>cspoker.org 3rd party</id>
+    		<url>http://cspoker.org:8080/nexus/content/repositories/thirdparty/</url>
+    	</repository>
+    </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <build>
-
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -181,12 +196,14 @@
         <repository>
             <id>archiva.internal</id>
             <name>Internal Release Repository</name>
-            <url>http://dev.inf.unideb.hu:8090/archiva/repository/internal/</url>
+            <!--url>http://dev.inf.unideb.hu:8090/archiva/repository/internal/</url-->
+            <url>http://localhost:8090/archiva/repository/internal/</url>
         </repository>
         <snapshotRepository>
             <id>archiva.snapshots</id>
             <name>Internal Snapshot Repository</name>
-            <url>http://dev.inf.unideb.hu:8090/archiva/repository/snapshots/</url>
+            <!--url>http://dev.inf.unideb.hu:8090/archiva/repository/snapshots/</url-->
+            <url>http://localhost:8090/archiva/repository/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 </project>

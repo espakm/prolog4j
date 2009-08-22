@@ -270,8 +270,8 @@ public class TuPrologSolution<S> extends Solution<S> {
 			if (!hasNext())
 				throw new NoSuchElementException();
 			fetched = false;
-			return get(variable);
-			// return this.<E> get(variable);
+			// return get(variable);
+			return this.<E> get(variable);
 		}
 
 		@Override
@@ -281,8 +281,8 @@ public class TuPrologSolution<S> extends Solution<S> {
 
 		@Override
 		public <A> A get(String variable) {
-			return TuPrologSolution.this.get(variable);
-			// return (A) Solution.this.get(variable);
+			// return TuPrologSolution.this.get(variable);
+			return (A) TuPrologSolution.this.get(variable);
 		}
 
 		@Override
