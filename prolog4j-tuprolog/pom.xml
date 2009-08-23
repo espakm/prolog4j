@@ -1,0 +1,157 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <artifactId>prolog4j</artifactId>
+        <groupId>prolog4j</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>prolog4j</groupId>
+    <artifactId>prolog4j-tuprolog</artifactId>
+    <packaging>jar</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <description>Easy to use interface over Prolog engines for Java.</description>
+    <name>prolog4j-tuprolog</name>
+    <inceptionYear>2009</inceptionYear>
+    <url>http://prolog4j.org/</url>
+    <licenses>
+        <license>
+            <name>GNU GPL</name>
+            <url>http://www.gnu.org/copyleft/gpl.html</url>
+            <distribution>repo</distribution>
+            <comments>GPLv3</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>jeszy</id>
+            <name>Péter Jeszenszky</name>
+            <email>jeszenszky.peter@inf.unideb.hu</email>
+            <url>http://www.inf.unideb.hu/~jeszy/</url>
+            <organization>University of Debrecen, Faculty of Informatics</organization>
+            <organizationUrl>http://www.inf.unideb.hu/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>espakm</id>
+            <name>Miklós Espák</name>
+            <email>espak.miklos@inf.unideb.hu</email>
+            <organization>University of Debrecen, Faculty of Informatics</organization>
+            <organizationUrl>http://www.inf.unideb.hu/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <scm>
+        <url>https://dev.inf.unideb.hu/gf/project/prolog4j/scmsvn/</url>
+        <connection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk/prolog4j-tuprolog</connection>
+        <developerConnection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk/prolog4j-tuprolog</developerConnection>
+    </scm>
+    <mailingLists>
+        <mailingList>
+            <name>Developer List</name>
+            <archive>http://dev.inf.unideb.hu/mailman/private/prolog4j-devel/</archive>
+            <post>prolog4j-devel@dev.inf.unideb.hu</post>
+            <subscribe>prolog4j-devel-subscribe@dev.inf.unideb.hu</subscribe>
+            <unsubscribe>prolog4j-devel-unsubscribe@dev.inf.unideb.hu</unsubscribe>
+        </mailingList>
+        <mailingList>
+            <name>User List</name>
+            <archive>http://dev.inf.unideb.hu/mailman/private/prolog4j-users/</archive>
+            <post>prolog4j-users@dev.inf.unideb.hu</post>
+            <subscribe>prolog4j-users-subscribe@dev.inf.unideb.hu</subscribe>
+            <unsubscribe>prolog4j-users-unsubscribe@dev.inf.unideb.hu</unsubscribe>
+        </mailingList>
+    </mailingLists>
+    <dependencies>
+        <dependency>
+            <groupId>it.unibo.tuProlog</groupId>
+            <artifactId>tuProlog</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.5.8</version>
+        </dependency>
+    </dependencies>
+    <repositories>
+        <!--repository>
+            <id>internal</id>
+            <name>Archiva Managed Internal Repository</name>
+            <url>http://dev.inf.unideb.hu:8090/archiva/repository/internal/</url>
+            <url>http://localhost:8090/archiva/repository/internal/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository-->
+    	<repository>
+    		<id>cspoker.org 3rd party</id>
+    		<url>http://cspoker.org:8080/nexus/content/repositories/thirdparty/</url>
+    	</repository>
+    </repositories>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <!--plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <tasks>
+                        <echo>Removing slf4j-api's dummy StaticLoggerBinder and StaticMarkerBinder</echo>
+                        <delete dir="target/classes/org/prolog4j/impl"/>
+                    </tasks>
+                </configuration>
+            </plugin-->
+        </plugins>
+    </build>
+    <distributionManagement>
+        <repository>
+            <id>archiva.internal</id>
+            <name>Internal Release Repository</name>
+            <!--url>http://dev.inf.unideb.hu:8090/archiva/repository/internal/</url-->
+            <url>http://localhost:8090/archiva/repository/internal/</url>
+        </repository>
+        <snapshotRepository>
+            <id>archiva.snapshots</id>
+            <name>Internal Snapshot Repository</name>
+            <!--url>http://dev.inf.unideb.hu:8090/archiva/repository/snapshots/</url-->
+            <url>http://localhost:8090/archiva/repository/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
