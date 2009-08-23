@@ -25,7 +25,6 @@
 package org.prolog4j.impl;
 
 import org.prolog4j.IProverFactory;
-import org.prolog4j.tuprolog.TuPrologProverFactory;
 
 /**
  * The binding of {@link ProverFactory} class with an actual instance of
@@ -61,8 +60,6 @@ public class StaticProverBinder {
 	// to avoid constant folding by the compiler, this field must *not* be final
 	public static String REQUESTED_API_VERSION = "1.5.9"; // !final
 
-	private static final String proverFactoryClassName = TuPrologProverFactory.class.getName();
-
 	/**
 	 * The IProverFactory instance returned by the {@link #getProverFactory}
 	 * method should always be the same object
@@ -70,18 +67,15 @@ public class StaticProverBinder {
 	private final IProverFactory proverFactory;
 
 	private StaticProverBinder() {
-		// throw new UnsupportedOperationException("This code should have never made it into the jar");
 		// Note: JCL gets substituted at build time by an appropriate Ant task
-		proverFactory = new TuPrologProverFactory();
+		throw new UnsupportedOperationException("This code should have never made it into the jar");
 	}
 
 	public IProverFactory getProverFactory() {
-		// throw new UnsupportedOperationException("This code should never make it into the jar");
-		return proverFactory;
+		throw new UnsupportedOperationException("This code should never make it into the jar");
 	}
 
 	public String getProverFactoryClassName() {
-		// throw new UnsupportedOperationException("This code should never make it into the jar");
-		return proverFactoryClassName;
+		throw new UnsupportedOperationException("This code should never make it into the jar");
 	}
 }
