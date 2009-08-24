@@ -74,16 +74,7 @@ of SLF4J for creating loggers.
 
 The suitable implementation should be able to be selected at deployment time.
 
-Status: ALMOST DONE
-
-The types are abstract, and the tuProlog-specific implementation has been 
-separated into a distinct package. The infrastructure for selecting between the
-implementations is in place. However, the tuProlog-specific implementation 
-should be put into another jar file, and the target/classes/org/prolog4j/impl
-directory should be deleted before creating the jar.
-  
-So, separate project should be created for the tuProlog-specific implementation,
-and it needs a separate pom.xml file as well, like in the SLF4J projects.
+Status: DONE
 
 ================================================================================
 

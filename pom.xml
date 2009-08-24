@@ -2,14 +2,21 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>prolog4j</groupId>
-    <artifactId>prolog4j</artifactId>
-    <packaging>jar</packaging>
+    <groupId>org.prolog4j</groupId>
+    <artifactId>prolog4j-parent</artifactId>
+    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <description>Easy to use interface over Prolog engines for Java.</description>
     <name>prolog4j</name>
     <inceptionYear>2009</inceptionYear>
     <url>http://prolog4j.org/</url>
+
+    <modules>
+    	<module>prolog4j-api</module>
+    	<module>prolog4j-tuprolog</module>
+    	<!--module>prolog4j-jtrolog</module-->
+    </modules>
+
     <licenses>
         <license>
             <name>GNU GPL</name>
@@ -70,18 +77,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>it.unibo.tuProlog</groupId>
-            <artifactId>tuProlog</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>jtrolog</groupId>
-            <artifactId>jtrolog</artifactId>
-            <version>2.1</version>
-            <!--scope>system</scope>
-            <systemPath>${basedir}/lib/jTrolog2_1.jar</systemPath-->
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.5.8</version>
@@ -90,6 +85,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.5.8</version>
+        </dependency>
+        <dependency>
+            <groupId>it.unibo.tuProlog</groupId>
+            <artifactId>tuProlog</artifactId>
+            <version>2.1.1</version>
         </dependency>
     </dependencies>
     <repositories>
@@ -114,7 +114,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-    <build>
+    <!--build>
+        <resources>
+             <resource>
+                 <directory>src/main/resources</directory>
+                 <filtering>true</filtering>
+             </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -126,7 +132,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
-            <!--plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -143,9 +149,9 @@
                         <delete dir="target/classes/org/prolog4j/impl"/>
                     </tasks>
                 </configuration>
-            </plugin-->
+            </plugin>
         </plugins>
-    </build>
+    </build-->
     <reporting>
         <plugins>
             <plugin>
