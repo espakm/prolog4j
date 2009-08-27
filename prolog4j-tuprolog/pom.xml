@@ -1,13 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.prolog4j</groupId>
         <artifactId>prolog4j-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.prolog4j</groupId>
     <artifactId>prolog4j-tuprolog</artifactId>
@@ -25,6 +23,7 @@
             <comments>GPLv3</comments>
         </license>
     </licenses>
+
     <developers>
         <developer>
             <id>jeszy</id>
@@ -48,28 +47,26 @@
             </roles>
         </developer>
     </developers>
+
     <dependencies>
-        <dependency>
-            <groupId>org.prolog4j</groupId>
-            <artifactId>prolog4j-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>it.unibo.tuProlog</groupId>
-            <artifactId>tuProlog</artifactId>
-            <version>2.1.1</version>
-        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.5.8</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.5.8</version>
+        </dependency>
+        <dependency>
+            <groupId>it.unibo.tuProlog</groupId>
+            <artifactId>tuProlog</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.prolog4j</groupId>
+            <artifactId>prolog4j-api</artifactId>
         </dependency>
     </dependencies>
+
     <repositories>
         <!--repository>
             <id>internal</id>
@@ -88,10 +85,12 @@
     		<url>http://cspoker.org:8080/nexus/content/repositories/thirdparty/</url>
     	</repository>
     </repositories>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -124,4 +123,5 @@
             </plugin-->
         </plugins>
     </build>
+
 </project>

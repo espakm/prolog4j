@@ -51,19 +51,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>it.unibo.tuProlog</groupId>
-            <artifactId>tuProlog</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.5.8</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.5.8</version>
+        </dependency>
+        <dependency>
+            <groupId>it.unibo.tuProlog</groupId>
+            <artifactId>tuProlog</artifactId>
         </dependency>
     </dependencies>
 
@@ -85,10 +82,12 @@
     		<url>http://cspoker.org:8080/nexus/content/repositories/thirdparty/</url>
     	</repository>
     </repositories-->
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -121,4 +120,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
