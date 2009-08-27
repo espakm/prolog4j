@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.prolog4j</groupId>
     <artifactId>prolog4j-parent</artifactId>
@@ -25,6 +26,7 @@
             <comments>GPLv3</comments>
         </license>
     </licenses>
+
     <developers>
         <developer>
             <id>jeszy</id>
@@ -48,11 +50,13 @@
             </roles>
         </developer>
     </developers>
+
     <scm>
         <url>https://dev.inf.unideb.hu/gf/project/prolog4j/scmsvn/</url>
         <connection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk</connection>
         <developerConnection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk</developerConnection>
     </scm>
+
     <mailingLists>
         <mailingList>
             <name>Developer List</name>
@@ -69,6 +73,12 @@
             <unsubscribe>prolog4j-users-unsubscribe@dev.inf.unideb.hu</unsubscribe>
         </mailingList>
     </mailingLists>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -76,22 +86,8 @@
             <version>4.6</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.5.8</version>
-        </dependency>
-        <dependency>
-            <groupId>it.unibo.tuProlog</groupId>
-            <artifactId>tuProlog</artifactId>
-            <version>2.1.1</version>
-        </dependency>
     </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -116,6 +112,21 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <repositories>
         <repository>
             <id>internal</id>
@@ -134,10 +145,7 @@
     		<url>http://cspoker.org:8080/nexus/content/repositories/thirdparty/</url>
     	</repository>
     </repositories>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
+
     <!--build>
         <resources>
              <resource>

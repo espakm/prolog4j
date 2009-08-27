@@ -1,11 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <parent>
         <groupId>org.prolog4j</groupId>
         <artifactId>prolog4j-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.prolog4j</groupId>
     <artifactId>prolog4j-tuprolog</artifactId>
@@ -15,38 +17,6 @@
     <name>prolog4j-tuprolog</name>
     <inceptionYear>2009</inceptionYear>
     <url>http://prolog4j.org/</url>
-    <licenses>
-        <license>
-            <name>GNU GPL</name>
-            <url>http://www.gnu.org/copyleft/gpl.html</url>
-            <distribution>repo</distribution>
-            <comments>GPLv3</comments>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <id>jeszy</id>
-            <name>Péter Jeszenszky</name>
-            <email>jeszenszky.peter@inf.unideb.hu</email>
-            <url>http://www.inf.unideb.hu/~jeszy/</url>
-            <organization>University of Debrecen, Faculty of Informatics</organization>
-            <organizationUrl>http://www.inf.unideb.hu/</organizationUrl>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>espakm</id>
-            <name>Miklós Espák</name>
-            <email>espak.miklos@inf.unideb.hu</email>
-            <organization>University of Debrecen, Faculty of Informatics</organization>
-            <organizationUrl>http://www.inf.unideb.hu/</organizationUrl>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
 
     <dependencies>
         <dependency>
@@ -67,39 +37,8 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <!--repository>
-            <id>internal</id>
-            <name>Archiva Managed Internal Repository</name>
-            <url>http://dev.inf.unideb.hu:8090/archiva/repository/internal/</url>
-            <url>http://localhost:8090/archiva/repository/internal/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository-->
-    	<repository>
-    		<id>cspoker.org 3rd party</id>
-    		<url>http://cspoker.org:8080/nexus/content/repositories/thirdparty/</url>
-    	</repository>
-    </repositories>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
