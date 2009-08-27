@@ -18,26 +18,8 @@
     <inceptionYear>2009</inceptionYear>
     <url>http://prolog4j.org/</url>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>it.unibo.tuProlog</groupId>
-            <artifactId>tuProlog</artifactId>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
