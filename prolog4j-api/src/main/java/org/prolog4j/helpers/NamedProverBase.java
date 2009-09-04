@@ -12,7 +12,7 @@ import org.prolog4j.ProverFactory;
  * 
  * @author Ceki Gulcu
  */
-public abstract class NamedProverBase implements Prover, Serializable {
+public abstract class NamedProverBase extends Prover implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

@@ -112,10 +112,6 @@ public class TuPrologSolution<S> extends Solution<S> {
 				actualArgs);
 	}
 
-	TuPrologSolution(Prolog engine, String goal, int inputArgs, Object[] actualArgs) {
-		this(engine, goalTerms(goal, inputArgs), actualArgs);
-	}
-
 	@Override
 	public boolean isSuccess() {
 		return success;
@@ -124,6 +120,14 @@ public class TuPrologSolution<S> extends Solution<S> {
 	@Override
 	public SolutionIterator<S> iterator() {
 		return new SolutionIteratorImpl<S>(varName(goalTerms.length - 2));
+//		try {
+//		Class<S> clazz = (Class<S>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+//		return new SolutionIteratorImpl<S>(varName(goalTerms.length - 2), clazz);
+//		}
+//		catch (Throwable t) {
+//			t.printStackTrace();
+//		}
+//		throw null;
 	}
 
 	@Override
@@ -234,8 +238,10 @@ public class TuPrologSolution<S> extends Solution<S> {
 		 * @param variable
 		 *            the name of the variable that is of special interest
 		 */
+		@SuppressWarnings("unchecked")
 		SolutionIteratorImpl(String variable) {
 			this.variable = capitalize(variable);
+//			clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		}
 
 		SolutionIteratorImpl(String variable, Class<E> clazz) {
@@ -270,8 +276,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 			if (!hasNext())
 				throw new NoSuchElementException();
 			fetched = false;
-			// return get(variable);
-			return this.<E> get(variable);
+			return get(variable);
 		}
 
 		@Override
@@ -280,9 +285,10 @@ public class TuPrologSolution<S> extends Solution<S> {
 		}
 
 		@Override
-		public <A> A get(String variable) {
-			// return TuPrologSolution.this.get(variable);
-			return (A) TuPrologSolution.this.get(variable);
+		public E get(String variable) {
+			if (clazz == null)
+				return TuPrologSolution.this.get(variable);
+			return TuPrologSolution.this.get(variable, clazz);
 		}
 
 		@Override

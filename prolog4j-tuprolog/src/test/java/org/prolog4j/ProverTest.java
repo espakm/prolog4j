@@ -24,7 +24,7 @@ public class ProverTest {
 	}
 
 	public static boolean isMortal(String somebody) {
-		return p.solve("mortal(X).", somebody).isSuccess();
+		return p.solve("mortal(X{}).", somebody).isSuccess();
 	}
 
 	public static List<String> getMortals() {
@@ -48,7 +48,7 @@ public class ProverTest {
 	@Test
 	public void testIsMember() {
 		List<String> philosophers = Arrays.asList("socrates", "plato");
-		Solution<String> solution = p.solve("member(X, List).", null, philosophers);
+		Solution<String> solution = p.solve("member(X, List{}).", philosophers);
 		assertTrue(solution.isSuccess());
 	}
 
@@ -56,7 +56,7 @@ public class ProverTest {
 	public void testTestOn() {
 		List<String> philosophers = Arrays.asList("socrates", "plato");
 		List<String> list = new ArrayList<String>(2);
-		Solution<String> solution = p.solve("member(X, List).", null, philosophers);
+		Solution<String> solution = p.solve("member(X, List{}).", philosophers);
 		for (String s : solution.<String> on("X"))
 			list.add(s);
 		assertEquals(list, Arrays.asList("socrates", "plato"));
@@ -67,11 +67,7 @@ public class ProverTest {
 		List<String> h1 = Arrays.asList("socrates");
 		List<String> h2 = Arrays.asList("thales", "plato");
 
-		Map<String, Object> inputs = new HashMap<String, Object>();
-		inputs.put("L1", h1);
-		inputs.put("L2", h2);
-		
-		Solution<Object[]> solution = p.solve("append(L1, L2, L12).", inputs);
+		Solution<Object[]> solution = p.solve("append(L1{}, L2{}, L12).", h1, h2);
 
 		Iterator<Object[]> it = solution.<Object[]>on("L12").iterator();
 		assertTrue(it.hasNext());
@@ -82,12 +78,12 @@ public class ProverTest {
 	
 	@Test
 	public void testTestListResult() {
-		// List<String> h3 = Arrays.asList("socrates", "homeros", "demokritos");
-		// for (List<String> humans : p
-		// .solve("append(L1, L2, L12).", h1, null, h3).<List<String>> on(
-		// "L2"))
-		// for (String h : humans)
-		// System.out.println(h); // homeros and demokritos
+		List<String> h1 = Arrays.asList("socrates");
+		List<String> h2 = Arrays.asList("thales", "plato");
+		List<String> h3 = Arrays.asList("socrates", "homeros", "demokritos");
+		for (List<String> humans : p.solve("append(L1{}, L2, L12{}).", h1, h3).on("L2", List.class))
+			for (String h : humans)
+				System.out.println(h); // homeros and demokritos
 	}
 
 }

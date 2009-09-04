@@ -27,15 +27,7 @@ public class CachingProver extends TuPrologProver {
     }
 
     @Override
-    public <A> Solution<A> solve(String goal, int inputArgs, Object... actualArgs) {
-        Term[] goalTerms = goalTermsCache.get(goal);
-        if (goalTerms == null)
-            goalTermsCache.put(goal, goalTerms = TuPrologSolution.goalTerms(goal, inputArgs));
-        return new TuPrologSolution<A>(engine, goalTerms, actualArgs);
-    }
-
-    @Override
-    public <A> Solution<A> solve(String goal, String[] inputArgs, Object[] actualArgs) {
+    protected <A> Solution<A> solve(String goal, String[] inputArgs, Object[] actualArgs) {
         Term[] goalTerms = goalTermsCache.get(goal);
         if (goalTerms == null)
             goalTermsCache.put(goal, goalTerms = TuPrologSolution.goalTerms(goal, inputArgs));
