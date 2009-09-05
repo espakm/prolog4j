@@ -12,13 +12,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ProverTest {
+public class TuPrologProverTest {
 
 	private static Prover p;
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
-		p = ProverFactory.getProver(ProverTest.class);
+		p = ProverFactory.getProver(TuPrologProverTest.class);
 		p.addTheory("mortal(X) :- human(X).", "human(socrates).",
 				"human(plato).");
 	}

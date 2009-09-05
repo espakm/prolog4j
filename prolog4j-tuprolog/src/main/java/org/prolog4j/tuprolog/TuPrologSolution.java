@@ -120,14 +120,6 @@ public class TuPrologSolution<S> extends Solution<S> {
 	@Override
 	public SolutionIterator<S> iterator() {
 		return new SolutionIteratorImpl<S>(varName(goalTerms.length - 2));
-//		try {
-//		Class<S> clazz = (Class<S>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-//		return new SolutionIteratorImpl<S>(varName(goalTerms.length - 2), clazz);
-//		}
-//		catch (Throwable t) {
-//			t.printStackTrace();
-//		}
-//		throw null;
 	}
 
 	@Override

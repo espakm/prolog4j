@@ -3,38 +3,6 @@ These should be added to the GForge site of the project. :)
 
 ================================================================================
 
-Passing input arguments to goals
---------------------------------
-
-Now several ways are provided for passing initial values for the variables:
- - parallel arrays of variable names and values (String[], Object[])
- - a mapping of variable names to values (Map<String, Object>)
- - no variable names are passed, only their values:
-   the goal is supposed to be a single compound term whose arguments are the 
-   names of the variables
-   
-The first two solution is not convenient and the third one is not flexible. 
-Moreover, the preferred type to which the output variable cannot be specified. 
-Instead, one of the following notations should be used:
-
- - Java formatter notation.
-   E.g. V%s
- - C#-like notation. This is used in SLF4J as well.
-   E.g. {V}
-
-Either of the notations should be capable of the followings:
- - the name of the variable
- - the type of the variable (expected type for inputs, suggested type for outputs)
- - the purpose of the variable: input, output, input/output, input and bound
-
-Moreover, these informations are not needed to be specified for each variables. 
-At default, the values are specified in the order of the occurrence of the 
-variables. If you would not like to bind an initial value for an argument, you
-can pass null to it. At default, the last variable should be the default output
-argument.
-
-================================================================================
-
 Queries as a separate class
 ---------------------------
 
@@ -52,37 +20,11 @@ Probably it is worth to distinguish a Query and a PreparedQuery type.
 
 ================================================================================
 
-Hierarchy of provers associated to package and class names
-----------------------------------------------------------
-
-Provers have to be assigned to (and accessed by) a name. Normally, the class or 
-package names should be used for accessing the prover of the given class or
-package, but arbitrary names can be used. Provers are created dynamically at the
-first time they are requested. (This is similar to the way of accessing loggers 
-in logging frameworks.)
-
-Status: DONE
-
-================================================================================
-
-Service Provider Interface pattern
-----------------------------------
-
-The Prover, Query and Solution types should be abstract, and their 
-implementations should be accessed through a factory. This is similar to the way
-of SLF4J for creating loggers. 
-
-The suitable implementation should be able to be selected at deployment time.
-
-Status: DONE
-
-================================================================================
-
 Alternative implementations
 ---------------------------
 
-Alternative implementations of should be developed for jTrolog, JLog, CIAO 
-Prolog, SWI-Prolog and so on.
+Alternative implementations of should be developed for JLog, CIAO Prolog, 
+SWI-Prolog and so on.
 
 ================================================================================
 
