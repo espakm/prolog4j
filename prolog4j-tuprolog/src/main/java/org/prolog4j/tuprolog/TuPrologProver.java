@@ -43,11 +43,6 @@ public class TuPrologProver extends NamedProverBase {
 	}
 	
 	@Override
-	public <A> Solution<A> solve(String goal) {
-		return new TuPrologSolution<A>(engine, goal);
-	}
-
-	@Override
 	protected <A> Solution<A> solve(String goal, String[] inputArgs, Object[] actualArgs) {
 		return new TuPrologSolution<A>(engine, TuPrologSolution.goalTerms(goal,
 				inputArgs), actualArgs);

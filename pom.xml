@@ -233,6 +233,10 @@
             <name>Internal Snapshot Repository</name>
             <url>http://dev.inf.unideb.hu:8090/archiva/repository/snapshots/</url>
         </snapshotRepository>
+	    <site>
+    		<id>project site</id>
+		    <url>scp://dev.inf.unideb.hu/home/www/prolog4j/</url>
+		</site>
     </distributionManagement>
 
 </project>

@@ -19,14 +19,6 @@ public class CachingProver extends TuPrologProver {
 	private Map<String, Term[]> goalTermsCache = new HashMap<String, Term[]>();
 
     @Override
-    public <A> Solution<A> solve(String goal) {
-        Term[] goalTerms = goalTermsCache.get(goal);
-        if (goalTerms == null)
-            goalTermsCache.put(goal, goalTerms = TuPrologSolution.goalTerms(goal, 0));
-        return new TuPrologSolution<A>(engine, goalTerms);
-    }
-
-    @Override
     protected <A> Solution<A> solve(String goal, String[] inputArgs, Object[] actualArgs) {
         Term[] goalTerms = goalTermsCache.get(goal);
         if (goalTerms == null)

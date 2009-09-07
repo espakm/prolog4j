@@ -24,11 +24,6 @@ public class JLogProver extends NamedProverBase {
 	}
 
 	@Override
-	public <A> Solution<A> solve(String goal) {
-		return new JLogSolution<A>(prolog, goal);
-	}
-
-	@Override
 	protected <A> Solution<A> solve(String goal, String[] inputArgs, Object[] actualArgs) {
 		return new JLogSolution<A>(prolog, goal, inputArgs, actualArgs);
 	}

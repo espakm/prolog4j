@@ -42,11 +42,6 @@ public class JTrologProver extends NamedProverBase {
 	}
 	
 	@Override
-	public <A> Solution<A> solve(String goal) {
-		return new JTrologSolution<A>(engine, goal);
-	}
-
-	@Override
 	protected <A> Solution<A> solve(String goal, String[] inputArgs, Object[] actualArgs) {
 		return new JTrologSolution<A>(engine, goal, inputArgs, actualArgs);
 	}
