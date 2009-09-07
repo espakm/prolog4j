@@ -2,6 +2,7 @@ package org.prolog4j.jlog;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -9,7 +10,13 @@ import java.util.NoSuchElementException;
 import org.prolog4j.SolutionIterator;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
-import ubc.cs.JLog.Terms.jVariable;
+import ubc.cs.JLog.Terms.iTermToObject;
+import ubc.cs.JLog.Terms.jAtom;
+import ubc.cs.JLog.Terms.jList;
+import ubc.cs.JLog.Terms.jListPair;
+import ubc.cs.JLog.Terms.jNullList;
+import ubc.cs.JLog.Terms.jTerm;
+import ubc.cs.JLog.Terms.jTermTranslation;
 
 /**
  * The <tt>Solution</tt> class is responsible for traversing through the
@@ -23,9 +30,42 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	private final jPrologAPI prolog;
 	private String[] outputVarNames;
 
-	private Hashtable<jVariable, Object> solution;
+	private Hashtable<String, Object> solution;
 	private final boolean success;
 
+	final static jTermTranslation translator;
+	static {
+		translator = new jTermTranslation();
+		translator.setDefaults();
+		iTermToObject atomToString = new iTermToObject() {
+			@Override
+			public Object createObjectFromTerm(jTerm term) {
+				if (term instanceof jAtom)
+					return term.getName();
+				return null;
+			}
+		};
+		translator.RegisterTermToObjectConverter(jAtom.class, atomToString);
+		iTermToObject listToArray = new iTermToObject() {
+			public Object createObjectFromTerm(jTerm term) {
+				if (term instanceof jList) {
+					jList list = (jList) term;
+					Enumeration e = list.elements(translator);
+					ArrayList<Object> al = new ArrayList<Object>();
+
+					while (e.hasMoreElements())
+						al.add(e.nextElement());
+
+					return al.toArray();		
+				}
+
+				throw new RuntimeException("Expected jList term."); 
+			}
+		};
+		translator.RegisterTermToObjectConverter(jListPair.class, listToArray);
+		translator.RegisterTermToObjectConverter(jNullList.class, listToArray);
+	}
+	
 	/**
 	 * Creates a <tt>Solution</tt> object for traversing through the solutions
 	 * for a Prolog query.
@@ -37,22 +77,30 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	 */
 	JLogSolution(jPrologAPI prolog, String goal) {
 		this.prolog = prolog;
+//		prolog.setTranslation(translator);
 		solution = prolog.query(goal);
-		success = solution == null;
-		if (!success)
-			return;
-	}
-
-	JLogSolution(jPrologAPI prolog, String goal, String[] varNames, Object[] actualArgs) {
-		this.prolog = prolog;
-		solution = prolog.query(goal);
-		success = solution == null;
+		success = solution != null;
 		if (!success)
 			return;
 		outputVarNames = new String[solution.size()];
 		int i = 0;
-		for (jVariable var: solution.keySet())
-			outputVarNames[i] = var.getName();
+		for (String var: solution.keySet())
+			outputVarNames[i++] = var;
+	}
+
+	JLogSolution(jPrologAPI prolog, String goal, String[] varNames, Object[] actualArgs) {
+		this.prolog = prolog;
+		Hashtable<String, Object> initialBindings = new Hashtable<String, Object>();
+		for (int i = 0; i < varNames.length; ++i)
+			initialBindings.put(varNames[i], actualArgs[i]);
+		solution = prolog.query(goal, initialBindings);
+		success = solution != null;
+		if (!success)
+			return;
+		outputVarNames = new String[solution.size()];
+		int i = 0;
+		for (String var: solution.keySet())
+			outputVarNames[i++] = var;
 	}
 
 	@Override
@@ -70,7 +118,7 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		return new Iterable<A>() {
 			@Override
 			public java.util.Iterator<A> iterator() {
-				return new SolutionIteratorImpl<A>(capitalize(variable));
+				return new SolutionIteratorImpl<A>(variable);
 			}
 		};
 	}
@@ -80,22 +128,9 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		return new Iterable<A>() {
 			@Override
 			public java.util.Iterator<A> iterator() {
-				return new SolutionIteratorImpl<A>(capitalize(variable), clazz);
+				return new SolutionIteratorImpl<A>(variable, clazz);
 			}
 		};
-	}
-
-	/**
-	 * @param string
-	 * @return
-	 */
-	private static String capitalize(String string) {
-		char firstLetter = string.charAt(0);
-		if (Character.isUpperCase(firstLetter))
-			return string;
-		StringBuilder sb = new StringBuilder(string);
-		sb.setCharAt(0, Character.toUpperCase(firstLetter));
-		return sb.toString();
 	}
 
 	@Override
@@ -105,13 +140,12 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 
 	@Override
 	public <A> A get(String variable) {
-		return (A) solution.get(capitalize(variable));
+		return Terms.<A> toObject((jTerm) solution.get(variable));
 	}
 
 	@Override
 	public <A> A get(String variable, Class<A> type) {
-		throw new UnsupportedOperationException();
-//		return solution.get(capitalize(variable)), type);
+		return Terms.toObject((jTerm) solution.get(variable), type);
 	}
 
 	@Override
@@ -156,11 +190,11 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		 */
 		@SuppressWarnings("unchecked")
 		SolutionIteratorImpl(String variable) {
-			this.variable = capitalize(variable);
+			this.variable = variable;
 		}
 
 		SolutionIteratorImpl(String variable, Class<E> clazz) {
-			this.variable = capitalize(variable);
+			this.variable = variable;
 			this.clazz = clazz;
 		}
 

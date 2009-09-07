@@ -24,12 +24,8 @@
             <artifactId>prolog4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>jtrolog</groupId>
-            <artifactId>jtrolog</artifactId>
-        </dependency>
-        <dependency>
             <groupId>jlog</groupId>
-            <artifactId>jlogic</artifactId>
+            <artifactId>jlogic-debug</artifactId>
         </dependency>
         <dependency>
             <groupId>jlog</groupId>

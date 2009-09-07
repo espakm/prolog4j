@@ -17,7 +17,16 @@ public class JLogProverTest {
 	@BeforeClass
 	public static void setUpBeforeClass() {
 		p = ProverFactory.getProver(JLogProverTest.class);
-		p.addTheory("mortal(X) :- human(X).", "human(socrates).",
+		p.addTheory(
+		"member(X, [X|_]).",
+		"member(X, [_|L]) :- member(X, L).",
+		"append([], R, R).",
+		"append([H|T], L, [H|R]) :-",
+		"	append(T, L, R).");
+		
+		p.addTheory(
+				"mortal(X) :- human(X).", 
+				"human(socrates).",
 				"human(plato).");
 	}
 
@@ -35,53 +44,54 @@ public class JLogProverTest {
 
 	@Test
 	public void testIsSuccess() {
-//		assertTrue(isMortal("socrates"));
+		assertTrue(isMortal("socrates"));
 	}
 
 	@Test
 	public void testIterable() {
-//		assertEquals(getMortals(), Arrays.asList("socrates", "plato"));
+		List<String> mortals = getMortals();
+		assertEquals(mortals, Arrays.asList("socrates", "plato"));
 	}
 
 	@Test
 	public void testIsMember() {
-//		List<String> philosophers = Arrays.asList("socrates", "plato");
-//		Solution<String> solution = p.solve("member(X, List{}).", philosophers);
-//		assertTrue(solution.isSuccess());
+		List<String> philosophers = Arrays.asList("socrates", "plato");
+		Solution<String> solution = p.solve("member(X, List{}).", philosophers);
+		assertTrue(solution.isSuccess());
 	}
 
 	@Test
 	public void testTestOn() {
-//		List<String> philosophers = Arrays.asList("socrates", "plato");
-//		List<String> list = new ArrayList<String>(2);
-//		Solution<String> solution = p.solve("member(X, List{}).", philosophers);
-//		for (String s : solution.<String> on("X"))
-//			list.add(s);
-//		assertEquals(list, Arrays.asList("socrates", "plato"));
+		List<String> philosophers = Arrays.asList("socrates", "plato");
+		List<String> list = new ArrayList<String>(2);
+		Solution<String> solution = p.solve("member(X, List{}).", philosophers);
+		for (String s : solution.<String> on("X"))
+			list.add(s);
+		assertEquals(list, Arrays.asList("socrates", "plato"));
 	}
 
 	@Test
 	public void testTestArrayResult() {
-//		List<String> h1 = Arrays.asList("socrates");
-//		List<String> h2 = Arrays.asList("thales", "plato");
-//
-//		Solution<Object[]> solution = p.solve("append(L1{}, L2{}, L12).", h1, h2);
-//
-//		Iterator<Object[]> it = solution.<Object[]>on("L12").iterator();
-//		assertTrue(it.hasNext());
-//		Object[] sol = it.next();
-//		assertArrayEquals(sol, new Object[]{"socrates", "thales", "plato"});
-//		assertFalse(it.hasNext());
+		List<String> h1 = Arrays.asList("socrates");
+		List<String> h2 = Arrays.asList("thales", "plato");
+
+		Solution<Object[]> solution = p.solve("append(L1{}, L2{}, L12).", h1, h2);
+
+		Iterator<Object[]> it = solution.<Object[]>on("L12").iterator();
+		assertTrue(it.hasNext());
+		Object[] sol = it.next();
+		assertArrayEquals(sol, new Object[]{"socrates", "thales", "plato"});
+		assertFalse(it.hasNext());
 	}
 	
 	@Test
 	public void testTestListResult() {
-//		List<String> h1 = Arrays.asList("socrates");
-//		List<String> h2 = Arrays.asList("thales", "plato");
-//		List<String> h3 = Arrays.asList("socrates", "homeros", "demokritos");
-//		for (List<String> humans : p.solve("append(L1{}, L2, L12{}).", h1, h3).on("L2", List.class))
-//			for (String h : humans)
-//				System.out.println(h); // homeros and demokritos
+		List<String> h1 = Arrays.asList("socrates");
+		List<String> h2 = Arrays.asList("thales", "plato");
+		List<String> h3 = Arrays.asList("socrates", "homeros", "demokritos");
+		for (List<String> humans : p.solve("append(L1{}, L2, L12{}).", h1, h3).on("L2", List.class))
+			for (String h : humans)
+				System.out.println(h); // homeros and demokritos
 	}
 
 }

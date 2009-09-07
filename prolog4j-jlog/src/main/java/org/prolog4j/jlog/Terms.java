@@ -14,13 +14,16 @@ import java.util.ListIterator;
 import org.prolog4j.Compound;
 import org.prolog4j.annotations.Goal;
 
-import jTrolog.parser.Parser;
-import jTrolog.terms.Int;
-import jTrolog.terms.Struct;
-import jTrolog.terms.StructAtom;
-import jTrolog.terms.Term;
-import jTrolog.terms.Var;
-import jTrolog.errors.InvalidTermException;
+import ubc.cs.JLog.Terms.jAtom;
+import ubc.cs.JLog.Terms.jCompoundTerm;
+import ubc.cs.JLog.Terms.jInteger;
+import ubc.cs.JLog.Terms.jList;
+import ubc.cs.JLog.Terms.jListPair;
+import ubc.cs.JLog.Terms.jNullList;
+import ubc.cs.JLog.Terms.jPredicate;
+import ubc.cs.JLog.Terms.jReal;
+import ubc.cs.JLog.Terms.jTerm;
+import ubc.cs.JLog.Terms.jVariable;
 
 /**
  * Utility class for performing transformations between POJOs and terms.
@@ -28,62 +31,46 @@ import jTrolog.errors.InvalidTermException;
  */
 class Terms {
 
-	static Term term(String repr) {
-		try {
-			Parser p = new Parser(repr);
-			return p.nextTerm(false);
-		} catch (InvalidTermException e) {
-			throw new RuntimeException(repr);
-		}
+//	static jTerm term(String repr) {
+//		try {
+//			Parser p = new Parser(repr);
+//			return p.nextTerm(false);
+//		} catch (InvalidTermException e) {
+//			throw new RuntimeException(repr);
+//		}
+//	}
+
+	static jInteger toTerm(Integer i) {
+		return new jInteger(i);
 	}
 
-	static Int toTerm(Integer i) {
-		return new Int(i);
+	static Integer toInteger(jTerm t) {
+		return ((jInteger) t).getIntegerValue();
 	}
 
-	static Integer toInteger(Term t) {
-		return ((Int) t).intValue();
+	static jTerm toTerm(Float f) {
+		return new jReal(f);
 	}
 
-	static Term toTerm(Long l) {
-		return new jTrolog.terms.Long(l);
+	static Float toFloat(jTerm t) {
+		return ((jReal) t).getRealValue();
 	}
 
-	static Long toLong(Term t) {
-		return ((jTrolog.terms.Long) t).longValue();
+	static jTerm toTerm(String s) {
+		return s == null ? jNullList.NULL_LIST : new jAtom(s);
 	}
 
-	static Term toTerm(Float f) {
-		return new jTrolog.terms.Float(f);
-	}
-
-	static Float toFloat(Term t) {
-		return ((jTrolog.terms.Float) t).floatValue();
-	}
-
-	static Term toTerm(Double d) {
-		return new jTrolog.terms.Double(d);
-	}
-
-	static Double toDouble(Term t) {
-		return ((jTrolog.terms.Double) t).doubleValue();
-	}
-
-	static Term toTerm(String s) {
-		return s == null ? Term.emptyList : new StructAtom(s);
-	}
-
-	static String toString(Term t) {
-		if (t instanceof StructAtom)
-			return ((Struct) t).name;
+	static String toString(jTerm t) {
+		if (t instanceof jAtom)
+			return ((jAtom) t).getName();
 		return null;
 	}
 
-	static Term toTerm(Object o) {
+	static jTerm toTerm(Object o) {
 		if (o == null)
-			return new Var("_", 1);
-		if (o instanceof Term)
-			return (Term) o;
+			return new jVariable();
+		if (o instanceof jTerm)
+			return (jTerm) o;
 		if (o instanceof Integer)
 			return toTerm((Integer) o);
 		if (o instanceof Long)
@@ -100,10 +87,10 @@ class Terms {
 			return toTerm((List) o);
 		if (o instanceof Compound) {
 			Compound c = (Compound) o;
-			Term[] args = new Term[c.getArity()];
-			for (int i = 0; i < args.length; ++i)
-				args[i] = toTerm(c.getArg(i));
-			return new Struct(c.getFunctor(), args);
+			jCompoundTerm ct = new jCompoundTerm(c.getArity());
+			for (int i = 0; i < c.getArity(); ++i)
+				ct.addTerm(toTerm(c.getArg(i)));
+			jPredicate p = new jPredicate(c.getFunctor(), ct);
 		}
 		Class<?> c = o.getClass();
 		if (c.isAnnotationPresent(org.prolog4j.annotations.Term.class))
@@ -113,7 +100,7 @@ class Terms {
 		// return toTerm(o.toString());
 	}
 
-	private static Term toTerm(Object o, Class<?> c) {
+	private static jTerm toTerm(Object o, Class<?> c) {
 		// Constructor[] ctrs = c.getConstructors();
 		// Constructor ctr = null;
 		// for (int i = 0; i < ctrs.length; ++i) {
@@ -145,7 +132,7 @@ class Terms {
 			cc = cc.getSuperclass();
 		}
 		// Term[] args = new Term[fields.size()];
-		ArrayList<Term> args2 = new ArrayList<Term>(fields.size());
+		ArrayList<jTerm> args2 = new ArrayList<jTerm>(fields.size());
 		try {
 			for (int i = 0; i < fields.size(); ++i) {
 				Field field = fields.get(i);
@@ -162,33 +149,35 @@ class Terms {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
-		return new Struct(c.getName(), args2.toArray(new Term[0]));
+		jCompoundTerm args3 = new jCompoundTerm(args2.size());
+		for (jTerm t: args2)
+			args3.addTerm(t);
+		return new jPredicate(c.getName(), args3);
 	}
 
 	// TODO
-	static <A> A toObject(Term t, Class<A> type) {
-		if (t instanceof Var)
-			return null;
-		if (t instanceof Int)
+	static <A> A toObject(jTerm t, Class<A> type) {
+		if (t instanceof jVariable) {
+			if (!((jVariable) t).isBound())
+				return null;
+			t = t.getTerm();
+		}
+		if (t instanceof jInteger)
 			return (A) toInteger(t);
-		if (t instanceof jTrolog.terms.Long)
-			return (A) toLong(t);
-		if (t instanceof jTrolog.terms.Float)
+		if (t instanceof jReal)
 			return (A) toFloat(t);
-		if (t instanceof jTrolog.terms.Double)
-			return (A) toDouble(t);
-		if (isList(t)) {
+		if (t instanceof jList) {
 			if (type.isArray())
 				return (A) toArray(t, type.getComponentType());
 			if (List.class.isAssignableFrom(type))
 				return (A) toList(t);
 		}
-		if (t instanceof StructAtom)
+		if (t instanceof jAtom)
 			return (A) toString(t);
-		if (t instanceof Struct) {
-			Struct s = (Struct) t;
-			int argNo = s.arity;
-			String className = s.name;
+		if (t instanceof jPredicate) {
+			jPredicate s = (jPredicate) t;
+			int argNo = s.getArity();
+			String className = s.getName();
 			try {
 				Class<?> c = Class.forName(className);
 				Constructor<A>[] ctrs = (Constructor<A>[]) c.getConstructors();
@@ -199,8 +188,9 @@ class Terms {
 					if (parameterTypes.length != argNo)
 						continue;
 					Object[] args = new Object[argNo];
+					jCompoundTerm arguments = s.getArguments();
 					for (int i = 0; i < argNo; ++i)
-						args[i] = toObject(s.getArg(i), parameterTypes[i]);
+						args[i] = toObject(arguments.elementAt(i), parameterTypes[i]);
 					// for (int i = 0; i < argNo; ++i)
 					// if (args[i] != null &&
 					// !parameterTypes[i].isAssignableFrom(args[i].getClass()))
@@ -235,24 +225,23 @@ class Terms {
 		throw new RuntimeException("Cannot convert to any POJO: " + t);
 	}
 
-	static <A> A toObject(Term t) {
-		if (t instanceof Var)
-			return null;
-		if (t instanceof Int)
+	static <A> A toObject(jTerm t) {
+		if (t instanceof jVariable) {
+			if (!((jVariable) t).isBound())
+				return null;
+			t = t.getTerm();
+		}
+		if (t instanceof jInteger)
 			return (A) toInteger(t);
-		if (t instanceof jTrolog.terms.Long)
-			return (A) toLong(t);
-		if (t instanceof jTrolog.terms.Float)
+		if (t instanceof jReal)
 			return (A) toFloat(t);
-		if (t instanceof jTrolog.terms.Double)
-			return (A) toDouble(t);
-		if (t instanceof StructAtom)
+		if (t instanceof jAtom)
 			return (A) toString(t);
-		if (isList(t))
+		if (t instanceof jList)
 			return (A) toArray(t);
-		if (t instanceof Struct) {
-			Struct s = (Struct) t;
-			String className = s.name;
+		if (t instanceof jPredicate) {
+			jPredicate s = (jPredicate) t;
+			String className = s.getName();
 			try {
 				return (A) toObject(t, Class.forName(className));
 			} catch (ClassNotFoundException e) {
@@ -262,76 +251,70 @@ class Terms {
 		throw new RuntimeException("Cannot convert to any POJO: " + t);
 	}
 
-	static <E> Term toTerm(List<E> list) {
-		Struct pList = Term.emptyList;
+	static <E> jTerm toTerm(List<E> list) {
+		jList pList = jNullList.NULL_LIST;
 		ListIterator<E> it = list.listIterator(list.size());
 		while (it.hasPrevious())
-			pList = new Struct(".", new Term[]{toTerm(it.previous()), pList});
+			pList = new jListPair(toTerm(it.previous()), pList);
 		return pList;
 	}
 
-	static Term toTerm(Object[] array) {
-		Struct pList = Term.emptyList;
+	static jTerm toTerm(Object[] array) {
+		jList pList = jNullList.NULL_LIST;
 		for (int i = array.length - 1; i >= 0; --i)
-			pList = new Struct(".", new Term[]{toTerm(array[i]), pList});
+			pList = new jListPair(toTerm(array[i]), pList);
 		return pList;
 	}
 
-	static Object[] toArray(Term tList) {
-		Struct list = (Struct) tList;
+	static Object[] toArray(jTerm tList) {
+		jList list = (jList) tList;
 		int length = listSize(list);
 		Object[] array = new Object[length];
 		for (int i = 0; i < length; ++i) {
-			Term t = list.getArg(0);
+			jListPair listPair = (jListPair) list;
+			jTerm t = listPair.getHead().getTerm();
 			array[i] = toObject(t);
-			list = (Struct) list.getArg(1);
+			list = (jList) listPair.getTail().getTerm();
 		}
 		return array;
 	}
 
-	static <A> A[] toArray(Term tList, Class<A> componentType) {
-		Struct list = (Struct) tList;
+	static <A> A[] toArray(jTerm tList, Class<A> componentType) {
+		jList list = (jList) tList;
 		int length = listSize(list);
 		A[] array = (A[]) Array.newInstance(componentType, length);
 
 		for (int i = 0; i < length; ++i) {
-			Term t = list.getArg(0);
+			jListPair listPair = (jListPair) list;
+			jTerm t = listPair.getHead().getTerm();
 			array[i] = toObject(t, componentType);
-			list = (Struct) list.getArg(1);
+			list = (jList) listPair.getTail().getTerm();
 		}
 		return array;
 	}
 
-	static List<?> toList(Term tList) {
-		Struct list = (Struct) tList;
+	static List<?> toList(jTerm tList) {
+		jList list = (jList) tList;
 		int length = listSize(list);
 		List aList = new ArrayList(length);
 		for (int i = 0; i < length; ++i) {
-			aList.add(toObject(list.getArg(0)));
-			list = (Struct) list.getArg(1);
+			jListPair listPair = (jListPair) list;
+			jTerm t = listPair.getHead();
+			aList.add(toObject(listPair.getHead().getTerm()));
+			list = (jList) listPair.getTail().getTerm();
 		}
 		return aList;
 	}
 	
-	static boolean isList(Term term) {
-		if (!(term instanceof Struct))
-			return false;
-		Struct list = (Struct) term;
-		while (list != Term.emptyList) {
-			if (!list.name.equals(".") || list.arity != 2 || !(list.getArg(1) instanceof Struct))
-				return false;
-			list = (Struct) list.getArg(1);
-		}
-		return true;
+	static boolean isList(jTerm term) {
+		return term instanceof jList;
 	}
 
-	static int listSize(Struct list) {
+	static int listSize(jList list) {
 		int L = 0;
-		while (list != Term.emptyList) {
-			if (!list.name.equals(".") || list.arity != 2 || !(list.getArg(1) instanceof Struct))
-				throw new RuntimeException("It's not a list!");
+		while (list != jNullList.NULL_LIST) {
 			++L;
-			list = (Struct) list.getArg(1);
+			list = (jList) ((jListPair) list).getTail().getTerm();
 		}
 		return L;
 	}

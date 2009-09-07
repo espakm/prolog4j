@@ -4,7 +4,6 @@ import org.prolog4j.Solution;
 import org.prolog4j.helpers.NamedProverBase;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
-import ubc.cs.JLog.Terms.jTermTranslation;
 
 /**
  * Represents a Prolog knowledge base and provides methods for solving queries
@@ -17,12 +16,11 @@ public class JLogProver extends NamedProverBase {
 	private static final long serialVersionUID = 1L;
 	
 	protected final jPrologAPI prolog;
-	private jTermTranslation translator = new TermTranslation();
 
 	public JLogProver(String name) {
 		super(name);
 		prolog = new jPrologAPI("");
-//		prolog.setTranslation(translator);
+		prolog.setTranslation(new TermTranslation());
 	}
 
 	@Override
