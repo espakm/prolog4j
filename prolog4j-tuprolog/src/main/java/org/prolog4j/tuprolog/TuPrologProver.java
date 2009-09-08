@@ -78,4 +78,8 @@ public class TuPrologProver extends NamedProverBase {
 		}
 	}
 
+	public Prolog getEngine() {
+		return engine;
+	}
+	
 }
