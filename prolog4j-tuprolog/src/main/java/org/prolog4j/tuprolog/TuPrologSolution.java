@@ -31,6 +31,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 
 	private final Prolog prolog;
 	private Term[] goalTerms;
+	private List vars;
 
 	private SolveInfo solution;
 	private final boolean success;
@@ -50,6 +51,12 @@ public class TuPrologSolution<S> extends Solution<S> {
 		}
 		solution = prolog.solve(goalTerms[0]);
 		success = solution.isSuccess();
+		if (!success)
+			return;
+		try {
+			vars = solution.getBindingVars();
+		} catch (NoSolutionException e) {
+		}
 	}
 
 	/**
