@@ -159,7 +159,7 @@
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
+            <!--plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <dependencies>
                     <dependency>
@@ -168,12 +168,13 @@
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
+            </plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <tagBase>https://dev.inf.unideb.hu/svn/prolog4j/tags</tagBase>
+                    <preparationGoals>clean install</preparationGoals>
                 </configuration>
             </plugin>
         </plugins>
