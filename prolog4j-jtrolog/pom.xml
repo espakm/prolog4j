@@ -27,6 +27,11 @@
             <groupId>jtrolog</groupId>
             <artifactId>jtrolog</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.prolog4j</groupId>
+            <artifactId>prolog4j-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

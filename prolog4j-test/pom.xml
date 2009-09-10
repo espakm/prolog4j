@@ -10,27 +10,22 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.prolog4j</groupId>
-    <artifactId>prolog4j-tuprolog</artifactId>
+    <artifactId>prolog4j-test</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <description>Easy to use interface over Prolog engines for Java.</description>
-    <name>prolog4j-tuprolog</name>
+    <name>prolog4j-test</name>
     <inceptionYear>2009</inceptionYear>
     <url>http://prolog4j.org/</url>
 
     <dependencies>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.prolog4j</groupId>
             <artifactId>prolog4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>it.unibo.tuProlog</groupId>
-            <artifactId>tuProlog</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.prolog4j</groupId>
-            <artifactId>prolog4j-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
