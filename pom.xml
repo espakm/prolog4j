@@ -1,12 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.prolog4j</groupId>
     <artifactId>prolog4j-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
     <description>Easy to use interface over Prolog engines for Java.</description>
     <name>prolog4j</name>
     <inceptionYear>2009</inceptionYear>
@@ -55,9 +53,9 @@
     </developers>
 
     <scm>
-        <url>https://dev.inf.unideb.hu/gf/project/prolog4j/scmsvn/</url>
-        <connection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk</connection>
-        <developerConnection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk</developerConnection>
+        <url>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/tags/prolog4j-0.1.0</url>
+        <connection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/tags/prolog4j-0.1.0</connection>
+        <developerConnection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/tags/prolog4j-0.1.0</developerConnection>
     </scm>
 
     <mailingLists>
