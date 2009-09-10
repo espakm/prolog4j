@@ -220,12 +220,12 @@
                     <targetJdk>1.6</targetJdk>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
                         <configLocation>my_checks.xml</configLocation>
                 </configuration>
-            </plugin>
+            </plugin-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
