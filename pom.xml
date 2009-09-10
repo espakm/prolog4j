@@ -174,7 +174,6 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <tagBase>https://dev.inf.unideb.hu/svn/prolog4j/tags</tagBase>
-                    <scmCommentPrefix>[sandbox] release:</scmCommentPrefix>
                 </configuration>
             </plugin>
         </plugins>
