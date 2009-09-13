@@ -54,6 +54,16 @@ public class ProverTest {
 	public void testIterable() {
 		List<String> mortals = getMortals();
 		assertEquals(mortals, Arrays.asList("socrates", "plato"));
+
+		int i = 0;
+		for (Object x: p.solve("member(X, [1, 2, 3])."))
+			++i;
+		assertTrue(i == 3);
+		
+		for (Object x: p.solve("member(X, 1)."))
+			;
+		for (Object x: p.solve("member(X, 1).").on("X"))
+			;
 	}
 
 	@Test

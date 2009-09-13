@@ -110,7 +110,9 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 
 	@Override
 	public SolutionIterator<S> iterator() {
-		return new SolutionIteratorImpl<S>(outputVarNames[outputVarNames.length - 1]);
+		if (success)
+			return new SolutionIteratorImpl<S>(outputVarNames[outputVarNames.length - 1]);
+		return (SolutionIterator<S>) NO_SOLUTIONS;
 	}
 
 	@Override

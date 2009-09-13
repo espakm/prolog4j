@@ -3,7 +3,9 @@ package org.prolog4j;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 public abstract class Solution<S> implements Iterable<S> {
@@ -118,5 +120,32 @@ public abstract class Solution<S> implements Iterable<S> {
 	 * @return a list array containing the values of the variables
 	 */
 	public abstract List<?>[] toLists();
+
+	protected static final SolutionIterator<?> NO_SOLUTIONS = new SolutionIterator<?>() {
+		@Override
+		public boolean hasNext() {
+			return false;
+		}
+
+		@Override
+		public Object next() {
+			throw new NoSuchElementException();
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public <A> A get(String variable) {
+			throw new NoSuchElementException();
+		}
+
+		@Override
+		public <A> A get(String variable, Class<A> type) {
+			throw new NoSuchElementException();
+		}
+	};
 	
 }

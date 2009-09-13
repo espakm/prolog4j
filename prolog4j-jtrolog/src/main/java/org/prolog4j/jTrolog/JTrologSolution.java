@@ -79,17 +79,14 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 						break;
 					}
 			solution = prolog.solve(sGoal);
+			success = solution.success();
 		} catch (InvalidTermException e) {
 			throw new RuntimeException(e);
 		} catch (ClassCastException e) {
 			throw new RuntimeException(e);
-		} catch (NoMorePrologSolutions e) {
-			success = false;
-			return;
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
-		success = true;
 	}
 
 	@Override
@@ -99,7 +96,9 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 
 	@Override
 	public SolutionIterator<S> iterator() {
-		return new SolutionIteratorImpl<S>(outputVarNames[outputVarNames.length - 1]);
+//		if (success)
+			return new SolutionIteratorImpl<S>(outputVarNames[outputVarNames.length - 1]);
+//		return (SolutionIterator<S>) NO_SOLUTIONS;
 	}
 
 	@Override
@@ -107,7 +106,7 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 		return new Iterable<A>() {
 			@Override
 			public java.util.Iterator<A> iterator() {
-				return new SolutionIteratorImpl<A>(capitalize(variable));
+				return new SolutionIteratorImpl<A>(variable);
 			}
 		};
 	}
@@ -117,22 +116,9 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 		return new Iterable<A>() {
 			@Override
 			public java.util.Iterator<A> iterator() {
-				return new SolutionIteratorImpl<A>(capitalize(variable), clazz);
+				return new SolutionIteratorImpl<A>(variable, clazz);
 			}
 		};
-	}
-
-	/**
-	 * @param string
-	 * @return
-	 */
-	private static String capitalize(String string) {
-		char firstLetter = string.charAt(0);
-		if (Character.isUpperCase(firstLetter))
-			return string;
-		StringBuilder sb = new StringBuilder(string);
-		sb.setCharAt(0, Character.toUpperCase(firstLetter));
-		return sb.toString();
 	}
 
 	@Override
@@ -143,12 +129,12 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	@Override
 	public <A> A get(String variable) {
 		return Terms.<A> toObject(solution
-				.getBinding(capitalize(variable)));
+				.getBinding(variable));
 	}
 
 	@Override
 	public <A> A get(String variable, Class<A> type) {
-		return Terms.toObject(solution.getBinding(capitalize(variable)), type);
+		return Terms.toObject(solution.getBinding(variable), type);
 	}
 
 	@Override
@@ -193,11 +179,11 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 		 */
 		@SuppressWarnings("unchecked")
 		SolutionIteratorImpl(String variable) {
-			this.variable = capitalize(variable);
+			this.variable = variable;
 		}
 
 		SolutionIteratorImpl(String variable, Class<E> clazz) {
-			this.variable = capitalize(variable);
+			this.variable = variable;
 			this.clazz = clazz;
 		}
 

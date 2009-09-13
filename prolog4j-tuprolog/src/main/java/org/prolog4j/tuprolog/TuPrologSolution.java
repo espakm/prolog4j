@@ -3,7 +3,6 @@ package org.prolog4j.tuprolog;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -31,7 +30,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 
 	private final Prolog prolog;
 	private Term[] goalTerms;
-	private List vars;
+	private List<Var> vars;
 
 	private SolveInfo solution;
 	private final boolean success;
@@ -51,72 +50,12 @@ public class TuPrologSolution<S> extends Solution<S> {
 		}
 		solution = prolog.solve(goalTerms[0]);
 		success = solution.isSuccess();
-		if (!success)
-			return;
+//		if (!success)
+//			return;
 		try {
 			vars = solution.getBindingVars();
 		} catch (NoSolutionException e) {
 		}
-	}
-
-	/**
-	 * @param prolog
-	 * @param goalTerms
-	 * @param actualArgs
-	 */
-	TuPrologSolution(Prolog prolog, Term[] goalTerms, Map<String, Object> actualArgs) {
-		this.prolog = prolog;
-		this.goalTerms = goalTerms;
-		for (String varName: actualArgs.keySet()) {
-			for (int i = 1; i < goalTerms.length; ++i) {
-				Var v = (Var) goalTerms[i];
-				String vName = v.getName();
-				if (vName.startsWith("J$") && vName.substring(2).equals(varName)) {
-					v.free();
-					prolog.unify(v, Terms.toTerm(actualArgs.get(varName)));
-					break;
-				}
-			}
-		}
-		solution = prolog.solve(goalTerms[0]);
-		success = solution.isSuccess();
-	}
-
-	/**
-	 * Creates a <tt>Solution</tt> object for traversing through the solutions
-	 * for a Prolog query.
-	 * 
-	 * @param prolog
-	 *            tuProlog engine
-	 * @param goal
-	 *            a Prolog goal
-	 */
-	TuPrologSolution(Prolog prolog, String goal) {
-		this.prolog = prolog;
-		Parser parser = new Parser(goal);
-		Term tGoal;
-		List<Term> terms;
-		try {
-			tGoal = parser.nextTerm(false);
-			solution = prolog.solve(tGoal);
-			terms = solution.getBindingVars();
-		} catch (InvalidTermException e) {
-			throw new RuntimeException(e);
-		} catch (NoSolutionException e) {
-			success = false;
-			return;
-		}
-		// Otherwise a NoSolutionException would have been thrown:
-		success = true;
-		this.goalTerms = new Term[terms.size() + 1];
-		this.goalTerms[0] = tGoal;
-		for (int i = 0; i < terms.size(); ++i)
-			this.goalTerms[i + 1] = terms.get(i);
-	}
-
-	TuPrologSolution(Prolog engine, String goal, Object[] actualArgs) {
-		this(engine, TuPrologSolution.goalTerms(goal, (1 << actualArgs.length) - 1),
-				actualArgs);
 	}
 
 	@Override
@@ -126,7 +65,9 @@ public class TuPrologSolution<S> extends Solution<S> {
 
 	@Override
 	public SolutionIterator<S> iterator() {
-		return new SolutionIteratorImpl<S>(varName(goalTerms.length - 2));
+		if (success)
+			return new SolutionIteratorImpl<S>(varName(vars.size() - 1));
+		return (SolutionIterator<S>) NO_SOLUTIONS;
 	}
 
 	@Override
@@ -134,7 +75,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 		return new Iterable<A>() {
 			@Override
 			public java.util.Iterator<A> iterator() {
-				return new SolutionIteratorImpl<A>(capitalize(variable));
+				return new SolutionIteratorImpl<A>(variable);
 			}
 		};
 	}
@@ -144,7 +85,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 		return new Iterable<A>() {
 			@Override
 			public java.util.Iterator<A> iterator() {
-				return new SolutionIteratorImpl<A>(capitalize(variable), clazz);
+				return new SolutionIteratorImpl<A>(variable, clazz);
 			}
 		};
 	}
@@ -154,34 +95,19 @@ public class TuPrologSolution<S> extends Solution<S> {
 	 * @return
 	 */
 	private String varName(int varIndex) {
-		// return ((Var) goalTerms[argIndex +
-		// 1]).getOriginalName().substring(2);
-		return ((Var) goalTerms[varIndex + 1]).getOriginalName();
-	}
-
-	/**
-	 * @param string
-	 * @return
-	 */
-	private static String capitalize(String string) {
-		char firstLetter = string.charAt(0);
-		if (Character.isUpperCase(firstLetter))
-			return string;
-		StringBuilder sb = new StringBuilder(string);
-		sb.setCharAt(0, Character.toUpperCase(firstLetter));
-		return sb.toString();
+		return vars.get(varIndex).getOriginalName();
 	}
 
 	@Override
 	public S get() {
-		return this.<S> get(varName(goalTerms.length - 2));
+		return this.<S> get(varName(vars.size() - 1));
 	}
 
 	@Override
 	public <A> A get(String variable) {
 		try {
 			return Terms.<A> toObject(solution
-					.getVarValue(capitalize(variable)));
+					.getVarValue(variable));
 		} catch (NoSolutionException e) {
 			throw new RuntimeException(e);
 		}
@@ -190,7 +116,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 	@Override
 	public <A> A get(String variable, Class<A> type) {
 		try {
-			return Terms.toObject(solution.getVarValue(capitalize(variable)),
+			return Terms.toObject(solution.getVarValue(variable),
 					type);
 		} catch (NoSolutionException e) {
 			throw new RuntimeException(e);
@@ -239,12 +165,12 @@ public class TuPrologSolution<S> extends Solution<S> {
 		 */
 		@SuppressWarnings("unchecked")
 		SolutionIteratorImpl(String variable) {
-			this.variable = capitalize(variable);
+			this.variable = variable;
 //			clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		}
 
 		SolutionIteratorImpl(String variable, Class<E> clazz) {
-			this.variable = capitalize(variable);
+			this.variable = variable;
 			this.clazz = clazz;
 		}
 
