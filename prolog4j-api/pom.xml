@@ -11,8 +11,8 @@
     <artifactId>prolog4j-api</artifactId>
     <packaging>jar</packaging>
     <version>0.1.2-SNAPSHOT</version>
+    <name>Prolog4J API</name>
     <description>Easy to use interface over Prolog engines for Java.</description>
-    <name>prolog4j-api</name>
     <inceptionYear>2009</inceptionYear>
     <url>http://prolog4j.org/</url>
 

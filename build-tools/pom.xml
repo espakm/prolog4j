@@ -11,7 +11,7 @@
     <artifactId>build-tools</artifactId>
     <packaging>jar</packaging>
     <version>0.1.2-SNAPSHOT</version>
-    <name>build-tools</name>
+    <name>Prolog4J build tools</name>
     <inceptionYear>2009</inceptionYear>
     <url>http://prolog4j.org/</url>
 

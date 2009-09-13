@@ -11,8 +11,8 @@
     <artifactId>prolog4j-jlog</artifactId>
     <packaging>jar</packaging>
     <version>0.1.2-SNAPSHOT</version>
-    <description>Easy to use interface over Prolog engines for Java.</description>
-    <name>prolog4j-jlog</name>
+    <name>Prolog4J JLog binding</name>
+    <description>Implementation for the Prolog4J API based on JLog</description>
     <inceptionYear>2009</inceptionYear>
     <url>http://prolog4j.org/</url>
 

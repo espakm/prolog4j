@@ -179,7 +179,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 		 */
 		private void fetch() {
 			try {
-				hasNext = solution.hasOpenAlternatives()
+				hasNext = prolog.hasOpenAlternatives()
 						&& (solution = prolog.solveNext()).isSuccess();
 				// if (!hasNext)
 				// prolog.solveHalt();
