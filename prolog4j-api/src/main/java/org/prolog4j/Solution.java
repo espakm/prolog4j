@@ -121,7 +121,8 @@ public abstract class Solution<S> implements Iterable<S> {
 	 */
 	public abstract List<?>[] toLists();
 
-	protected static final SolutionIterator<?> NO_SOLUTIONS = new SolutionIterator<?>() {
+	@SuppressWarnings("unchecked")
+	protected static final SolutionIterator NO_SOLUTIONS = new SolutionIterator() {
 		@Override
 		public boolean hasNext() {
 			return false;
@@ -138,14 +139,15 @@ public abstract class Solution<S> implements Iterable<S> {
 		}
 
 		@Override
-		public <A> A get(String variable) {
+		public Object get(String variable) {
 			throw new NoSuchElementException();
 		}
 
 		@Override
-		public <A> A get(String variable, Class<A> type) {
+		public Object get(String variable, Class type) {
 			throw new NoSuchElementException();
 		}
+
 	};
 	
 }
