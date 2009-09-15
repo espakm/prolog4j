@@ -173,6 +173,7 @@
                 <configuration>
                     <tagBase>https://dev.inf.unideb.hu/svn/prolog4j/tags</tagBase>
                     <preparationGoals>clean install</preparationGoals>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
         </plugins>
