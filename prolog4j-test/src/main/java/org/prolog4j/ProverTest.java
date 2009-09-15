@@ -7,8 +7,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -107,4 +109,30 @@ public class ProverTest {
 				System.out.println(h); // homeros and demokritos
 	}
 
+	@Test
+	public void theoryTest() {
+		p.addTheory("greek(socrates).");
+		p.addTheory("greek(plato).");
+		p.addTheory("greek(demokritos).");
+		Set<Object> greeks = p.solve("greek(H).").toSet();
+		Set<Object> greeksExpected = new HashSet<Object>();
+		greeksExpected.add("socrates");
+		greeksExpected.add("plato");
+		greeksExpected.add("demokritos");
+		assertEquals(greeksExpected, greeks);
+	}
+	
+	@Test
+	public void assertTest() {
+		p.solve("assertz(roman(michelangelo)).");
+		p.solve("assertz(roman(davinci)).");
+		p.solve("assertz(roman(iulius)).");
+		Set<Object> romans = p.solve("roman(H).").toSet();
+		Set<Object> romansExpected = new HashSet<Object>();
+		romansExpected.add("michelangelo");
+		romansExpected.add("davinci");
+		romansExpected.add("iulius");
+		assertEquals(romansExpected, romans);
+	}
+	
 }
