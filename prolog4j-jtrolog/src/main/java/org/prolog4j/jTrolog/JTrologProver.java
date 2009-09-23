@@ -1,7 +1,7 @@
 package org.prolog4j.jTrolog;
 
-import org.prolog4j.Solution;
-import org.prolog4j.helpers.NamedProverBase;
+import org.prolog4j.AbstractProver;
+import org.prolog4j.Query;
 
 import jTrolog.errors.InvalidLibraryException;
 import jTrolog.errors.PrologException;
@@ -13,7 +13,7 @@ import jTrolog.engine.Prolog;
  * 
  * @see org.prolog4j.impl.Solution
  */
-public class JTrologProver extends NamedProverBase {
+public class JTrologProver extends AbstractProver {
 
 	// static {
 	// GLOBAL.engine.addWarningListener(new WarningListener() {
@@ -40,12 +40,12 @@ public class JTrologProver extends NamedProverBase {
 	public Prolog getEngine() {
 		return engine;
 	}
-	
-	@Override
-	protected <A> Solution<A> solve(String goal, String[] inputArgs, Object[] actualArgs) {
-		return new JTrologSolution<A>(engine, goal, inputArgs, actualArgs);
-	}
 
+	@Override
+	public Query query(String goal) {
+		return new JTrologQuery(engine, goal);
+	}
+	
 	@Override
 	public void loadLibrary(String className) {
 		try {

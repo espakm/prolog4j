@@ -29,9 +29,23 @@ public abstract class Solution<S> implements Iterable<S> {
 	 *            the name of the variable
 	 * @return an <tt>Iterable<A></tt> object
 	 */
-	public abstract <A> Iterable<A> on(final String variable);
+	public <A> Iterable<A> on(final String variable) {
+		return new Iterable<A>() {
+			@Override
+			public java.util.Iterator<A> iterator() {
+				return new SolutionIteratorImpl<A>(variable);
+			}
+		};
+	}
 	
-	public abstract <A> Iterable<A> on(final String variable, final Class<A> clazz);
+	public <A> Iterable<A> on(final String variable, final Class<A> clazz) {
+		return new Iterable<A>() {
+			@Override
+			public java.util.Iterator<A> iterator() {
+				return new SolutionIteratorImpl<A>(variable, clazz);
+			}
+		};
+	}
 	
 	/**
 	 * Returns the value of the variable last occurring in the goal bound to by
@@ -84,6 +98,9 @@ public abstract class Solution<S> implements Iterable<S> {
 		return collection;
 	}
 
+	@Override
+	public abstract SolutionIterator<S> iterator();
+	
 	/**
 	 * Collects the values of the variables into the given collections.
 	 * 
@@ -119,6 +136,89 @@ public abstract class Solution<S> implements Iterable<S> {
 	 * @return a list array containing the values of the variables
 	 */
 	public abstract List<?>[] toLists();
+
+	protected boolean fetched;
+	protected boolean hasNext;
+	
+	/**
+	 * Fetches the next solution.
+	 */
+	protected abstract void fetchNext();
+	
+	/**
+	 * Internal implementation for the {@link org.prolog4j.SolutionIterator
+	 * SolutionIterator} interface.
+	 * 
+	 * @param <E>
+	 *            the type of the values of the variable that is of special
+	 *            interest
+	 */
+	protected class SolutionIteratorImpl<E> implements SolutionIterator<E> {
+
+		protected String variable;
+		protected Class<E> clazz;
+
+		/**
+		 * Creates a new SolutionIteratorImpl object.
+		 * 
+		 * @param variable
+		 *            the name of the variable that is of special interest
+		 */
+		@SuppressWarnings("unchecked")
+		public SolutionIteratorImpl(String variable) {
+			this.variable = variable;
+//			clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+			fetched = true;
+			hasNext = isSuccess();
+		}
+
+		public SolutionIteratorImpl(String variable, Class<E> clazz) {
+			this.variable = variable;
+			this.clazz = clazz;
+			fetched = true;
+			hasNext = isSuccess();
+		}
+
+		/**
+		 * Fetches the next solution.
+		 */
+		protected void fetch() {
+			Solution.this.fetchNext();
+		}
+		
+		@Override
+		public boolean hasNext() {
+			if (!fetched)
+				fetch();
+			return hasNext;
+		}
+
+		@Override
+		public E next() {
+			if (!hasNext())
+				throw new NoSuchElementException();
+			fetched = false;
+			return get(variable);
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public E get(String variable) {
+			if (clazz == null)
+				return Solution.this.get(variable);
+			return Solution.this.get(variable, clazz);
+		}
+
+		@Override
+		public <A> A get(String variable, Class<A> type) {
+			return Solution.this.get(variable, type);
+		}
+
+	}
 
 	@SuppressWarnings("unchecked")
 	protected static final SolutionIterator NO_SOLUTIONS = new SolutionIterator() {

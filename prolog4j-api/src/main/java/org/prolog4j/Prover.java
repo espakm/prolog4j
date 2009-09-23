@@ -20,6 +20,15 @@ public interface Prover {
 	public abstract <A> Solution<A> solve(String goal, Object... actualArgs);
 
 	/**
+	 * Creates a Prolog query that can be solved later.
+	 * 
+	 * @param goal
+	 *            the Prolog goal
+	 * @return a query object to be solved later
+	 */
+	public abstract Query query(String goal);
+
+	/**
 	 * Loads in a Prolog library of the specified name.
 	 * 
 	 * @param library the name of the library

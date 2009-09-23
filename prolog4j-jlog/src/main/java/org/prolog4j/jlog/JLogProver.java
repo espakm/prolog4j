@@ -1,7 +1,8 @@
 package org.prolog4j.jlog;
 
+import org.prolog4j.AbstractProver;
+import org.prolog4j.Query;
 import org.prolog4j.Solution;
-import org.prolog4j.helpers.NamedProverBase;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
 
@@ -11,7 +12,7 @@ import ubc.cs.JLog.Foundation.jPrologAPI;
  * 
  * @see org.prolog4j.impl.Solution
  */
-public class JLogProver extends NamedProverBase {
+public class JLogProver extends AbstractProver {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -24,8 +25,8 @@ public class JLogProver extends NamedProverBase {
 	}
 
 	@Override
-	protected <A> Solution<A> solve(String goal, String[] inputArgs, Object[] actualArgs) {
-		return new JLogSolution<A>(prolog, goal, inputArgs, actualArgs);
+	public Query query(String goal) {
+		return new JLogQuery(prolog, goal);
 	}
 
 	@Override

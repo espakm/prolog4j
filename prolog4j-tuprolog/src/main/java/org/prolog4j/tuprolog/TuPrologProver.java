@@ -1,7 +1,7 @@
 package org.prolog4j.tuprolog;
 
-import org.prolog4j.Solution;
-import org.prolog4j.helpers.NamedProverBase;
+import org.prolog4j.AbstractProver;
+import org.prolog4j.Query;
 
 import alice.tuprolog.InvalidLibraryException;
 import alice.tuprolog.InvalidTheoryException;
@@ -14,7 +14,7 @@ import alice.tuprolog.Theory;
  * 
  * @see org.prolog4j.impl.Solution
  */
-public class TuPrologProver extends NamedProverBase {
+public class TuPrologProver extends AbstractProver {
 
 	// static {
 	// GLOBAL.engine.addWarningListener(new WarningListener() {
@@ -43,9 +43,8 @@ public class TuPrologProver extends NamedProverBase {
 	}
 	
 	@Override
-	protected <A> Solution<A> solve(String goal, String[] inputArgs, Object[] actualArgs) {
-		return new TuPrologSolution<A>(engine, TuPrologSolution.goalTerms(goal,
-				inputArgs), actualArgs);
+	public Query query(String goal) {
+		return new TuPrologQuery(engine, goal);
 	}
 
 	@Override

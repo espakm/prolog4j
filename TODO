@@ -3,24 +3,10 @@ These should be added to the GForge site of the project. :)
 
 ================================================================================
 
-Queries as a separate class
----------------------------
+Setting arguments for queries
+-----------------------------
 
-A Query represents a Prolog goal that can be parameterized and can be solved by 
-a Prover resulting a Solution. Normally, a query can be solved by a prover at 
-any time, for different sets of actual arguments.
-
-Queries are similar to the Statement and PreparedStatement class of JDBC.
-
-For now, queries are not represented as a separate type. The individual imple-
-mentations represent them in their own way (typically inside of the subclass of
-Solution). The importance of separate query objects would be that you could
-store the preprocessed queries and solve at several times. (So it needs to be
-preprocessed just once.)
-
-Probably it is worth distinguishing a Query and a PreparedQuery type.
-
-Scheduled for 0.1.1
+Query#setArgument(int number, Object value);
 
 ================================================================================
 
@@ -101,9 +87,6 @@ Not of high priority.
 
 Refactorings, clean-ups
 -----------------------
-
-There is some unnecessary legacy code from SLF4J (e.g. NOPProver) that should be
-removed.
 
 Add missing JavaDoc comments, improve the code style according to the checkstyle
 plugin.

@@ -53,6 +53,15 @@ public class ProverTest {
 	}
 
 	@Test
+	public void testArgumentPlace() {
+		assertTrue(p.solve("mortal({}).", "socrates").isSuccess());
+		assertFalse(p.solve("mortal({}).", "zeus").isSuccess());
+		assertTrue(p.solve("member(X, {}).", Arrays.asList(1, 2, 3)).isSuccess());
+		for (Integer i: p.solve("member(X, {}).", Arrays.asList(1, 2, 3)).<Integer>on("X"))
+			System.out.println("ProverTest.testIsSuccess2() " + i);
+	}
+
+	@Test
 	public void testIterable() {
 		List<String> mortals = getMortals();
 		assertEquals(mortals, Arrays.asList("socrates", "plato"));

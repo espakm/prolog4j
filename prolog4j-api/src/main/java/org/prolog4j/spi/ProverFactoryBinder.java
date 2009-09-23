@@ -66,4 +66,5 @@ public interface ProverFactoryBinder {
 	 * @return the class name of the intended {@link IProverFactory} instance
 	 */
 	public String getProverFactoryClassName();
+
 }
