@@ -65,11 +65,8 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 //		translator.RegisterTermToObjectConverter(jNullList.class, listToArray);
 //	}
 	
-	JLogSolution(jPrologAPI prolog, String goal, String[] varNames, Object[] actualArgs) {
+	JLogSolution(jPrologAPI prolog, String goal, Hashtable<String, Object> initialBindings) {
 		this.prolog = prolog;
-		Hashtable<String, Object> initialBindings = new Hashtable<String, Object>();
-		for (int i = 0; i < varNames.length; ++i)
-			initialBindings.put(varNames[i], actualArgs[i]);
 		solution = prolog.query(goal, initialBindings);
 		success = solution != null;
 		if (!success)

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 public abstract class Query {
 
 	protected final String goal;
-	protected final String[] inputVariables;
+	protected final ArrayList<String> inputVarNames;
 	
 	protected Query(String goal) {
-		ArrayList<String> variables = new ArrayList<String>();
+		inputVarNames = new ArrayList<String>();
 		StringBuilder goalB = new StringBuilder(goal);
 		String newVarPrefix = null;
 		int end = 0;
@@ -27,16 +27,16 @@ public abstract class Query {
 				if (newVarPrefix == null)
 					newVarPrefix = findNewVarPrefix(goal);
 				String variable = newVarPrefix + i;
-				variables.add(variable);
+				inputVarNames.add(variable);
 				goalB.replace(end, end + 2, variable);
 			}
 			else {
-				variables.add(goalB.substring(start + 1, end));
+				inputVarNames.add(goalB.substring(start + 1, end));
 				goalB.delete(end, end + 2);
 			}
 		}
 		this.goal = goalB.toString();
-		inputVariables = variables.toArray(new String[variables.size()]);
+		inputVarNames.trimToSize();
 	}
 	
 	private String findNewVarPrefix(String goal) {
@@ -66,4 +66,6 @@ public abstract class Query {
 	 */
 	public abstract <A> Solution<A> solve(Object... actualArgs);
 
+	public abstract void set(int argument, Object value);
+	
 }

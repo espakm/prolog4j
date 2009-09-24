@@ -54,7 +54,7 @@ public abstract class Solution<S> implements Iterable<S> {
 	 * @return the value of the last variable occurring in the goal
 	 */
 	public abstract S get();
-
+	
 	/**
 	 * Returns the value of the given variable bound to by the first solution of
 	 * the goal.

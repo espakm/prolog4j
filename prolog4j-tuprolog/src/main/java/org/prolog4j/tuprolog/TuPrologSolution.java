@@ -24,7 +24,6 @@ import alice.tuprolog.Var;
 public class TuPrologSolution<S> extends Solution<S> {
 
 	private final Prolog prolog;
-	private Term[] goalTerms;
 	private List<Var> vars;
 
 	private SolveInfo solution;
@@ -35,15 +34,9 @@ public class TuPrologSolution<S> extends Solution<S> {
 	 * @param goalTerms
 	 * @param actualArgs
 	 */
-	TuPrologSolution(Prolog prolog, Term[] goalTerms, Object... actualArgs) {
+	TuPrologSolution(Prolog prolog, Term goal) {
 		this.prolog = prolog;
-		this.goalTerms = goalTerms;
-		for (int i = 0; i < actualArgs.length; ++i) {
-			Var v = (Var) goalTerms[i + 1];
-			v.free();
-			prolog.unify(v, Terms.toTerm(actualArgs[i]));
-		}
-		solution = prolog.solve(goalTerms[0]);
+		solution = prolog.solve(goal);
 		success = solution.isSuccess();
 		try {
 			vars = solution.getBindingVars();
@@ -108,7 +101,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 
 	@Override
 	public List<?>[] toLists() {
-		List<?>[] lists = new List<?>[goalTerms.length - 1];
+		List<?>[] lists = new List<?>[vars.size() - 1];
 		for (int i = 0; i < lists.length; ++i)
 			lists[i] = new ArrayList();
 		collect(lists);

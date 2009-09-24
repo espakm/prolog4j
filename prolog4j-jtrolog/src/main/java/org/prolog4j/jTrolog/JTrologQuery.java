@@ -1,5 +1,7 @@
 package org.prolog4j.jTrolog;
 
+import java.util.LinkedList;
+
 import jTrolog.engine.Prolog;
 import jTrolog.parser.Parser;
 import jTrolog.terms.Struct;
@@ -15,6 +17,8 @@ public class JTrologQuery extends Query {
 	private String[] outputVarNames;
 	private Struct sGoal;
 	private Var[] vars;
+	private LinkedList<Var> inputVars;
+	private String defaultVarName;
 	
 	protected JTrologQuery(Prolog engine, String goal) {
 		super(goal);
@@ -22,20 +26,34 @@ public class JTrologQuery extends Query {
 		Parser parser = new Parser(this.goal);
 		sGoal = (Struct) parser.nextTerm(false);
 		vars = sGoal.getVarList();
+		inputVars = new LinkedList<Var>();
+		for (Var var: vars)
+			if (inputVarNames.contains(var.toString()))
+				inputVars.add(var);
 		outputVarNames = new String[vars.length];
-		for (int i = 0; i < vars.length; ++i)
+		int i;
+		for (i = 0; i < vars.length; ++i)
 			outputVarNames[i] = vars[i].toString();
+		while (--i >= 0)
+			if (!outputVarNames[i].startsWith("P4J_")) {
+				defaultVarName = outputVarNames[i];
+				break;
+			}
 	}
 
 	@Override
 	public <A> Solution<A> solve(Object... actualArgs) {
-		for (int i = 0; i < inputVariables.length; ++i)
-			for (Var var: vars)
-				if (var.toString().equals(inputVariables[i])) {
-					sGoal = new Struct(",", new Term[]{new Struct("=", new Term[]{var, Terms.toTerm(actualArgs[i])}), sGoal});
-					break;
-				}
-		return new JTrologSolution<A>(engine, sGoal, outputVarNames);
+		int i = 0;
+		for (Var var: inputVars)
+			sGoal = new Struct(",", new Term[]{new Struct("=", new Term[]{var, Terms.toTerm(actualArgs[i++])}), sGoal});
+		return new JTrologSolution<A>(engine, sGoal, defaultVarName, outputVarNames);
+	}
+
+	@Override
+	public void set(int argument, Object value) {
+		Var var = vars[argument];
+		sGoal = new Struct(",", new Term[]{new Struct("=", new Term[]{var, Terms.toTerm(value)}), sGoal});
+		inputVars.remove(var);
 	}
 
 }

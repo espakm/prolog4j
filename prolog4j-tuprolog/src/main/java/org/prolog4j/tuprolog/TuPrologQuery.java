@@ -1,5 +1,8 @@
 package org.prolog4j.tuprolog;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+
 import org.prolog4j.Query;
 import org.prolog4j.Solution;
 
@@ -7,46 +10,51 @@ import alice.tuprolog.InvalidTermException;
 import alice.tuprolog.Parser;
 import alice.tuprolog.Prolog;
 import alice.tuprolog.Struct;
-import alice.tuprolog.Term;
 import alice.tuprolog.Var;
 
 public class TuPrologQuery extends Query {
 
 	private final Prolog prolog;
-	private final Term[] goalTerms;
+	private Struct sGoal;
+	private Var[] inputVars;
+	private LinkedList<Var> varss;
 	
 	public TuPrologQuery(Prolog prolog, String goal) {
 		super(goal);
 		this.prolog = prolog;
-		this.goalTerms = goalTerms();
-	}
-
-	@Override
-	public <A> Solution<A> solve(Object... actualArgs) {
-		return new TuPrologSolution<A>(prolog, goalTerms, actualArgs);
-	}
-
-	private Term[] goalTerms() {
-		int inputArgNumber = inputVariables.length;
-		Term[] ruleTerms = new Term[inputArgNumber + 1];
-		Struct sGoal;
+		inputVars = new Var[inputVarNames.size()];
 		try {
-			Parser parser = new Parser(goal);
+			Parser parser = new Parser(this.goal);
 			sGoal = (Struct) parser.nextTerm(false);
-			int index = 0;
-			for (int i = 0; i < inputVariables.length; ++i) {
-				Var argVar = new Var(inputVariables[i]);
+			for (int i = 0, index = 0; i < inputVarNames.size(); ++i, ++index) {
+				Var argVar = new Var(inputVarNames.get(i));
 				Var arg = new Var("J$" + argVar.getOriginalName());
 				sGoal = new Struct(",", new Struct("=", argVar, arg), sGoal);
-				ruleTerms[++index] = arg;
-//				ruleTerms[++index] = argVar;
+				inputVars[index] = arg;
 			}
 			sGoal.resolveTerm();
 		} catch (InvalidTermException e) {
 			throw new RuntimeException(e);
 		}
-		ruleTerms[0] = sGoal;
-		return ruleTerms;
+		varss = new LinkedList<Var>();
+		varss.addAll(Arrays.asList(inputVars));
+	}
+
+	@Override
+	public <A> Solution<A> solve(Object... actualArgs) {
+		int i = 0;
+		for (Var var: varss) {
+			var.free();
+			prolog.unify(var, Terms.toTerm(actualArgs[i++]));
+		}
+		return new TuPrologSolution<A>(prolog, sGoal);
+	}
+
+	@Override
+	public void set(int argument, Object value) {
+		inputVars[argument].free();
+		prolog.unify(inputVars[argument], Terms.toTerm(value));
+		varss.remove(inputVars[argument]);
 	}
 
 }

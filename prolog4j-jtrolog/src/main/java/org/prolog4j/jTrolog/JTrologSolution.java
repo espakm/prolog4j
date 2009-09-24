@@ -21,6 +21,7 @@ import jTrolog.terms.Struct;
 public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 
 	private final Prolog prolog;
+	private String defaultVarName;
 	private String[] outputVarNames;
 
 	private Solution solution;
@@ -35,10 +36,11 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	 * @param goal
 	 *            a Prolog goal
 	 */
-	JTrologSolution(Prolog prolog, Struct sGoal, String[] outputVarNames) {
+	JTrologSolution(Prolog prolog, Struct sGoal, String defaultVarName, String[] outputVarNames) {
 		this.prolog = prolog;
+		this.defaultVarName = defaultVarName;
+		this.outputVarNames = outputVarNames;
 		try {
-			this.outputVarNames = outputVarNames;
 			solution = prolog.solve(sGoal);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
@@ -54,13 +56,13 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	@Override
 	public SolutionIterator<S> iterator() {
 //		if (success)
-			return new SolutionIteratorImpl<S>(outputVarNames[outputVarNames.length - 1]);
+			return new SolutionIteratorImpl<S>(defaultVarName);
 //		return (SolutionIterator<S>) NO_SOLUTIONS;
 	}
 
 	@Override
 	public S get() {
-		return this.<S> get(outputVarNames[outputVarNames.length - 1]);
+		return this.<S> get(defaultVarName);
 	}
 
 	@Override
