@@ -3,75 +3,22 @@ These should be added to the GForge site of the project. :)
 
 ================================================================================
 
-Setting arguments for queries
------------------------------
-
-Query#setArgument(int number, Object value);
-
-================================================================================
-
-Improving the syntax of queries
--------------------------------
-
-Queries can be passed to provers as strings that store ISO Prolog goals. In the 
-goal the name of the variables can be suffixed by braces that bind the value of
-the corresponding formal argument to the variable.
-
-E.g.:
-prover.solve("member(X{}, List{}).", 1, Arrays.asList(1, 2, 3))
-
-The first formal argument (1) following the query will be bound to the first 
-variable denoted by braces (X), the second argument ([1, 2, 3]) to the second 
-such variable (List) and so on. At most one occurrence of a variable needs to
-be supplemented by braces. This notation is suitable for input variables.
-
-However, the names of the output variables are also needed. Since the solutions
-are iterable objects themselves, they need the name of a variable, whose values
-can be returned by their iterator. This is called the default output variable. 
-Moreover, there are methods for collecting all solutions. These methods need the
-name of each output variable.
-
-For now, all the variables occurring in the query are regarded as output vari-
-ables, and the default output variable is the one last occurring in the goal.
-However, this is not a flexible solution.
-
-The following notation is suggested in accordance with the convention for Prolog
-documentations:
-  - input variables: {} or {+}
-  - output variables: {-}
-  - input/output variables: {?}
-  - input variables that must be bound: {@}
-  - local variables are not denoted.
-
-Scheduled for 0.1.2
-
-================================================================================
-
-Alternatives to the syntax extension of queries
------------------------------------------------
-
-1) return/1
-
-The default output variable could be specified by the return/1 predicate. The 
-predicate could be used only at the end of the query, and it should be automati-
-cally removed from the query, remembering its argument. If the argument is a 
-variable then it will be the default output variable. If not then a new variable
-should be introduced and that will be the default output variable.
-
-E.g.:
-return(X) should be removed or replaced by true
-return([1, 2 | X]) should be replaced by NewVar = [1, 2 | X]
-
-This can be easily done for any implementation by using a visitor on the parsed
-query. The visitor should look for the rightmost return node of the parsed 
-query.
-
-2) Collect methods
+Collect methods
+---------------
 
 These methods should accept a list of variables whose values they have to 
 collect.
 
-Scheduled for 0.1.2
+================================================================================
+
+Exception handling
+------------------
+
+Only two kinds of exceptions are needed: one for the invalid syntax of a query
+and one for the case when you want to get the value(s) of a variable not exis-
+ting in the goal. Both should be unchecked exceptions.
+
+Later these situations should be checked statically.
 
 ================================================================================
 

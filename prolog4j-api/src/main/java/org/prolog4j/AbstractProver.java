@@ -50,7 +50,7 @@ public abstract class AbstractProver implements Prover, Serializable {
 	}
 
 	public String toString() {
-		return this.getClass().getName() + "(" + getName() + ")";
+		return getClass().getName() + "(" + getName() + ")";
 	}
 
 }

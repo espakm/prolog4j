@@ -66,6 +66,8 @@ public abstract class Query {
 	 */
 	public abstract <A> Solution<A> solve(Object... actualArgs);
 
-	public abstract void set(int argument, Object value);
+	public abstract Query bind(int argument, Object value);
+
+	public abstract Query bind(String variable, Object value);
 	
 }

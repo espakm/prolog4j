@@ -69,12 +69,13 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		this.prolog = prolog;
 		solution = prolog.query(goal, initialBindings);
 		success = solution != null;
-		if (!success)
+		if (!success || solution.size() == 0)
 			return;
 		outputVarNames = new String[solution.size()];
 		int i = 0;
 		for (String var: solution.keySet())
 			outputVarNames[i++] = var;
+		defaultOutputVariable = outputVarNames[outputVarNames.length - 1];
 	}
 
 	@Override
@@ -83,20 +84,10 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	}
 
 	@Override
-	public SolutionIterator<S> iterator() {
-		if (success)
-			return new SolutionIteratorImpl<S>(outputVarNames[outputVarNames.length - 1]);
-		return (SolutionIterator<S>) NO_SOLUTIONS;
-	}
-
-	@Override
-	public S get() {
-		return this.<S> get(outputVarNames[outputVarNames.length - 1]);
-	}
-
-	@Override
 	public <A> A get(String variable) {
-		return Terms.<A> toObject((jTerm) solution.get(variable));
+		if (clazz == null)
+			return Terms.<A> toObject((jTerm) solution.get(variable));
+		return (A) get(variable, clazz);
 	}
 
 	@Override
@@ -124,7 +115,7 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	}
 
 	@Override
-	protected void fetchNext() {
+	protected void fetch() {
 		solution = prolog.retry();
 		hasNext = solution != null;
 		fetched = true;

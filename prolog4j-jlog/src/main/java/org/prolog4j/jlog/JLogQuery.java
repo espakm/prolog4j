@@ -28,8 +28,15 @@ public class JLogQuery extends Query {
 	}
 
 	@Override
-	public void set(int argument, Object value) {
+	public Query bind(int argument, Object value) {
 		bindings.put(inputVarNames.get(argument), value);
+		return this;
+	}
+
+	@Override
+	public Query bind(String variable, Object value) {
+		bindings.put(variable, value);
+		return this;
 	}
 
 }

@@ -50,10 +50,22 @@ public class JTrologQuery extends Query {
 	}
 
 	@Override
-	public void set(int argument, Object value) {
+	public Query bind(int argument, Object value) {
 		Var var = vars[argument];
 		sGoal = new Struct(",", new Term[]{new Struct("=", new Term[]{var, Terms.toTerm(value)}), sGoal});
 		inputVars.remove(var);
+		return this;
+	}
+
+	@Override
+	public Query bind(String variable, Object value) {
+		for (Var inputVar: inputVars)
+			if (inputVar.toString().equals(variable)) {
+				sGoal = new Struct(",", new Term[]{new Struct("=", new Term[]{inputVar, Terms.toTerm(value)}), sGoal});
+				inputVars.remove(inputVar);
+				return this;
+			}
+		throw new RuntimeException("No such variable.");
 	}
 
 }

@@ -21,7 +21,6 @@ import jTrolog.terms.Struct;
 public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 
 	private final Prolog prolog;
-	private String defaultVarName;
 	private String[] outputVarNames;
 
 	private Solution solution;
@@ -38,7 +37,7 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	 */
 	JTrologSolution(Prolog prolog, Struct sGoal, String defaultVarName, String[] outputVarNames) {
 		this.prolog = prolog;
-		this.defaultVarName = defaultVarName;
+		this.defaultOutputVariable = defaultVarName;
 		this.outputVarNames = outputVarNames;
 		try {
 			solution = prolog.solve(sGoal);
@@ -54,21 +53,10 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	}
 
 	@Override
-	public SolutionIterator<S> iterator() {
-//		if (success)
-			return new SolutionIteratorImpl<S>(defaultVarName);
-//		return (SolutionIterator<S>) NO_SOLUTIONS;
-	}
-
-	@Override
-	public S get() {
-		return this.<S> get(defaultVarName);
-	}
-
-	@Override
 	public <A> A get(String variable) {
-		return Terms.<A> toObject(solution
-				.getBinding(variable));
+		if (clazz == null)
+			return Terms.<A> toObject(solution.getBinding(variable));
+		return (A) get(variable, clazz);
 	}
 
 	@Override
@@ -96,7 +84,7 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	}
 
 	@Override
-	protected void fetchNext() {
+	protected void fetch() {
 		try {
 			hasNext = prolog.hasOpenAlternatives() && 
 			(solution = prolog.solveNext()).success();

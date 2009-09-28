@@ -38,22 +38,19 @@ public class TuPrologSolution<S> extends Solution<S> {
 		this.prolog = prolog;
 		solution = prolog.solve(goal);
 		success = solution.isSuccess();
+		if (!success)
+			return;
 		try {
 			vars = solution.getBindingVars();
 		} catch (NoSolutionException e) {
 		}
+		if (vars.size() > 0)
+			defaultOutputVariable = varName(vars.size() - 1);
 	}
 
 	@Override
 	public boolean isSuccess() {
 		return success;
-	}
-
-	@Override
-	public SolutionIterator<S> iterator() {
-		if (success)
-			return new SolutionIteratorImpl<S>(varName(vars.size() - 1));
-		return (SolutionIterator<S>) NO_SOLUTIONS;
 	}
 
 	/**
@@ -65,15 +62,11 @@ public class TuPrologSolution<S> extends Solution<S> {
 	}
 
 	@Override
-	public S get() {
-		return this.<S> get(varName(vars.size() - 1));
-	}
-
-	@Override
 	public <A> A get(String variable) {
 		try {
-			return Terms.<A> toObject(solution
-					.getVarValue(variable));
+			if (clazz == null)
+				return Terms.<A> toObject(solution.getVarValue(variable));
+			return (A) get(variable, clazz);
 		} catch (NoSolutionException e) {
 			throw new RuntimeException(e);
 		}
@@ -108,7 +101,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 		return lists;
 	}
 
-	protected void fetchNext() {
+	protected void fetch() {
 		try {
 			hasNext = prolog.hasOpenAlternatives()
 			&& (solution = prolog.solveNext()).isSuccess();

@@ -51,10 +51,23 @@ public class TuPrologQuery extends Query {
 	}
 
 	@Override
-	public void set(int argument, Object value) {
+	public Query bind(int argument, Object value) {
 		inputVars[argument].free();
 		prolog.unify(inputVars[argument], Terms.toTerm(value));
 		varss.remove(inputVars[argument]);
+		return this;
+	}
+
+	@Override
+	public Query bind(String variable, Object value) {
+		for (Var inputVar: inputVars)
+			if (inputVar.getName().equals(variable)) {
+				inputVar.free();
+				prolog.unify(inputVar, Terms.toTerm(value));
+				varss.remove(inputVar);
+				return this;
+			}
+		throw new RuntimeException("No such variable.");
 	}
 
 }

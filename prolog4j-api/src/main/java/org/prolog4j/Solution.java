@@ -9,6 +9,12 @@ import java.util.Set;
 
 public abstract class Solution<S> implements Iterable<S> {
 
+	protected String defaultOutputVariable;
+	protected Class<S> clazz;
+	
+	protected boolean fetched;
+	protected boolean hasNext;
+	
 	/**
 	 * Returns whether there exists a solution or not. Does not depend on the
 	 * state of the traversal, only one solution should exist.
@@ -17,7 +23,7 @@ public abstract class Solution<S> implements Iterable<S> {
 	 *         <tt>false</tt>
 	 */
 	public abstract boolean isSuccess();
-	
+
 	/**
 	 * Returns another {@link java.util.Iterable Iterable} object that supports
 	 * traversing the solutions according to another variable.
@@ -30,21 +36,15 @@ public abstract class Solution<S> implements Iterable<S> {
 	 * @return an <tt>Iterable<A></tt> object
 	 */
 	public <A> Iterable<A> on(final String variable) {
-		return new Iterable<A>() {
-			@Override
-			public java.util.Iterator<A> iterator() {
-				return new SolutionIteratorImpl<A>(variable);
-			}
-		};
+		defaultOutputVariable = variable;
+		clazz = null;
+		return (Solution<A>) this;
 	}
 	
 	public <A> Iterable<A> on(final String variable, final Class<A> clazz) {
-		return new Iterable<A>() {
-			@Override
-			public java.util.Iterator<A> iterator() {
-				return new SolutionIteratorImpl<A>(variable, clazz);
-			}
-		};
+		defaultOutputVariable = variable;
+		this.clazz = (Class<S>) clazz;
+		return (Solution<A>) this;
 	}
 	
 	/**
@@ -53,7 +53,9 @@ public abstract class Solution<S> implements Iterable<S> {
 	 * 
 	 * @return the value of the last variable occurring in the goal
 	 */
-	public abstract S get();
+	public S get() {
+		return this.<S> get(defaultOutputVariable);
+	}
 	
 	/**
 	 * Returns the value of the given variable bound to by the first solution of
@@ -99,8 +101,46 @@ public abstract class Solution<S> implements Iterable<S> {
 	}
 
 	@Override
-	public abstract SolutionIterator<S> iterator();
-	
+	public SolutionIterator<S> iterator() {
+		fetched = true;
+		hasNext = isSuccess();
+		return new SolutionIterator<S>() {
+
+			@Override
+			public boolean hasNext() {
+				if (!fetched)
+					fetch();
+				return hasNext;
+			}
+
+			@Override
+			public S next() {
+				if (!hasNext())
+					throw new NoSuchElementException();
+				fetched = false;
+				return get(defaultOutputVariable);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public S get(String variable) {
+				if (clazz == null)
+					return Solution.this.get(variable);
+				return Solution.this.get(variable, clazz);
+			}
+
+			@Override
+			public <A> A get(String variable, Class<A> type) {
+				return Solution.this.get(variable, type);
+			}
+
+		};
+	}
+
 	/**
 	 * Collects the values of the variables into the given collections.
 	 * 
@@ -137,116 +177,9 @@ public abstract class Solution<S> implements Iterable<S> {
 	 */
 	public abstract List<?>[] toLists();
 
-	protected boolean fetched;
-	protected boolean hasNext;
-	
 	/**
 	 * Fetches the next solution.
 	 */
-	protected abstract void fetchNext();
-	
-	/**
-	 * Internal implementation for the {@link org.prolog4j.SolutionIterator
-	 * SolutionIterator} interface.
-	 * 
-	 * @param <E>
-	 *            the type of the values of the variable that is of special
-	 *            interest
-	 */
-	protected class SolutionIteratorImpl<E> implements SolutionIterator<E> {
-
-		protected String variable;
-		protected Class<E> clazz;
-
-		/**
-		 * Creates a new SolutionIteratorImpl object.
-		 * 
-		 * @param variable
-		 *            the name of the variable that is of special interest
-		 */
-		@SuppressWarnings("unchecked")
-		public SolutionIteratorImpl(String variable) {
-			this.variable = variable;
-//			clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-			fetched = true;
-			hasNext = isSuccess();
-		}
-
-		public SolutionIteratorImpl(String variable, Class<E> clazz) {
-			this.variable = variable;
-			this.clazz = clazz;
-			fetched = true;
-			hasNext = isSuccess();
-		}
-
-		/**
-		 * Fetches the next solution.
-		 */
-		protected void fetch() {
-			Solution.this.fetchNext();
-		}
-		
-		@Override
-		public boolean hasNext() {
-			if (!fetched)
-				fetch();
-			return hasNext;
-		}
-
-		@Override
-		public E next() {
-			if (!hasNext())
-				throw new NoSuchElementException();
-			fetched = false;
-			return get(variable);
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public E get(String variable) {
-			if (clazz == null)
-				return Solution.this.get(variable);
-			return Solution.this.get(variable, clazz);
-		}
-
-		@Override
-		public <A> A get(String variable, Class<A> type) {
-			return Solution.this.get(variable, type);
-		}
-
-	}
-
-	@SuppressWarnings("unchecked")
-	protected static final SolutionIterator NO_SOLUTIONS = new SolutionIterator() {
-		@Override
-		public boolean hasNext() {
-			return false;
-		}
-
-		@Override
-		public Object next() {
-			throw new NoSuchElementException();
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public Object get(String variable) {
-			throw new NoSuchElementException();
-		}
-
-		@Override
-		public Object get(String variable, Class type) {
-			throw new NoSuchElementException();
-		}
-
-	};
+	protected abstract void fetch();
 	
 }
