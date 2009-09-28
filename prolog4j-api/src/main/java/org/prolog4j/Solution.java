@@ -35,12 +35,14 @@ public abstract class Solution<S> implements Iterable<S> {
 	 *            the name of the variable
 	 * @return an <tt>Iterable<A></tt> object
 	 */
+	@SuppressWarnings("unchecked")
 	public <A> Iterable<A> on(final String variable) {
 		defaultOutputVariable = variable;
 		clazz = null;
 		return (Solution<A>) this;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <A> Iterable<A> on(final String variable, final Class<A> clazz) {
 		defaultOutputVariable = variable;
 		this.clazz = (Class<S>) clazz;
@@ -126,6 +128,7 @@ public abstract class Solution<S> implements Iterable<S> {
 				throw new UnsupportedOperationException();
 			}
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public S get(String variable) {
 				if (clazz == null)
@@ -147,6 +150,7 @@ public abstract class Solution<S> implements Iterable<S> {
 	 * @param collections
 	 *            the collections which will store the solutions
 	 */
+	@SuppressWarnings("unchecked")
 	public abstract void collect(Collection... collections);
 	
 	/**

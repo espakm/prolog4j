@@ -60,17 +60,14 @@ public class StaticProverBinder {
 	// to avoid constant folding by the compiler, this field must *not* be final
 	public static String REQUESTED_API_VERSION = "1.5.9"; // !final
 
-	/**
-	 * The IProverFactory instance returned by the {@link #getProverFactory}
-	 * method should always be the same object
-	 */
-	private final IProverFactory proverFactory;
-
 	private StaticProverBinder() {
 		// Note: JCL gets substituted at build time by an appropriate Ant task
 		throw new UnsupportedOperationException("This code should have never made it into the jar");
 	}
 
+	/**
+	 * The IProverFactory instance returned by the method should always be the same object.
+	 */
 	public IProverFactory getProverFactory() {
 		throw new UnsupportedOperationException("This code should never make it into the jar");
 	}
