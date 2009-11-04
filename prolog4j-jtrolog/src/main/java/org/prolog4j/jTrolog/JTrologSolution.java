@@ -30,10 +30,10 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	 * Creates a <tt>JTrologSolution</tt> object for traversing through the solutions
 	 * for a Prolog query.
 	 * 
-	 * @param prolog
-	 *            jTrolog engine
-	 * @param goal
-	 *            a Prolog goal
+	 * @param prolog jTrolog engine
+	 * @param sGoal a Prolog goal
+	 * @param defaultVarName the name of the output variable of special interest
+	 * @param outputVarNames the name of each output variable
 	 */
 	JTrologSolution(Prolog prolog, Struct sGoal, String defaultVarName, String[] outputVarNames) {
 		this.prolog = prolog;
@@ -54,8 +54,9 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 
 	@Override
 	public <A> A get(String variable) {
-		if (clazz == null)
+		if (clazz == null) {
 			return Terms.<A> toObject(solution.getBinding(variable));
+		}
 		return (A) get(variable, clazz);
 	}
 
@@ -69,16 +70,18 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 		SolutionIterator<S> it = iterator();
 		while (it.hasNext()) {
 			it.next();
-			for (int i = 0; i < collections.length; ++i)
+			for (int i = 0; i < collections.length; ++i) {
 				collections[i].add(it.get(outputVarNames[i]));
+			}
 		}
 	}
 
 	@Override
 	public List<?>[] toLists() {
 		List<?>[] lists = new List<?>[outputVarNames.length];
-		for (int i = 0; i < lists.length; ++i)
+		for (int i = 0; i < lists.length; ++i) {
 			lists[i] = new ArrayList();
+		}
 		collect(lists);
 		return lists;
 	}
@@ -86,8 +89,7 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	@Override
 	protected void fetch() {
 		try {
-			hasNext = prolog.hasOpenAlternatives() && 
-			(solution = prolog.solveNext()).success();
+			hasNext = prolog.hasOpenAlternatives() && (solution = prolog.solveNext()).success();
 			// if (!hasNext)
 			// prolog.solveHalt();
 			fetched = true;

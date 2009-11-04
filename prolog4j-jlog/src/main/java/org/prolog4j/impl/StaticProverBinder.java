@@ -37,7 +37,7 @@ import org.prolog4j.jlog.JLogProverFactory;
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
-public class StaticProverBinder {
+public final class StaticProverBinder {
 
 	/**
 	 * The unique instance of this class.
@@ -50,7 +50,7 @@ public class StaticProverBinder {
 	 * 
 	 * @return the StaticProverBinder singleton
 	 */
-	public static final StaticProverBinder getSingleton() {
+	public static StaticProverBinder getSingleton() {
 		return SINGLETON;
 	}
 
@@ -61,7 +61,7 @@ public class StaticProverBinder {
 	// to avoid constant folding by the compiler, this field must *not* be final
 	public static String REQUESTED_API_VERSION = "0.1.2"; // !final
 
-	private static final String proverFactoryClassName = JLogProverFactory.class.getName();
+	private static String proverFactoryClassName = JLogProverFactory.class.getName();
 
 	/**
 	 * The IProverFactory instance returned by the {@link #getProverFactory}

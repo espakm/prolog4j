@@ -23,29 +23,40 @@ import alice.tuprolog.Var;
  */
 public class TuPrologSolution<S> extends Solution<S> {
 
+	/** The tuProlog engine. */
 	private final Prolog prolog;
+	
+	/** The list of variables occurring in the query. */
 	private List<Var> vars;
 
+	/** This object provides the bindings for one solution of the query. */
 	private SolveInfo solution;
+	
+	/** True if the query has a solution, otherwise false. */
 	private final boolean success;
 
 	/**
-	 * @param prolog
-	 * @param goalTerms
-	 * @param actualArgs
+	 * Creates an object, using which the solutions of a query can be accessed.
+	 * 
+	 * @param prolog tuProlog engine
+	 * @param goal the goal to be solved
 	 */
 	TuPrologSolution(Prolog prolog, Term goal) {
 		this.prolog = prolog;
 		solution = prolog.solve(goal);
 		success = solution.isSuccess();
-		if (!success)
+		if (!success) {
 			return;
+		}
 		try {
 			vars = solution.getBindingVars();
 		} catch (NoSolutionException e) {
+			// It cannot happen.
+			throw null;
 		}
-		if (vars.size() > 0)
+		if (vars.size() > 0) {
 			defaultOutputVariable = varName(vars.size() - 1);
+		}
 	}
 
 	@Override
@@ -54,8 +65,10 @@ public class TuPrologSolution<S> extends Solution<S> {
 	}
 
 	/**
-	 * @param varIndex
-	 * @return
+	 * Returns the name of the variable of the specified index.
+	 * 
+	 * @param varIndex the index of the variable
+	 * @return the name of the variable
 	 */
 	private String varName(int varIndex) {
 		return vars.get(varIndex).getOriginalName();
@@ -64,8 +77,9 @@ public class TuPrologSolution<S> extends Solution<S> {
 	@Override
 	public <A> A get(String variable) {
 		try {
-			if (clazz == null)
+			if (clazz == null) {
 				return Terms.<A> toObject(solution.getVarValue(variable));
+			}
 			return (A) get(variable, clazz);
 		} catch (NoSolutionException e) {
 			throw new RuntimeException(e);
@@ -87,8 +101,9 @@ public class TuPrologSolution<S> extends Solution<S> {
 		SolutionIterator<S> it = iterator();
 		while (it.hasNext()) {
 			it.next();
-			for (int i = 0; i < collections.length; ++i)
+			for (int i = 0; i < collections.length; ++i) {
 				collections[i].add(it.get(varName(i)));
+			}
 		}
 	}
 

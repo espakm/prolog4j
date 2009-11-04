@@ -24,7 +24,14 @@ import alice.tuprolog.Var;
  * Utility class for performing transformations between POJOs and terms.
  * Intended for internal use from within Prolog4J-tuProlog.
  */
-class Terms {
+@SuppressWarnings("unchecked")
+final class Terms {
+
+	/**
+	 * Private constructor for disallowing instantiation of this utility class.
+	 */
+	private Terms() {
+	}
 
 	static Term term(String repr) {
 		try {
@@ -35,29 +42,38 @@ class Terms {
 	}
 
 	private static String typeName(Class<?> c) {
-		if (c == int.class)
+		if (c == int.class) {
 			return "int";
-		if (c == long.class)
+		}
+		if (c == long.class) {
 			return "long";
-		if (c == float.class)
+		}
+		if (c == float.class) {
 			return "float";
-		if (c == double.class)
+		}
+		if (c == double.class) {
 			return "double";
-		if (c == short.class)
+		}
+		if (c == short.class) {
 			return "short";
-		if (c == byte.class)
+		}
+		if (c == byte.class) {
 			return "byte";
+		}
 		// if (c == char.class)
 		// return "char";
 		// if (c == boolean.class)
 		// return "boolean";
-		if (c == Object.class)
+		if (c == Object.class) {
 			return "term";
-		if (c == String.class)
+		}
+		if (c == String.class) {
 			return "atom";
-		if (c.isArray())
+		}
+		if (c.isArray()) {
 			return new StringBuilder(typeName(c.getComponentType()))
 					.append('*').toString();
+		}
 		return c.getCanonicalName();
 	}
 
@@ -68,8 +84,9 @@ class Terms {
 	private static Struct type(Constructor<?> ctr) {
 		Class[] argTypes = ctr.getParameterTypes();
 		Struct[] fieldTypes = new Struct[argTypes.length];
-		for (int i = 0; i < argTypes.length; ++i)
+		for (int i = 0; i < argTypes.length; ++i) {
 			fieldTypes[i] = type(argTypes[i]);
+		}
 		return new Struct(ctr.getDeclaringClass().getCanonicalName(),
 				fieldTypes);
 	}
@@ -117,24 +134,33 @@ class Terms {
 	}
 
 	static Term toTerm(Object o) {
-		if (o == null)
+		if (o == null) {
 			return new Var();
-		if (o instanceof Term)
+		}
+		if (o instanceof Term) {
 			return (Term) o;
-		if (o instanceof Integer)
+		}
+		if (o instanceof Integer) {
 			return toTerm((Integer) o);
-		if (o instanceof Long)
+		}
+		if (o instanceof Long) {
 			return toTerm((Long) o);
-		if (o instanceof Float)
+		}
+		if (o instanceof Float) {
 			return toTerm((Float) o);
-		if (o instanceof Double)
+		}
+		if (o instanceof Double) {
 			return toTerm((Double) o);
-		if (o instanceof String)
+		}
+		if (o instanceof String) {
 			return toTerm((String) o);
-		if (o instanceof Object[])
+		}
+		if (o instanceof Object[]) {
 			return toTerm((Object[]) o);
-		if (o instanceof List)
+		}
+		if (o instanceof List) {
 			return toTerm((List) o);
+		}
 		if (o instanceof Compound) {
 			Compound c = (Compound) o;
 			Term[] args = new Term[c.getArity()];
@@ -143,8 +169,9 @@ class Terms {
 			return new Struct(c.getFunctor(), args);
 		}
 		Class<?> c = o.getClass();
-		if (c.isAnnotationPresent(org.prolog4j.annotations.Term.class))
+		if (c.isAnnotationPresent(org.prolog4j.annotations.Term.class)) {
 			return toTerm(o, c);
+		}
 
 		throw new ClassCastException();
 		// return toTerm(o.toString());
@@ -232,7 +259,8 @@ class Terms {
 			try {
 				Class<?> c = Class.forName(className);
 				Constructor<A>[] ctrs = (Constructor<A>[]) c.getConstructors();
-				constructorLoop: for (Constructor<A> ctr : ctrs) {
+//				constructorLoop:
+				for (Constructor<A> ctr : ctrs) {
 					if (!ctr.isAnnotationPresent(Goal.class))
 						continue;
 					Class[] parameterTypes = ctr.getParameterTypes();

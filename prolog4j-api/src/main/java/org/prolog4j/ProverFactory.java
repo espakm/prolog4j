@@ -51,32 +51,51 @@ import org.prolog4j.impl.StaticProverBinder;
  */
 public final class ProverFactory {
 
-	static final String NO_STATICPROVERBINDER_URL = "http://www.slf4j.org/codes.html#StaticLoggerBinder";
-	static final String MULTIPLE_BINDINGS_URL = "http://www.slf4j.org/codes.html#multiple_bindings";
-	static final String NULL_LF_URL = "http://www.slf4j.org/codes.html#null_LF";
-	static final String VERSION_MISMATCH = "http://www.slf4j.org/codes.html#version_mismatch";
+//	static final String NO_STATICPROVERBINDER_URL = 
+//		"http://www.slf4j.org/codes.html#StaticLoggerBinder";
+//	static final String MULTIPLE_BINDINGS_URL = "http://www.slf4j.org/codes.html#multiple_bindings";
+//	static final String NULL_LF_URL = "http://www.slf4j.org/codes.html#null_LF";
+//	static final String VERSION_MISMATCH = "http://www.slf4j.org/codes.html#version_mismatch";
 
-	static final String UNSUCCESSFUL_INIT_URL = "http://www.slf4j.org/codes.html#unsuccessfulInit";
-	static final String UNSUCCESSFUL_INIT_MSG = "org.prolog4j.ProverFactory could not be successfully initialized. See also "
-			+ UNSUCCESSFUL_INIT_URL;
+//	static final String UNSUCCESSFUL_INIT_URL = "http://www.slf4j.org/codes.html#unsuccessfulInit";
+	
+	/**
+	 * The error message when the initialization of the prover factory was 
+	 * unsuccessful.
+	 */
+	static final String UNSUCCESSFUL_INIT_MSG = 
+		"org.prolog4j.ProverFactory could not be successfully initialized.";
+//		+ " See also " + UNSUCCESSFUL_INIT_URL;
 
-	static enum InitializationState {
+	/**
+	 * The possible states of the initialization of the ProverFactory instance.
+	 */
+	private static enum InitializationState {
+		/** The initialization has not been started yet. */
 		UNINITIALIZED,
+		/** The initialization has been started. */
 		ONGOING,
+		/** The initialization has been failed. */
 		FAILED,
+		/** The initialization has been finished successfully. */
 		SUCCESSFUL
 	}
 
-	static InitializationState initState = InitializationState.UNINITIALIZED;
+	/**
+	 * The state of the initialization of the ProverFactory instance.
+	 */
+	private static InitializationState initState = InitializationState.UNINITIALIZED;
 
 	/**
 	 * It is our responsibility to track version changes and manage the
 	 * compatibility list.
 	 */
-	static private final String[] API_COMPATIBILITY_LIST = {
+	private static final String[] API_COMPATIBILITY_LIST = {
 		"0.1.0", "0.1.1", "0.1.2" };
 
-	// private constructor prevents instantiation
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
 	private ProverFactory() {
 	}
 
@@ -95,14 +114,20 @@ public final class ProverFactory {
 		initState = InitializationState.UNINITIALIZED;
 	}
 
-	private final static void performInitialization() {
+	/**
+	 * Initializes the factory. Creates the instance and performs checks.
+	 */
+	private static void performInitialization() {
 		bind();
 		versionSanityCheck();
 		singleImplementationSanityCheck();
 
 	}
 
-	private final static void bind() {
+	/**
+	 * Creates the ProverFactory instance.
+	 */
+	private static void bind() {
 		try {
 			// the next line does the binding
 			getSingleton();
@@ -113,8 +138,8 @@ public final class ProverFactory {
 			if (msg != null
 					&& msg.indexOf("org/prolog4j/impl/StaticProverBinder") != -1) {
 				reportFailure("Failed to load class \"org.prolog4j.impl.StaticProverBinder\".");
-				reportFailure("See " + NO_STATICPROVERBINDER_URL
-						+ " for further details.");
+//				reportFailure("See " + NO_STATICPROVERBINDER_URL
+//						+ " for further details.");
 			}
 			throw ncde;
 		} catch (Exception e) {
@@ -125,18 +150,22 @@ public final class ProverFactory {
 		}
 	}
 
-	private final static void versionSanityCheck() {
+	/**
+	 * Checks if the current binding is compatible with the version of the API.
+	 */
+	private static void versionSanityCheck() {
 		try {
 			String requested = StaticProverBinder.REQUESTED_API_VERSION;
 
-			for (String compatibleVersion: API_COMPATIBILITY_LIST)
-				if (compatibleVersion.equals(requested))
+			for (String compatibleVersion : API_COMPATIBILITY_LIST) {
+				if (compatibleVersion.equals(requested)) {
 					return;
+				}
+			}
 			reportFailure("The requested version " + requested
 					+ " by your Prolog4J binding is not compatible with "
 					+ Arrays.toString(API_COMPATIBILITY_LIST));
-			reportFailure("See " + VERSION_MISMATCH
-					+ " for further details.");
+//			reportFailure("See " + VERSION_MISMATCH + " for further details.");
 		} catch (java.lang.NoSuchFieldError nsfe) {
 			// given our large user base and Prolog4J's commitment to backward
 			// compatibility, we cannot cry here. Only for implementations
@@ -148,29 +177,40 @@ public final class ProverFactory {
 		}
 	}
 
-	// We need to use the name of the StaticProverBinder class, we can't
-	// reference the class itself.
+	/**
+	 * We need to use the name of the StaticProverBinder class, we can't
+	 * reference the class itself.
+	 */
 	private static String STATIC_PROVER_BINDER_PATH = "org/prolog4j/impl/StaticProverBinder.class";
 
+	/**
+	 * Checks if there is only one Prolog4J binding in the class path.
+	 */
 	private static void singleImplementationSanityCheck() {
 		try {
 			Enumeration<URL> paths = ProverFactory.class.getClassLoader()
 					.getResources(STATIC_PROVER_BINDER_PATH);
 			List<URL> implementationList = new ArrayList<URL>();
-			while (paths.hasMoreElements())
+			while (paths.hasMoreElements()) {
 				implementationList.add(paths.nextElement());
+			}
 			if (implementationList.size() > 1) {
 				reportFailure("Class path contains multiple Prolog4J bindings.");
-				for (URL implementation: implementationList)
+				for (URL implementation : implementationList) {
 					reportFailure("Found binding in [" + implementation + "]");
-				reportFailure("See " + MULTIPLE_BINDINGS_URL + " for an explanation.");
+				}
+//				reportFailure("See " + MULTIPLE_BINDINGS_URL + " for an explanation.");
 			}
 		} catch (IOException ioe) {
 			reportFailure("Error getting resources from path", ioe);
 		}
 	}
 
-	private final static StaticProverBinder getSingleton() {
+	/**
+	 * Returns the ProverFactory instance.
+	 * @return the ProverFactory instance
+	 */
+	private static StaticProverBinder getSingleton() {
 		return StaticProverBinder.getSingleton();
 	}
 
@@ -195,7 +235,7 @@ public final class ProverFactory {
 	 *            the returned prover will be named after clazz
 	 * @return prover
 	 */
-	public static Prover getProver(Class<?> clazz) {
+	public static Prover getProver(final Class<?> clazz) {
 		return getProver(clazz.getName());
 	}
 
@@ -219,17 +259,29 @@ public final class ProverFactory {
 			throw new IllegalStateException(UNSUCCESSFUL_INIT_MSG);
 		case ONGOING:
 			throw new IllegalStateException(UNSUCCESSFUL_INIT_MSG);
+		default:
+			throw new IllegalStateException("Unreachable code");
 		}
-		throw new IllegalStateException("Unreachable code");
 	}
 
-	static final public void reportFailure(String msg, Throwable t) {
+	/**
+	 * Reports a failure to the standard error.
+	 * 
+	 * @param msg the message
+	 * @param t the exception or error that caused the failure
+	 */
+	public static void reportFailure(String msg, Throwable t) {
 		System.err.println(msg);
 		System.err.println("Reported exception:");
 		t.printStackTrace();
 	}
 
-	static final public void reportFailure(String msg) {
+	/**
+	 * Reports a failure to the standard error.
+	 * 
+	 * @param msg the message
+	 */
+	public static void reportFailure(String msg) {
 		System.err.println("Prolog4J: " + msg);
 	}
 

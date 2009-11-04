@@ -15,8 +15,14 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * JUnit test for Prolog4J API and bindings.
+ */
 public class ProverTest {
 
+	/**
+	 * The prover.
+	 */
 	private static Prover p;
 
 	@BeforeClass
@@ -67,14 +73,14 @@ public class ProverTest {
 		assertEquals(mortals, Arrays.asList("socrates", "plato"));
 
 		int i = 0;
-		for (Object x: p.solve("member(X, [1, 2, 3])."))
+		for (Object _: p.solve("member(X, [1, 2, 3])."))
 			++i;
 		assertTrue(i == 3);
 		
-		for (Object x: p.solve("member(X, 1)."))
-			;
-		for (Object x: p.solve("member(X, 1).").on("X"))
-			;
+		for (Object _: p.solve("member(X, 1).")) {
+		}
+		for (Object _: p.solve("member(X, 1).").on("X")) {
+		}
 	}
 
 	@Test
@@ -111,7 +117,7 @@ public class ProverTest {
 	@Test
 	public void testTestListResult() {
 		List<String> h1 = Arrays.asList("socrates");
-		List<String> h2 = Arrays.asList("thales", "plato");
+//		List<String> h2 = Arrays.asList("thales", "plato");
 		List<String> h3 = Arrays.asList("socrates", "homeros", "demokritos");
 		for (List<String> humans : p.solve("append(L1{}, L2, L12{}).", h1, h3).on("L2", List.class))
 			for (String h : humans)

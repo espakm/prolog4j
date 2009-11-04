@@ -37,7 +37,7 @@ import org.prolog4j.jTrolog.JTrologProverFactory;
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
-public class StaticProverBinder {
+public final class StaticProverBinder {
 
 	/**
 	 * The unique instance of this class.

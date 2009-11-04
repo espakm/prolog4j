@@ -16,8 +16,6 @@ public @interface Out {
     /**
      * The name of a Prolog variable in the goal. The value(s) that get bound to
      * the variable can be accessed through the return value of the method.
-     * 
-     * @return The name of a Prolog variable occurring in the goal.
      */
     String value();
 

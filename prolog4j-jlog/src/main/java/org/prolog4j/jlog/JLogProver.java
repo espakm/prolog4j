@@ -2,7 +2,6 @@ package org.prolog4j.jlog;
 
 import org.prolog4j.AbstractProver;
 import org.prolog4j.Query;
-import org.prolog4j.Solution;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
 
@@ -14,6 +13,7 @@ import ubc.cs.JLog.Foundation.jPrologAPI;
  */
 public class JLogProver extends AbstractProver {
 
+	/** Class version for serialization. */
 	private static final long serialVersionUID = 1L;
 	
 	protected final jPrologAPI prolog;

@@ -7,14 +7,14 @@ import ubc.cs.JLog.Terms.jTermTranslation;
 
 public class TermTranslation extends jTermTranslation {
 
-	private static final iTermToObject idempotentTermTranslator = new iTermToObject() {
+	private static final iTermToObject IDEMPOTENT_TERM_TRANSLATOR = new iTermToObject() {
 		@Override
 		public Object createObjectFromTerm(jTerm term) {
 			return term;
 		}
 	};
 
-	private static final iObjectToTerm objectConverter = new iObjectToTerm() {
+	private static final iObjectToTerm OBJECT_CONVERTER = new iObjectToTerm() {
 		@Override
 		public jTerm createTermFromObject(Object object) {
 			return Terms.toTerm(object);
@@ -22,8 +22,8 @@ public class TermTranslation extends jTermTranslation {
 	};
 
 	public TermTranslation() {
-		RegisterDefaultTermToObjectConverter(idempotentTermTranslator);
-		RegisterDefaultObjectToTermConverter(objectConverter);
+		RegisterDefaultTermToObjectConverter(IDEMPOTENT_TERM_TRANSLATOR);
+		RegisterDefaultObjectToTermConverter(OBJECT_CONVERTER);
 	}
 	
 }

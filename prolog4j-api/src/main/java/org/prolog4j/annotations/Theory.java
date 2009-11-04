@@ -10,13 +10,12 @@ import java.lang.annotation.Target;
  * {@link org.prolog4j.Prover Prover} that has the name as the annotated package
  * or type, respectively.
  */
-@Target( { ElementType.PACKAGE, ElementType.TYPE })
+@Target({ ElementType.PACKAGE, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Theory {
 
     /**
      * The Prolog theory.
-     * @return The Prolog theory.
      */
     String[] value();
 

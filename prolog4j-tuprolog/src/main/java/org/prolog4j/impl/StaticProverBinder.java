@@ -37,7 +37,7 @@ import org.prolog4j.tuprolog.TuPrologProverFactory;
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
-public class StaticProverBinder {
+final public class StaticProverBinder {
 
 	/**
 	 * The unique instance of this class.

@@ -15,8 +15,6 @@ public @interface In {
     /**
      * The name of a Prolog variable in the goal. The value of the actual
      * argument will be bound to the variable before solving the goal.
-     * 
-     * @return The name of a Prolog variable occurring in the goal.
      */
     String value();
 

@@ -51,7 +51,8 @@ public interface IProverFactory {
    * return the same prover instance regardless of the requested name.
    *
    * @param name the name of the Prover to return
+   * @return a prover instance with the specified name
    */
-  public Prover getProver(String name);
+  Prover getProver(String name);
 
 }

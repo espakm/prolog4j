@@ -1,5 +1,11 @@
 package org.prolog4j;
 
+/**
+ * A Prover objects represents a Prolog knowledge base, on which you can create 
+ * and solve queries. The implementations of this interface should not provide 
+ * public constructors. The Prover instances should be created through {@link 
+ * ProverFactory#getProver()}.
+ */
 public interface Prover {
 
 	/**
@@ -17,7 +23,7 @@ public interface Prover {
 	 *            the actual arguments of the goal
 	 * @return an object for traversing the solutions
 	 */
-	public abstract <A> Solution<A> solve(String goal, Object... actualArgs);
+	<A> Solution<A> solve(String goal, Object... actualArgs);
 
 	/**
 	 * Creates a Prolog query that can be solved later.
@@ -26,14 +32,14 @@ public interface Prover {
 	 *            the Prolog goal
 	 * @return a query object to be solved later
 	 */
-	public abstract Query query(String goal);
+	Query query(String goal);
 
 	/**
 	 * Loads in a Prolog library of the specified name.
 	 * 
 	 * @param library the name of the library
 	 */
-	public abstract void loadLibrary(String library);
+	void loadLibrary(String library);
 
 	/**
 	 * Adds a Prolog theory to the knowledge base.
@@ -41,7 +47,7 @@ public interface Prover {
 	 * @param theory
 	 *            the Prolog theory
 	 */
-	public abstract void addTheory(String theory);
+	void addTheory(String theory);
 
 	/**
 	 * Adds a Prolog theory to the knowledge base. The elements of the arguments
@@ -50,6 +56,6 @@ public interface Prover {
 	 * @param theory
 	 *            the Prolog theory
 	 */
-	public abstract void addTheory(String... theory);
+	void addTheory(String... theory);
 
 }

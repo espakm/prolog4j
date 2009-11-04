@@ -24,9 +24,16 @@ import jTrolog.errors.InvalidTermException;
 
 /**
  * Utility class for performing transformations between POJOs and terms.
- * Intended for internal use from within Prolog4J-tuProlog.
+ * Intended for internal use from within Prolog4J-jTrolog.
  */
-class Terms {
+@SuppressWarnings("unchecked")
+final class Terms {
+
+	/**
+	 * Private constructor for disallowing instantiation of this utility class.
+	 */
+	private Terms() {
+	}
 
 	static Term term(String repr) {
 		try {
@@ -192,7 +199,8 @@ class Terms {
 			try {
 				Class<?> c = Class.forName(className);
 				Constructor<A>[] ctrs = (Constructor<A>[]) c.getConstructors();
-				constructorLoop: for (Constructor<A> ctr : ctrs) {
+//				constructorLoop:
+				for (Constructor<A> ctr : ctrs) {
 					if (!ctr.isAnnotationPresent(Goal.class))
 						continue;
 					Class[] parameterTypes = ctr.getParameterTypes();

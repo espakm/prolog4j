@@ -69,8 +69,9 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		this.prolog = prolog;
 		solution = prolog.query(goal, initialBindings);
 		success = solution != null;
-		if (!success || solution.size() == 0)
+		if (!success || solution.size() == 0) {
 			return;
+		}
 		outputVarNames = new String[solution.size()];
 		int i = 0;
 		for (String var: solution.keySet())
@@ -85,8 +86,9 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 
 	@Override
 	public <A> A get(String variable) {
-		if (clazz == null)
+		if (clazz == null) {
 			return Terms.<A> toObject((jTerm) solution.get(variable));
+		}
 		return (A) get(variable, clazz);
 	}
 

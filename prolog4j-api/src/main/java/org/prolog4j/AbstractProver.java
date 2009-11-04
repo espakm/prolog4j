@@ -1,6 +1,5 @@
 package org.prolog4j;
 
-import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 
@@ -13,20 +12,31 @@ import java.io.Serializable;
  */
 public abstract class AbstractProver implements Prover, Serializable {
 
+	/** Class version for serialization. */
 	private static final long serialVersionUID = 1L;
 	
+	/** The name of the prover. */
 	protected String name;
 
+	/**
+	 * Initializes an AbstractProver object.
+	 * 
+	 * @param name the name of the prover
+	 */
 	protected AbstractProver(String name) {
 		this.name = name;
 	}
 	
+	/**
+	 * Returns the name of the prover.
+	 * @return the name of the prover
+	 */
 	public String getName() {
 		return name;
 	}
 
 	@Override
-	public <A> Solution<A> solve(String goal, Object... actualArgs) {
+	public <A> Solution<A> solve(final String goal, final Object... actualArgs) {
 		return query(goal).solve(actualArgs);
 	}
 	
@@ -42,13 +52,13 @@ public abstract class AbstractProver implements Prover, Serializable {
 	 * injection, then this approach would be mostly counterproductive.
 	 * 
 	 * @return prover with same name as returned by ProverFactory
-	 * @throws ObjectStreamException
 	 */
-	protected Object readResolve() throws ObjectStreamException {
+	protected Object readResolve() {
 		// TODO The knowledge base is not restored this way.
 		return ProverFactory.getProver(getName());
 	}
 
+	@Override
 	public String toString() {
 		return getClass().getName() + "(" + getName() + ")";
 	}

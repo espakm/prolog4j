@@ -7,12 +7,33 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+/**
+ * Represents the solutions of a query.
+ *
+ * @param <S> The type of the values of the variable that is of special
+ *            interest
+ */
 public abstract class Solution<S> implements Iterable<S> {
 
+	/**
+	 * The name of the variable that is of special interest.
+	 */
 	protected String defaultOutputVariable;
+
+	/**
+	 * The values that get bound to the default output variable will be
+	 * converted to this type.
+	 */
 	protected Class<S> clazz;
 	
+	/**
+	 * Stores whether the next solution has already been fetched or not.
+	 */
 	protected boolean fetched;
+	
+	/**
+	 * Stores whether there is another solution or not.
+	 */
 	protected boolean hasNext;
 	
 	/**
@@ -33,7 +54,7 @@ public abstract class Solution<S> implements Iterable<S> {
 	 *            interest
 	 * @param variable
 	 *            the name of the variable
-	 * @return an <tt>Iterable<A></tt> object
+	 * @return an <tt>Iterable</tt> object
 	 */
 	@SuppressWarnings("unchecked")
 	public <A> Iterable<A> on(final String variable) {
@@ -42,6 +63,20 @@ public abstract class Solution<S> implements Iterable<S> {
 		return (Solution<A>) this;
 	}
 	
+	/**
+	 * Returns another {@link java.util.Iterable Iterable} object that supports
+	 * traversing the solutions according to another variable. The returned 
+	 * object will convert the traversed elements to the specified type.
+	 * 
+	 * @param <A>
+	 *            the type of the values of the variable that is of special
+	 *            interest
+	 * @param variable
+	 *            the name of the variable
+	 * @param clazz
+	 *            the type to which the elements have to be converted
+	 * @return an <tt>Iterable</tt> object
+	 */
 	@SuppressWarnings("unchecked")
 	public <A> Iterable<A> on(final String variable, final Class<A> clazz) {
 		defaultOutputVariable = variable;
@@ -88,7 +123,7 @@ public abstract class Solution<S> implements Iterable<S> {
 	
 	/**
 	 * Collects the values of the primary variable into the given collection.
-	 * Returns its parameter
+	 * Returns its parameter.
 	 * 
 	 * @param <C>
 	 *            the type of the collection
@@ -96,10 +131,29 @@ public abstract class Solution<S> implements Iterable<S> {
 	 *            the collection which will store the solutions
 	 * @return <tt>collection</tt>
 	 */
-	public <C extends Collection<? super S>> C collect(C collection) {
-		for (S s : this)
+	public final <C extends Collection<? super S>> C collect(final C collection) {
+		for (S s : this) {
 			collection.add(s);
+		}
 		return collection;
+	}
+
+	/**
+	 * Collects the values of the specified variables into the given collections.
+	 * The size of the arrays is expected to be the same.
+	 * 
+	 * @param variables the name of the output variables
+	 * @param collections the collections where to store the solutions
+	 */
+	@SuppressWarnings("unchecked")
+	public final void collect(String[] variables, Collection[] collections) {
+		SolutionIterator it = iterator();
+		while (it.hasNext()) {
+			it.next();
+			for (int i = 0; i < variables.length; ++i) {
+				collections[i].add(it.get(variables[i]));
+			}
+		}
 	}
 
 	@Override
@@ -110,15 +164,17 @@ public abstract class Solution<S> implements Iterable<S> {
 
 			@Override
 			public boolean hasNext() {
-				if (!fetched)
+				if (!fetched) {
 					fetch();
+				}
 				return hasNext;
 			}
 
 			@Override
 			public S next() {
-				if (!hasNext())
+				if (!hasNext()) {
 					throw new NoSuchElementException();
+				}
 				fetched = false;
 				return get(defaultOutputVariable);
 			}
@@ -131,8 +187,9 @@ public abstract class Solution<S> implements Iterable<S> {
 			@SuppressWarnings("unchecked")
 			@Override
 			public S get(String variable) {
-				if (clazz == null)
+				if (clazz == null) {
 					return Solution.this.get(variable);
+				}
 				return Solution.this.get(variable, clazz);
 			}
 

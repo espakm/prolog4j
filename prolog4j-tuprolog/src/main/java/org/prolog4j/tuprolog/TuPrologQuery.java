@@ -12,19 +12,22 @@ import alice.tuprolog.Prolog;
 import alice.tuprolog.Struct;
 import alice.tuprolog.Var;
 
-public class TuPrologQuery extends Query {
+/**
+ * TuProlog implementation of the Query class.
+ */
+class TuPrologQuery extends Query {
 
 	private final Prolog prolog;
 	private Struct sGoal;
 	private Var[] inputVars;
 	private LinkedList<Var> varss;
 	
-	public TuPrologQuery(Prolog prolog, String goal) {
+	TuPrologQuery(Prolog prolog, String goal) {
 		super(goal);
 		this.prolog = prolog;
 		inputVars = new Var[inputVarNames.size()];
 		try {
-			Parser parser = new Parser(this.goal);
+			Parser parser = new Parser(getGoal());
 			sGoal = (Struct) parser.nextTerm(false);
 			for (int i = 0, index = 0; i < inputVarNames.size(); ++i, ++index) {
 				Var argVar = new Var(inputVarNames.get(i));
@@ -60,13 +63,14 @@ public class TuPrologQuery extends Query {
 
 	@Override
 	public Query bind(String variable, Object value) {
-		for (Var inputVar: inputVars)
+		for (Var inputVar: inputVars) {
 			if (inputVar.getName().equals(variable)) {
 				inputVar.free();
 				prolog.unify(inputVar, Terms.toTerm(value));
 				varss.remove(inputVar);
 				return this;
 			}
+		}
 		throw new RuntimeException("No such variable.");
 	}
 

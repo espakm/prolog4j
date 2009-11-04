@@ -36,7 +36,7 @@ import org.prolog4j.IProverFactory;
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
-public class StaticProverBinder {
+public final class StaticProverBinder {
 
 	/**
 	 * The unique instance of this class.
@@ -49,17 +49,20 @@ public class StaticProverBinder {
 	 * 
 	 * @return the StaticProverBinder singleton
 	 */
-	public static final StaticProverBinder getSingleton() {
+	public static StaticProverBinder getSingleton() {
 		return SINGLETON;
 	}
 
 	/**
 	 * Declare the version of the Prolog4J API this implementation is compiled
 	 * against. The value of this field is usually modified with each release.
+	 * To avoid constant folding by the compiler, this field must *not* be final!
 	 */
-	// to avoid constant folding by the compiler, this field must *not* be final
 	public static String REQUESTED_API_VERSION = "1.5.9"; // !final
 
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
 	private StaticProverBinder() {
 		// Note: JCL gets substituted at build time by an appropriate Ant task
 		throw new UnsupportedOperationException("This code should have never made it into the jar");
@@ -67,11 +70,16 @@ public class StaticProverBinder {
 
 	/**
 	 * The IProverFactory instance returned by the method should always be the same object.
+	 * @return a factory for creating provers
 	 */
 	public IProverFactory getProverFactory() {
 		throw new UnsupportedOperationException("This code should never make it into the jar");
 	}
 
+	/**
+	 * Returns the name of the factory prover class.
+	 * @return the name of the factory prover class
+	 */
 	public String getProverFactoryClassName() {
 		throw new UnsupportedOperationException("This code should never make it into the jar");
 	}

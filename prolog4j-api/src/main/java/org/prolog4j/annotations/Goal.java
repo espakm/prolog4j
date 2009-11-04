@@ -26,8 +26,6 @@ public @interface Goal {
 
     /**
      * The Prolog goal. Should be ended by a dot.
-     * 
-     * @return The Prolog goal.
      */
     String value();
 
@@ -36,9 +34,7 @@ public @interface Goal {
      * specified by this annotations. If the return type is denoted by
      * {@link org.prolog4j.annotations.Out @Out}, its name is <i>not</i>
      * required to be specified here.
-     * 
-     * @return The name of the output variables occurring in the goal.
      */
-    String[] out() default {};
+    String[] out() default { };
 
 }

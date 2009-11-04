@@ -27,9 +27,16 @@ import ubc.cs.JLog.Terms.jVariable;
 
 /**
  * Utility class for performing transformations between POJOs and terms.
- * Intended for internal use from within Prolog4J-tuProlog.
+ * Intended for internal use from within Prolog4J-JLog.
  */
-class Terms {
+@SuppressWarnings("unchecked")
+final class Terms {
+
+	/**
+	 * Private constructor for disallowing instantiation of this utility class.
+	 */
+	private Terms() {
+	}
 
 //	static jTerm term(String repr) {
 //		try {
@@ -67,34 +74,45 @@ class Terms {
 	}
 
 	static jTerm toTerm(Object o) {
-		if (o == null)
+		if (o == null) {
 			return new jVariable();
-		if (o instanceof jTerm)
+		}
+		if (o instanceof jTerm) {
 			return (jTerm) o;
-		if (o instanceof Integer)
+		}
+		if (o instanceof Integer) {
 			return toTerm((Integer) o);
-		if (o instanceof Long)
+		}
+		if (o instanceof Long) {
 			return toTerm((Long) o);
-		if (o instanceof Float)
+		}
+		if (o instanceof Float) {
 			return toTerm((Float) o);
-		if (o instanceof Double)
+		}
+		if (o instanceof Double) {
 			return toTerm((Double) o);
-		if (o instanceof String)
+		}
+		if (o instanceof String) {
 			return toTerm((String) o);
-		if (o instanceof Object[])
+		}
+		if (o instanceof Object[]) {
 			return toTerm((Object[]) o);
-		if (o instanceof List)
+		}
+		if (o instanceof List) {
 			return toTerm((List) o);
+		}
 		if (o instanceof Compound) {
 			Compound c = (Compound) o;
 			jCompoundTerm ct = new jCompoundTerm(c.getArity());
-			for (int i = 0; i < c.getArity(); ++i)
+			for (int i = 0; i < c.getArity(); ++i) {
 				ct.addTerm(toTerm(c.getArg(i)));
-			jPredicate p = new jPredicate(c.getFunctor(), ct);
+			}
+			return new jPredicate(c.getFunctor(), ct);
 		}
 		Class<?> c = o.getClass();
-		if (c.isAnnotationPresent(org.prolog4j.annotations.Term.class))
+		if (c.isAnnotationPresent(org.prolog4j.annotations.Term.class)) {
 			return toTerm(o, c);
+		}
 
 		throw new ClassCastException();
 		// return toTerm(o.toString());
@@ -181,7 +199,8 @@ class Terms {
 			try {
 				Class<?> c = Class.forName(className);
 				Constructor<A>[] ctrs = (Constructor<A>[]) c.getConstructors();
-				constructorLoop: for (Constructor<A> ctr : ctrs) {
+//				constructorLoop:
+				for (Constructor<A> ctr : ctrs) {
 					if (!ctr.isAnnotationPresent(Goal.class))
 						continue;
 					Class[] parameterTypes = ctr.getParameterTypes();
@@ -299,7 +318,6 @@ class Terms {
 		List aList = new ArrayList(length);
 		for (int i = 0; i < length; ++i) {
 			jListPair listPair = (jListPair) list;
-			jTerm t = listPair.getHead();
 			aList.add(toObject(listPair.getHead().getTerm()));
 			list = (jList) listPair.getTail().getTerm();
 		}
@@ -311,12 +329,12 @@ class Terms {
 	}
 
 	static int listSize(jList list) {
-		int L = 0;
+		int size = 0;
 		while (list != jNullList.NULL_LIST) {
-			++L;
+			++size;
 			list = (jList) ((jListPair) list).getTail().getTerm();
 		}
-		return L;
+		return size;
 	}
 
 }

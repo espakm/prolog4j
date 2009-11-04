@@ -14,7 +14,7 @@ import org.prolog4j.IProverFactory;
  */
 public class JLogProverFactory implements IProverFactory {
 
-	final static JLogProverFactory INSTANCE = new JLogProverFactory();
+	private static final JLogProverFactory INSTANCE = new JLogProverFactory();
 
 	private Map<String, Prover> proverMap = new HashMap<String, Prover>();
 
