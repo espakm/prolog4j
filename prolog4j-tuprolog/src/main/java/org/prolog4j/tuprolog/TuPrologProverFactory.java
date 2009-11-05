@@ -12,12 +12,33 @@ import org.prolog4j.IProverFactory;
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
-public class TuPrologProverFactory implements IProverFactory {
+public final class TuPrologProverFactory implements IProverFactory {
 
-	final static TuPrologProverFactory INSTANCE = new TuPrologProverFactory();
+	/**
+	 * The unique instance of this class.
+	 */
+	private static final TuPrologProverFactory INSTANCE = new TuPrologProverFactory();
+	
+	/**
+	 * Returns the single instance of this class.
+	 * 
+	 * @return the only one TuPrologProverFactory instance
+	 */
+	public static TuPrologProverFactory getInstance() {
+		return INSTANCE;
+	}
 
-	private Map<String, Prover> proverMap = new HashMap<String, Prover>();
+	/**
+	 * Stores the provers assigned to their names.
+	 */
+	private final Map<String, Prover> proverMap = new HashMap<String, Prover>();
 
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
+	private TuPrologProverFactory() {
+	}
+	
 	@Override
 	public Prover getProver(String name) {
 		Prover prover = null;

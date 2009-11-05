@@ -68,7 +68,7 @@ public final class StaticProverBinder {
 	 * Private constructor to prevent instantiation.
 	 */
 	private StaticProverBinder() {
-		proverFactory = new JTrologProverFactory();
+		proverFactory = JTrologProverFactory.getInstance();
 	}
 
 	/**

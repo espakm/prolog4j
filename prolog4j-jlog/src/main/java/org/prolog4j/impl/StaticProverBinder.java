@@ -70,7 +70,7 @@ public final class StaticProverBinder {
 	 * Private constructor to prevent instantiation.
 	 */
 	private StaticProverBinder() {
-		proverFactory = new JLogProverFactory();
+		proverFactory = JLogProverFactory.getInstance();
 	}
 
 	/**

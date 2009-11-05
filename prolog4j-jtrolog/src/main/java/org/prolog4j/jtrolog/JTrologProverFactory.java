@@ -12,12 +12,33 @@ import org.prolog4j.IProverFactory;
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
-public class JTrologProverFactory implements IProverFactory {
+public final class JTrologProverFactory implements IProverFactory {
 
-	final static JTrologProverFactory INSTANCE = new JTrologProverFactory();
+	/**
+	 * The unique instance of this class.
+	 */
+	private static final JTrologProverFactory INSTANCE = new JTrologProverFactory();
 
+	/**
+	 * Returns the single instance of this class.
+	 * 
+	 * @return the only one JTrologProverFactory instance
+	 */
+	public static JTrologProverFactory getInstance() {
+		return INSTANCE;
+	}
+
+	/**
+	 * Stores the provers assigned to their names.
+	 */
 	private Map<String, Prover> proverMap = new HashMap<String, Prover>();
 
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
+	private JTrologProverFactory() {
+	}
+	
 	@Override
 	public Prover getProver(String name) {
 		Prover prover = null;

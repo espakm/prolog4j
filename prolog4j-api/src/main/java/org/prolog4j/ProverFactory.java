@@ -167,10 +167,7 @@ public final class ProverFactory {
 					+ Arrays.toString(API_COMPATIBILITY_LIST));
 //			reportFailure("See " + VERSION_MISMATCH + " for further details.");
 		} catch (java.lang.NoSuchFieldError nsfe) {
-			// given our large user base and Prolog4J's commitment to backward
-			// compatibility, we cannot cry here. Only for implementations
-			// which willingly declare a REQUESTED_API_VERSION field do we
-			// emit compatibility warnings.
+			reportFailure("The binding does not declare its compatibility list.");
 		} catch (Throwable e) {
 			// we should never reach here
 			reportFailure("Unexpected problem occured during version sanity check", e);
@@ -181,7 +178,8 @@ public final class ProverFactory {
 	 * We need to use the name of the StaticProverBinder class, we can't
 	 * reference the class itself.
 	 */
-	private static String STATIC_PROVER_BINDER_PATH = "org/prolog4j/impl/StaticProverBinder.class";
+	private static final String STATIC_PROVER_BINDER_PATH =
+			"org/prolog4j/impl/StaticProverBinder.class";
 
 	/**
 	 * Checks if there is only one Prolog4J binding in the class path.
@@ -267,11 +265,11 @@ public final class ProverFactory {
 	/**
 	 * Reports a failure to the standard error.
 	 * 
-	 * @param msg the message
+	 * @param message the message
 	 * @param t the exception or error that caused the failure
 	 */
-	public static void reportFailure(String msg, Throwable t) {
-		System.err.println(msg);
+	public static void reportFailure(String message, Throwable t) {
+		System.err.println(message);
 		System.err.println("Reported exception:");
 		t.printStackTrace();
 	}
@@ -279,10 +277,10 @@ public final class ProverFactory {
 	/**
 	 * Reports a failure to the standard error.
 	 * 
-	 * @param msg the message
+	 * @param message the message
 	 */
-	public static void reportFailure(String msg) {
-		System.err.println("Prolog4J: " + msg);
+	public static void reportFailure(String message) {
+		System.err.printf("Prolog4J: %s", message);
 	}
 
 }
