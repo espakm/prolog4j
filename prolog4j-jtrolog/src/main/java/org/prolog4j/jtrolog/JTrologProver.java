@@ -1,4 +1,4 @@
-package org.prolog4j.jTrolog;
+package org.prolog4j.jtrolog;
 
 import org.prolog4j.AbstractProver;
 import org.prolog4j.Query;

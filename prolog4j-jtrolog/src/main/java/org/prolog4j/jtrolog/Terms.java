@@ -1,4 +1,4 @@
-package org.prolog4j.jTrolog;
+package org.prolog4j.jtrolog;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -334,14 +334,14 @@ final class Terms {
 	}
 
 	static int listSize(Struct list) {
-		int L = 0;
+		int size = 0;
 		while (list != Term.emptyList) {
 			if (!list.name.equals(".") || list.arity != 2 || !(list.getArg(1) instanceof Struct))
 				throw new RuntimeException("It's not a list!");
-			++L;
+			++size;
 			list = (Struct) list.getArg(1);
 		}
-		return L;
+		return size;
 	}
 
 }

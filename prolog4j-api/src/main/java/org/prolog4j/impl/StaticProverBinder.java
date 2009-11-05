@@ -33,21 +33,18 @@ import org.prolog4j.IProverFactory;
  * This class is meant to provide a dummy StaticProverBinder to the prolog4j-api
  * module. Real implementations are found in each Prolog4J binding project, e.g.
  * prolog4j-tuprolog, prolog4j-jtrolog etc.
- * 
- * @author Ceki G&uuml;lc&uuml;
  */
 public final class StaticProverBinder {
 
 	/**
 	 * The unique instance of this class.
-	 * 
 	 */
 	private static final StaticProverBinder SINGLETON = new StaticProverBinder();
 
 	/**
-	 * Return the singleton of this class.
+	 * Returns the single instance of this class.
 	 * 
-	 * @return the StaticProverBinder singleton
+	 * @return the StaticProverBinder instance for a specific implementation
 	 */
 	public static StaticProverBinder getSingleton() {
 		return SINGLETON;
@@ -58,7 +55,7 @@ public final class StaticProverBinder {
 	 * against. The value of this field is usually modified with each release.
 	 * To avoid constant folding by the compiler, this field must *not* be final!
 	 */
-	public static String REQUESTED_API_VERSION = "1.5.9"; // !final
+	public static String REQUESTED_API_VERSION = "0.1.2";
 
 	/**
 	 * Private constructor to prevent instantiation.

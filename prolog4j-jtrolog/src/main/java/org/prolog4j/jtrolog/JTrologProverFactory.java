@@ -1,4 +1,4 @@
-package org.prolog4j.jTrolog;
+package org.prolog4j.jtrolog;
 
 import java.util.HashMap;
 import java.util.Map;

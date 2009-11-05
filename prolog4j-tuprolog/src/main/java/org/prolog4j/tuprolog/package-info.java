@@ -1,4 +1,4 @@
 /**
- * This package contains the tuProlog binding for the Prolog4J API.
+ * This package contains the tuProlog implementation of the Prolog4J API.
  */
 package org.prolog4j.tuprolog;
