@@ -1,6 +1,7 @@
 package org.prolog4j;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a Prolog query. It is supposed to be created by 
@@ -8,19 +9,19 @@ import java.util.ArrayList;
  */
 public abstract class Query {
 
-	/** The goal to be solved. */
+	/** The Prolog goal to be solved. */
 	private final String goal;
 	
-	/** The name of the input variables of the goal. */
-	protected final ArrayList<String> inputVarNames;
+	/** The name of the named placeholders of the goal. */
+	private final ArrayList<String> placeholderNames;
 	
 	/**
 	 * Creates a query object.
 	 * 
-	 * @param goal the prolog goal
+	 * @param goal the Prolog goal
 	 */
-	protected Query(final String goal) {
-		inputVarNames = new ArrayList<String>();
+	protected Query(String goal) {
+		placeholderNames = new ArrayList<String>();
 		StringBuilder goalB = new StringBuilder(goal);
 		String newVarPrefix = null;
 		int end = 0;
@@ -42,25 +43,33 @@ public abstract class Query {
 					newVarPrefix = findNewVarPrefix(goal);
 				}
 				String variable = newVarPrefix + i;
-				inputVarNames.add(variable);
+				placeholderNames.add(variable);
 				goalB.replace(end, end + 2, variable);
 			} else {
-				inputVarNames.add(goalB.substring(start + 1, end));
+				placeholderNames.add(goalB.substring(start + 1, end));
 				goalB.delete(end, end + 2);
 			}
 		}
 		this.goal = goalB.toString();
-		inputVarNames.trimToSize();
+		placeholderNames.trimToSize();
 	}
 	
 	/**
-	 * Returns the Prolog goal to be solved. It may differ from the original 
-	 * goal passed to the constructor.
+	 * Returns the Prolog goal to be solved. The placeholders are removed from
+	 * it, so it may differ from the original goal passed to the constructor.
 	 * 
-	 * @return the goal to be solved
+	 * @return the Prolog goal to be solved
 	 */
 	protected String getGoal() {
 		return goal;
+	}
+
+	/**
+	 * Returns a list with the name of the place holders in the query.
+	 * @return the placeholderNames
+	 */
+	protected List<String> getPlaceholderNames() {
+		return placeholderNames;
 	}
 
 	/**
@@ -69,7 +78,7 @@ public abstract class Query {
 	 * @param goal the goal
 	 * @return a new, not conflicting variable name
 	 */
-	private String findNewVarPrefix(final String goal) {
+	private String findNewVarPrefix(String goal) {
 		if (!goal.contains("P4J_")) {
 			return "P4J_";
 		}
@@ -84,7 +93,7 @@ public abstract class Query {
 	/**
 	 * Solves the Prolog goal and returns an object using which the individual
 	 * solutions can be iterated over. The actual arguments will be bound to the
-	 * variables before solving the goal.
+	 * placeholders before solving the goal.
 	 * 
 	 * @param <A>
 	 *            the type of an element of the solutions

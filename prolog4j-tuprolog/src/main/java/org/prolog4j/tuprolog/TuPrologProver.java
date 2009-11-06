@@ -11,8 +11,6 @@ import alice.tuprolog.Theory;
 /**
  * Represents a Prolog knowledge base and provides methods for solving queries
  * on it. The prover itself is not responsible for processing the solutions.
- * 
- * @see org.prolog4j.impl.Solution
  */
 public class TuPrologProver extends AbstractProver {
 
@@ -29,15 +27,26 @@ public class TuPrologProver extends AbstractProver {
 	// });
 	// }
 
+	/** Class version for serialization. */
 	private static final long serialVersionUID = 1L;
 	
-	protected final Prolog engine;
+	/**
+	 * The tuProlog engine that is used for storing the knowledge base and 
+	 * solving queries on it.
+	 */
+	private final Prolog engine;
 
-	public TuPrologProver(String name) {
-		super(name);
+	/**
+	 * Creates a tuProlog prover of the given name.
+	 */
+	TuPrologProver() {
 		engine = new Prolog();
 	}
 
+	/**
+	 * Returns the tuProlog engine used by the prover.
+	 * @return the tuProlog engine
+	 */
 	public Prolog getEngine() {
 		return engine;
 	}
@@ -68,8 +77,9 @@ public class TuPrologProver extends AbstractProver {
 	@Override
 	public void addTheory(String... theory) {
 		StringBuilder sb = new StringBuilder();
-		for (String factOrRule : theory)
+		for (String factOrRule : theory) {
 			sb.append(factOrRule).append('\n');
+		}
 		try {
 			engine.addTheory(new Theory(sb.toString()));
 		} catch (InvalidTheoryException e) {

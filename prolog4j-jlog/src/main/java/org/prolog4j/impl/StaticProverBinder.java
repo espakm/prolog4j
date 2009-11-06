@@ -64,13 +64,12 @@ public final class StaticProverBinder {
 	/**
 	 * The IProverFactory instance returned by the {@link #getProverFactory}.
 	 */
-	private final IProverFactory proverFactory;
+	private final IProverFactory proverFactory = JLogProverFactory.getInstance();
 
 	/**
 	 * Private constructor to prevent instantiation.
 	 */
 	private StaticProverBinder() {
-		proverFactory = JLogProverFactory.getInstance();
 	}
 
 	/**

@@ -1,10 +1,7 @@
 package org.prolog4j.jlog;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.prolog4j.AbstractProverFactory;
 import org.prolog4j.Prover;
-import org.prolog4j.IProverFactory;
 
 /**
  * An implementation of {@link IProverFactory} which always returns
@@ -12,7 +9,7 @@ import org.prolog4j.IProverFactory;
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
-public final class JLogProverFactory implements IProverFactory {
+public final class JLogProverFactory extends AbstractProverFactory {
 
 	/**
 	 * The unique instance of this class.
@@ -29,27 +26,13 @@ public final class JLogProverFactory implements IProverFactory {
 	}
 
 	/**
-	 * Stores the provers assigned to their names.
-	 */
-	private Map<String, Prover> proverMap = new HashMap<String, Prover>();
-
-	/**
 	 * Private constructor to prevent instantiation.
 	 */
 	private JLogProverFactory() {
 	}
-	
+
 	@Override
-	public Prover getProver(String name) {
-		Prover prover = null;
-		// protect against concurrent access of the proverMap
-		synchronized (this) {
-			prover = proverMap.get(name);
-			if (prover == null) {
-				prover = new JLogProver(name);
-				proverMap.put(name, prover);
-			}
-		}
-		return prover;
+	protected Prover createProver() {
+		return new JLogProver();
 	}
 }

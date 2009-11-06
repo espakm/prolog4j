@@ -26,6 +26,21 @@ public class InvalidQuery extends RuntimeException {
 	}
 	
 	/**
+	 * Constructs an InvalidQuery exception. It takes as its argument the Prolog
+	 * query that cannot be processed.
+	 * It takes the original exception (that has been thrown by the inherent 
+	 * Prolog implementation) as another argument.
+	 * 
+	 * @param query the syntactically incorrect Prolog query
+	 * @param cause the original exception thrown by the implementation
+	 */
+	public InvalidQuery(String query, Throwable cause) {
+		super(String.format("The following query is syntactically incorrect: \"%s\".", query),
+				cause);
+		this.query = query;
+	}
+	
+	/**
 	 * Returns the query that caused the exception.
 	 * 
 	 * @return the syntactically incorrect Prolog query

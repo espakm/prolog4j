@@ -8,25 +8,37 @@ import ubc.cs.JLog.Foundation.jPrologAPI;
 /**
  * Represents a Prolog knowledge base and provides methods for solving queries
  * on it. The prover itself is not responsible for processing the solutions.
- * 
- * @see org.prolog4j.impl.Solution
  */
 public class JLogProver extends AbstractProver {
 
 	/** Class version for serialization. */
 	private static final long serialVersionUID = 1L;
 	
-	protected final jPrologAPI prolog;
+	/**
+	 * The JLog engine that is used for storing the knowledge base and 
+	 * solving queries on it.
+	 */
+	private final jPrologAPI engine;
 
-	public JLogProver(String name) {
-		super(name);
-		prolog = new jPrologAPI("");
-		prolog.setTranslation(new TermTranslation());
+	/**
+	 * Creates a JLog prover.
+	 */
+	JLogProver() {
+		engine = new jPrologAPI("");
+		engine.setTranslation(new TermTranslation());
+	}
+
+	/**
+	 * Returns the jTrolog engine used by the prover.
+	 * @return the jTrolog engine
+	 */
+	public jPrologAPI getEngine() {
+		return engine;
 	}
 
 	@Override
 	public Query query(String goal) {
-		return new JLogQuery(prolog, goal);
+		return new JLogQuery(engine, goal);
 	}
 
 	@Override
@@ -36,15 +48,16 @@ public class JLogProver extends AbstractProver {
 
 	@Override
 	public void addTheory(String theory) {
-		prolog.consultSource(theory);
+		engine.consultSource(theory);
 	}
 
 	@Override
 	public void addTheory(String... theory) {
 		StringBuilder sb = new StringBuilder();
-		for (String factOrRule : theory)
+		for (String factOrRule : theory) {
 			sb.append(factOrRule).append('\n');
-		prolog.consultSource(sb.toString());
+		}
+		engine.consultSource(sb.toString());
 	}
 
 }

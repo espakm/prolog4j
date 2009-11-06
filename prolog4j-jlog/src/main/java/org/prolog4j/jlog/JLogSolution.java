@@ -26,10 +26,16 @@ import ubc.cs.JLog.Terms.jTerm;
  */
 public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 
+	/** The JLog engine that is used for solving the query. */
 	private final jPrologAPI prolog;
+
+	/** The name of the output variables of the query. */
 	private String[] outputVarNames;
 
+	/** Stores the bindings of one solution of the query. */
 	private Hashtable<String, Object> solution;
+
+	/** True if the query has a solution, otherwise false. */
 	private final boolean success;
 
 //	final static jTermTranslation translator;
@@ -74,8 +80,9 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		}
 		outputVarNames = new String[solution.size()];
 		int i = 0;
-		for (String var: solution.keySet())
+		for (String var: solution.keySet()) {
 			outputVarNames[i++] = var;
+		}
 		defaultOutputVariable = outputVarNames[outputVarNames.length - 1];
 	}
 
@@ -102,16 +109,18 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		SolutionIterator<S> it = iterator();
 		while (it.hasNext()) {
 			it.next();
-			for (int i = 0; i < collections.length; ++i)
+			for (int i = 0; i < collections.length; ++i) {
 				collections[i].add(it.get(outputVarNames[i]));
+			}
 		}
 	}
 
 	@Override
 	public List<?>[] toLists() {
 		List<?>[] lists = new List<?>[outputVarNames.length];
-		for (int i = 0; i < lists.length; ++i)
+		for (int i = 0; i < lists.length; ++i) {
 			lists[i] = new ArrayList();
+		}
 		collect(lists);
 		return lists;
 	}

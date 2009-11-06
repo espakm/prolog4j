@@ -4,40 +4,15 @@ import java.io.Serializable;
 
 
 /**
- * Serves as base class for named prover implementation. More significantly,
- * this class establishes deserialization behavior. See @see #readResolve.
- * 
- * @author Ceki Gulcu
- * @author Miklós Espák
+ * Serves as base class for prover implementation.
  */
 public abstract class AbstractProver implements Prover, Serializable {
 
 	/** Class version for serialization. */
 	private static final long serialVersionUID = 1L;
 	
-	/** The name of the prover. */
-	private String name;
-
-	/**
-	 * Initializes an AbstractProver object.
-	 * 
-	 * @param name the name of the prover
-	 */
-	protected AbstractProver(String name) {
-		this.name = name;
-	}
-	
-	/**
-	 * Returns the name of the prover.
-	 * 
-	 * @return the name of the prover
-	 */
-	public String getName() {
-		return name;
-	}
-
 	@Override
-	public <A> Solution<A> solve(final String goal, final Object... actualArgs) {
+	public final <A> Solution<A> solve(final String goal, final Object... actualArgs) {
 		return query(goal).solve(actualArgs);
 	}
 	
@@ -58,10 +33,5 @@ public abstract class AbstractProver implements Prover, Serializable {
 //		// TODO The knowledge base is not restored this way.
 //		return ProverFactory.getProver(getName());
 //	}
-
-	@Override
-	public String toString() {
-		return String.format("%s(%s)", getClass().getName(), getName());
-	}
 
 }

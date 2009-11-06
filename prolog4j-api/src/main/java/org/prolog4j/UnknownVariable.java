@@ -29,6 +29,24 @@ public class UnknownVariable extends RuntimeException {
 	}
 	
 	/**
+	 * Constructs an UnknownVariable exception. It takes the name of the absent
+	 * variable as its argument. The exception is thrown when you want to get 
+	 * the value of a variable that does not occur in the query being processed.
+	 * It takes the original exception (that has been thrown by the inherent 
+	 * Prolog implementation) as another argument.
+	 * 
+	 * @param variable
+	 * 				the name of the variable whose value was required but does
+	 * 				not exist in the query
+	 * @param cause the original exception thrown by the implementation
+	 */
+	public UnknownVariable(String variable, Throwable cause) {
+		super(String.format("The following variable does not occur in the query: %s.", variable),
+				cause);
+		this.variable = variable;
+	}
+	
+	/**
 	 * Returns the name of the variable that caused the exception.
 	 * 
 	 * @return the name of the variable that is absent in the query being processed

@@ -23,7 +23,7 @@ import alice.tuprolog.Var;
  */
 public class TuPrologSolution<S> extends Solution<S> {
 
-	/** The tuProlog engine. */
+	/** The tuProlog engine that is used for solving the query. */
 	private final Prolog prolog;
 	
 	/** The list of variables occurring in the query. */

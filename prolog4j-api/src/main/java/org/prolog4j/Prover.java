@@ -1,7 +1,7 @@
 package org.prolog4j;
 
 /**
- * A Prover objects represents a Prolog knowledge base, on which you can create 
+ * A Prover object represents a Prolog knowledge base, on which you can create 
  * and solve queries. The implementations of this interface should not provide 
  * public constructors. The Prover instances should be created through {@link 
  * ProverFactory#getProver()}.
@@ -10,10 +10,8 @@ public interface Prover {
 
 	/**
 	 * Solves a Prolog goal and returns an object using which the individual
-	 * solutions can be iterated over. The goal must be a single compound term
-	 * whose arguments are variables. The arity of the goal term has to equal
-	 * the number of actual arguments. The actual arguments will be bound to the
-	 * variables before solving the goal.
+	 * solutions can be iterated over. It is equivalent with the following:
+	 * <code>query(goal).solve(actualArgs)</code>
 	 * 
 	 * @param <A>
 	 *            the type of an element of the solutions
@@ -22,11 +20,12 @@ public interface Prover {
 	 * @param actualArgs
 	 *            the actual arguments of the goal
 	 * @return an object for traversing the solutions
+	 * @see Query#solve(Object...)
 	 */
 	<A> Solution<A> solve(String goal, Object... actualArgs);
 
 	/**
-	 * Creates a Prolog query that can be solved later.
+	 * Creates a Prolog query that can be solved later. 
 	 * 
 	 * @param goal
 	 *            the Prolog goal

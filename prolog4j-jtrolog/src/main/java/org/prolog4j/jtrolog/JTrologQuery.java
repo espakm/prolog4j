@@ -1,35 +1,67 @@
 package org.prolog4j.jtrolog;
 
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import jTrolog.engine.Prolog;
+import jTrolog.errors.InvalidTermException;
 import jTrolog.parser.Parser;
 import jTrolog.terms.Struct;
 import jTrolog.terms.Term;
 import jTrolog.terms.Var;
 
+import org.prolog4j.InvalidQuery;
 import org.prolog4j.Query;
 import org.prolog4j.Solution;
+import org.prolog4j.UnknownVariable;
 
+/**
+ * The jTrolog implementation of the Query class.
+ */
 public class JTrologQuery extends Query {
 
+	/** The jTrolog engine used to process this query. */
 	private Prolog engine;
+	
+	/** The names of the output variables of the goal. */
 	private String[] outputVarNames;
+
+	/** The jTrolog representation of the goal to be solved. */
 	private Struct sGoal;
+
+	/** The jTrolog variables representing the input variables of the goal. */
 	private Var[] vars;
-	private LinkedList<Var> inputVars;
+	
+	/** 
+	 * This field stores those elements of {@link inputVars} that are still not
+	 * bound.
+	 */
+	private List<Var> unboundVars;
+	
+	/** The name of the variable that is of special interest when solving the goal. */
 	private String defaultVarName;
 	
+	/**
+	 * Creates a JTrolog query object.
+	 * 
+	 * @param engine the jTrolog engine to process the query
+	 * @param goal the Prolog goal to be solved
+	 */
 	protected JTrologQuery(Prolog engine, String goal) {
 		super(goal);
 		this.engine = engine;
 		Parser parser = new Parser(getGoal());
-		sGoal = (Struct) parser.nextTerm(false);
+		try {
+			sGoal = (Struct) parser.nextTerm(false);
+		} catch (InvalidTermException e) {
+			throw new InvalidQuery(getGoal());
+		}
 		vars = sGoal.getVarList();
-		inputVars = new LinkedList<Var>();
+		unboundVars = new LinkedList<Var>();
 		for (Var var: vars) {
-			if (inputVarNames.contains(var.toString())) {
-				inputVars.add(var);
+			if (getPlaceholderNames().contains(var.toString())) {
+				unboundVars.add(var);
 			}
 		}
 		outputVarNames = new String[vars.length];
@@ -48,7 +80,7 @@ public class JTrologQuery extends Query {
 	@Override
 	public <A> Solution<A> solve(Object... actualArgs) {
 		int i = 0;
-		for (Var var: inputVars) {
+		for (Var var: unboundVars) {
 			sGoal = new Struct(
 						",", 
 						new Term[]{
@@ -64,24 +96,26 @@ public class JTrologQuery extends Query {
 		sGoal = new Struct(
 					",", 
 					new Term[]{new Struct("=", new Term[]{var, Terms.toTerm(value)}), sGoal});
-		inputVars.remove(var);
+		unboundVars.remove(var);
 		return this;
 	}
 
 	@Override
 	public Query bind(String variable, Object value) {
-		for (Var inputVar: inputVars) {
-			if (inputVar.toString().equals(variable)) {
+		Iterator<Var> it = unboundVars.iterator();
+		while (it.hasNext()) {
+			Var v = it.next();
+			if (v.toString().equals(variable)) {
 				sGoal = new Struct(
 						",", 
 						new Term[]{
 								new Struct("=", 
-										new Term[]{inputVar, Terms.toTerm(value)}), sGoal});
-				inputVars.remove(inputVar);
+										new Term[]{v, Terms.toTerm(value)}), sGoal});
+				it.remove();
 				return this;
 			}
 		}
-		throw new RuntimeException("No such variable.");
+		throw new UnknownVariable(variable);
 	}
 
 }

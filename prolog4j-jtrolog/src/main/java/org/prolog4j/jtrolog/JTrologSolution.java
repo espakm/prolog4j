@@ -20,27 +20,35 @@ import jTrolog.terms.Struct;
  */
 public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 
-	private final Prolog prolog;
+	/** The jTrolog engine that is used for solving the query. */
+	private final Prolog engine;
+	
+	/** The name of the output variables of the query. */
 	private String[] outputVarNames;
 
+	/** 
+	 * This jTrolog object provides the bindings of one solution of a query.
+	 */
 	private Solution solution;
+	
+	/** True if the query has a solution, otherwise false. */
 	private final boolean success;
 
 	/**
 	 * Creates a <tt>JTrologSolution</tt> object for traversing through the solutions
 	 * for a Prolog query.
 	 * 
-	 * @param prolog jTrolog engine
+	 * @param engine jTrolog engine
 	 * @param sGoal a Prolog goal
 	 * @param defaultVarName the name of the output variable of special interest
 	 * @param outputVarNames the name of each output variable
 	 */
-	JTrologSolution(Prolog prolog, Struct sGoal, String defaultVarName, String[] outputVarNames) {
-		this.prolog = prolog;
+	JTrologSolution(Prolog engine, Struct sGoal, String defaultVarName, String[] outputVarNames) {
+		this.engine = engine;
 		this.defaultOutputVariable = defaultVarName;
 		this.outputVarNames = outputVarNames;
 		try {
-			solution = prolog.solve(sGoal);
+			solution = engine.solve(sGoal);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
@@ -89,12 +97,14 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	@Override
 	protected void fetch() {
 		try {
-			hasNext = prolog.hasOpenAlternatives() && (solution = prolog.solveNext()).success();
+			hasNext = engine.hasOpenAlternatives()
+						&& (solution = engine.solveNext()).success();
 			// if (!hasNext)
-			// prolog.solveHalt();
+			// engine.solveHalt();
 			fetched = true;
 		} catch (NoMorePrologSolutions e) {
 			// Should not happen.
+			throw null;
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

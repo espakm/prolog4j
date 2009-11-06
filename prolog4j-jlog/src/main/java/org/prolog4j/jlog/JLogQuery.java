@@ -8,11 +8,11 @@ import org.prolog4j.Solution;
 import ubc.cs.JLog.Foundation.jPrologAPI;
 
 /**
- * JLog implementation of the Query class.
+ * The JLog implementation of the Query class.
  */
 class JLogQuery extends Query {
 
-	/** JLog engine. */
+	/** The JLog engine used to process this query. */
 	private final jPrologAPI engine;
 
 	/** Stores the initial binding of variables. */
@@ -27,13 +27,13 @@ class JLogQuery extends Query {
 	JLogQuery(jPrologAPI engine, String goal) {
 		super(goal);
 		this.engine = engine;
-		this.bindings = new Hashtable<String, Object>(inputVarNames.size());
+		this.bindings = new Hashtable<String, Object>(getPlaceholderNames().size());
 	}
 
 	@Override
 	public <A> Solution<A> solve(Object... actualArgs) {
 		int i = 0;
-		for (String var: inputVarNames) {
+		for (String var: getPlaceholderNames()) {
 			if (!bindings.contains(var)) {
 				bindings.put(var, actualArgs[i++]);
 			}
@@ -43,7 +43,7 @@ class JLogQuery extends Query {
 
 	@Override
 	public Query bind(int argument, Object value) {
-		bindings.put(inputVarNames.get(argument), value);
+		bindings.put(getPlaceholderNames().get(argument), value);
 		return this;
 	}
 

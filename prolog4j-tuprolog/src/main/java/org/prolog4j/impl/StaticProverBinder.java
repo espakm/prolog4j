@@ -63,13 +63,12 @@ public final class StaticProverBinder {
 	 * The IProverFactory instance returned by the {@link #getProverFactory}
 	 * method.
 	 */
-	private final IProverFactory proverFactory;
+	private final IProverFactory proverFactory = TuPrologProverFactory.getInstance();
 
 	/**
 	 * Private constructor to prevent instantiation.
 	 */
 	private StaticProverBinder() {
-		proverFactory = TuPrologProverFactory.getInstance();
 	}
 
 	/**

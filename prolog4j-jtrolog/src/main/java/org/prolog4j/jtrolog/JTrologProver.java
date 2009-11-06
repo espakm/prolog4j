@@ -10,8 +10,6 @@ import jTrolog.engine.Prolog;
 /**
  * Represents a Prolog knowledge base and provides methods for solving queries
  * on it. The prover itself is not responsible for processing the solutions.
- * 
- * @see org.prolog4j.impl.Solution
  */
 public class JTrologProver extends AbstractProver {
 
@@ -28,15 +26,26 @@ public class JTrologProver extends AbstractProver {
 	// });
 	// }
 
+	/** Class version for serialization. */
 	private static final long serialVersionUID = 1L;
 	
-	protected final Prolog engine;
+	/**
+	 * The jTrolog engine that is used for storing the knowledge base and 
+	 * solving queries on it.
+	 */
+	private final Prolog engine;
 
-	public JTrologProver(String name) {
-		super(name);
+	/**
+	 * Creates a jTrolog prover of the given name.
+	 */
+	JTrologProver() {
 		engine = new Prolog();
 	}
 
+	/**
+	 * Returns the jTrolog engine used by the prover.
+	 * @return the jTrolog engine
+	 */
 	public Prolog getEngine() {
 		return engine;
 	}
@@ -67,8 +76,9 @@ public class JTrologProver extends AbstractProver {
 	@Override
 	public void addTheory(String... theory) {
 		StringBuilder sb = new StringBuilder();
-		for (String factOrRule : theory)
+		for (String factOrRule : theory) {
 			sb.append(factOrRule).append('\n');
+		}
 		try {
 			engine.addTheory(sb.toString());
 		} catch (PrologException e) {
