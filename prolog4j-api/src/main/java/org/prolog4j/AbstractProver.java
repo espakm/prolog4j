@@ -10,10 +10,25 @@ public abstract class AbstractProver implements Prover, Serializable {
 
 	/** Class version for serialization. */
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The conversion policy used by this prover.
+	 */
+	private final ConversionPolicy conversionPolicy = new ConversionPolicy(this);
 	
 	@Override
 	public final <A> Solution<A> solve(final String goal, final Object... actualArgs) {
 		return query(goal).solve(actualArgs);
+	}
+	
+	@Override
+	public ConversionPolicy getConversionPolicy() {
+		return conversionPolicy;
+	}
+	
+	@Override
+	public boolean match(Object term1, Object term2) {
+		throw new UnsupportedOperationException();
 	}
 	
 //	/**
