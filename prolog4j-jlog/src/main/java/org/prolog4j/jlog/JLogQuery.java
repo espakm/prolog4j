@@ -12,6 +12,8 @@ import ubc.cs.JLog.Foundation.jPrologAPI;
  */
 class JLogQuery extends Query {
 
+	private final JLogProver prover;
+	
 	/** The JLog engine used to process this query. */
 	private final jPrologAPI engine;
 
@@ -24,9 +26,10 @@ class JLogQuery extends Query {
 	 * @param engine the JLog engine
 	 * @param goal the Prolog goal
 	 */
-	JLogQuery(jPrologAPI engine, String goal) {
+	JLogQuery(JLogProver prover, String goal) {
 		super(goal);
-		this.engine = engine;
+		this.prover = prover;
+		this.engine = prover.getEngine();
 		this.bindings = new Hashtable<String, Object>(getPlaceholderNames().size());
 	}
 
@@ -38,7 +41,7 @@ class JLogQuery extends Query {
 				bindings.put(var, actualArgs[i++]);
 			}
 		}
-		return new JLogSolution<A>(engine, getGoal(), bindings);
+		return new JLogSolution<A>(prover, getGoal(), bindings);
 	}
 
 	@Override

@@ -14,13 +14,16 @@ import alice.tuprolog.InvalidTermException;
 import alice.tuprolog.Parser;
 import alice.tuprolog.Prolog;
 import alice.tuprolog.Struct;
+import alice.tuprolog.Term;
 import alice.tuprolog.Var;
 
 /**
  * The tuProlog implementation of the Query class.
  */
 class TuPrologQuery extends Query {
-
+	
+	private TuPrologProver prover;
+	
 	/** The tuProlog engine used to process this query. */
 	private final Prolog engine;
 
@@ -42,9 +45,10 @@ class TuPrologQuery extends Query {
 	 * @param engine the tuProlog engine to process the query
 	 * @param goal the Prolog goal to be solved
 	 */
-	TuPrologQuery(Prolog engine, String goal) {
+	TuPrologQuery(TuPrologProver prover, String goal) {
 		super(goal);
-		this.engine = engine;
+		this.prover = prover;
+		this.engine = prover.getEngine();
 		inputVars = new Var[getPlaceholderNames().size()];
 		try {
 			Parser parser = new Parser(getGoal());
@@ -67,15 +71,16 @@ class TuPrologQuery extends Query {
 		int i = 0;
 		for (Var var: unboundVars) {
 			var.free();
-			engine.unify(var, Terms.toTerm(actualArgs[i++]));
+//			engine.unify(var, terms.toTerm(actualArgs[i++]));
+			engine.unify(var, (Term) prover.getConversionPolicy().convertObject(actualArgs[i++]));
 		}
-		return new TuPrologSolution<A>(engine, sGoal);
+		return new TuPrologSolution<A>(prover, sGoal);
 	}
 
 	@Override
 	public Query bind(int argument, Object value) {
 		inputVars[argument].free();
-		engine.unify(inputVars[argument], Terms.toTerm(value));
+		engine.unify(inputVars[argument], (Term) prover.getConversionPolicy().convertObject(value));
 		unboundVars.remove(inputVars[argument]);
 		return this;
 	}
@@ -87,7 +92,7 @@ class TuPrologQuery extends Query {
 			Var v = it.next();
 			if (v.getName().equals(variable)) {
 				v.free();
-				engine.unify(v, Terms.toTerm(value));
+				engine.unify(v, (Term) prover.getConversionPolicy().convertObject(value));
 				it.remove();
 				return this;
 			}

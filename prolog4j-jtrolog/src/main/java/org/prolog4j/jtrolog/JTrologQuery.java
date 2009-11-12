@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import jTrolog.engine.Prolog;
 import jTrolog.errors.InvalidTermException;
 import jTrolog.parser.Parser;
 import jTrolog.terms.Struct;
@@ -21,9 +20,9 @@ import org.prolog4j.UnknownVariable;
  */
 public class JTrologQuery extends Query {
 
-	/** The jTrolog engine used to process this query. */
-	private Prolog engine;
-	
+	/** The jTrolog prover used to process this query. */
+	private JTrologProver prover;
+
 	/** The names of the output variables of the goal. */
 	private String[] outputVarNames;
 
@@ -45,12 +44,12 @@ public class JTrologQuery extends Query {
 	/**
 	 * Creates a JTrolog query object.
 	 * 
-	 * @param engine the jTrolog engine to process the query
+	 * @param prover the jTrolog prover to process the query
 	 * @param goal the Prolog goal to be solved
 	 */
-	protected JTrologQuery(Prolog engine, String goal) {
+	protected JTrologQuery(JTrologProver prover, String goal) {
 		super(goal);
-		this.engine = engine;
+		this.prover = prover;
 		Parser parser = new Parser(getGoal());
 		try {
 			sGoal = (Struct) parser.nextTerm(false);
@@ -84,10 +83,12 @@ public class JTrologQuery extends Query {
 			sGoal = new Struct(
 						",", 
 						new Term[]{
-								new Struct("=", new Term[]{var, Terms.toTerm(actualArgs[i++])}),
+								new Struct("=", new Term[]{var, 
+										(Term) prover.getConversionPolicy().
+										convertObject(actualArgs[i++])}),
 								sGoal});
 		}
-		return new JTrologSolution<A>(engine, sGoal, defaultVarName, outputVarNames);
+		return new JTrologSolution<A>(prover, sGoal, defaultVarName, outputVarNames);
 	}
 
 	@Override
@@ -95,7 +96,8 @@ public class JTrologQuery extends Query {
 		Var var = vars[argument];
 		sGoal = new Struct(
 					",", 
-					new Term[]{new Struct("=", new Term[]{var, Terms.toTerm(value)}), sGoal});
+					new Term[]{new Struct("=", new Term[]{var, 
+							(Term) prover.getConversionPolicy().convertObject(value)}), sGoal});
 		unboundVars.remove(var);
 		return this;
 	}
@@ -110,7 +112,9 @@ public class JTrologQuery extends Query {
 						",", 
 						new Term[]{
 								new Struct("=", 
-										new Term[]{v, Terms.toTerm(value)}), sGoal});
+										new Term[]{v, 
+										(Term) prover.getConversionPolicy().
+										convertObject(value)}), sGoal});
 				it.remove();
 				return this;
 			}

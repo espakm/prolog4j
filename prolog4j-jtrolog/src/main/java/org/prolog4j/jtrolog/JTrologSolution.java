@@ -20,6 +20,9 @@ import jTrolog.terms.Struct;
  */
 public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 
+	/** The jTrolog prover used to process this query. */
+	private JTrologProver prover;
+	
 	/** The jTrolog engine that is used for solving the query. */
 	private final Prolog engine;
 	
@@ -38,13 +41,15 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	 * Creates a <tt>JTrologSolution</tt> object for traversing through the solutions
 	 * for a Prolog query.
 	 * 
-	 * @param engine jTrolog engine
+	 * @param prover jTrolog prover
 	 * @param sGoal a Prolog goal
 	 * @param defaultVarName the name of the output variable of special interest
 	 * @param outputVarNames the name of each output variable
 	 */
-	JTrologSolution(Prolog engine, Struct sGoal, String defaultVarName, String[] outputVarNames) {
-		this.engine = engine;
+	JTrologSolution(JTrologProver prover, Struct sGoal, String defaultVarName, 
+			String[] outputVarNames) {
+		this.prover = prover;
+		this.engine = prover.getEngine();
 		this.defaultOutputVariable = defaultVarName;
 		this.outputVarNames = outputVarNames;
 		try {
@@ -63,14 +68,14 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	@Override
 	public <A> A get(String variable) {
 		if (clazz == null) {
-			return Terms.<A> toObject(solution.getBinding(variable));
+			return (A) prover.getConversionPolicy().convertTerm(solution.getBinding(variable));
 		}
 		return (A) get(variable, clazz);
 	}
 
 	@Override
 	public <A> A get(String variable, Class<A> type) {
-		return Terms.toObject(solution.getBinding(variable), type);
+		return (A) prover.getConversionPolicy().convertTerm(solution.getBinding(variable), type);
 	}
 
 	@Override

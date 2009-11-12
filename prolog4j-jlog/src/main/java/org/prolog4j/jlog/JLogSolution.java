@@ -2,20 +2,12 @@ package org.prolog4j.jlog;
 
 import java.util.ArrayList;
 import java.util.Collection;
-//import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
 import org.prolog4j.SolutionIterator;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
-//import ubc.cs.JLog.Terms.iTermToObject;
-//import ubc.cs.JLog.Terms.jAtom;
-//import ubc.cs.JLog.Terms.jList;
-//import ubc.cs.JLog.Terms.jListPair;
-//import ubc.cs.JLog.Terms.jNullList;
-import ubc.cs.JLog.Terms.jTerm;
-//import ubc.cs.JLog.Terms.jTermTranslation;
 
 /**
  * The <tt>Solution</tt> class is responsible for traversing through the
@@ -26,6 +18,8 @@ import ubc.cs.JLog.Terms.jTerm;
  */
 public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 
+	private JLogProver prover;
+	
 	/** The JLog engine that is used for solving the query. */
 	private final jPrologAPI prolog;
 
@@ -71,8 +65,9 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 //		translator.RegisterTermToObjectConverter(jNullList.class, listToArray);
 //	}
 	
-	JLogSolution(jPrologAPI prolog, String goal, Hashtable<String, Object> initialBindings) {
-		this.prolog = prolog;
+	JLogSolution(JLogProver prover, String goal, Hashtable<String, Object> initialBindings) {
+		this.prover = prover;
+		this.prolog = prover.getEngine();
 		solution = prolog.query(goal, initialBindings);
 		success = solution != null;
 		if (!success || solution.size() == 0) {
@@ -94,14 +89,17 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	@Override
 	public <A> A get(String variable) {
 		if (clazz == null) {
-			return Terms.<A> toObject((jTerm) solution.get(variable));
+//			return Terms.<A> toObject((jTerm) solution.get(variable));
+			return (A) prover.getConversionPolicy().convertTerm(solution.get(variable));
+//			return (A) solution.get(variable);
 		}
 		return (A) get(variable, clazz);
 	}
 
 	@Override
 	public <A> A get(String variable, Class<A> type) {
-		return Terms.toObject((jTerm) solution.get(variable), type);
+//		return Terms.toObject((jTerm) solution.get(variable), type);
+		return (A) prover.getConversionPolicy().convertTerm(solution.get(variable), type);
 	}
 
 	@Override

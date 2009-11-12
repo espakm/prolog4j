@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.prolog4j.Prover;
 import org.prolog4j.Solution;
 import org.prolog4j.SolutionIterator;
 
@@ -23,6 +24,11 @@ import alice.tuprolog.Var;
  */
 public class TuPrologSolution<S> extends Solution<S> {
 
+	/** The tuProlog prover that is used for solving this query. */
+	private Prover prover;
+
+//	private static final Terms terms = Terms.getInstance();
+
 	/** The tuProlog engine that is used for solving the query. */
 	private final Prolog prolog;
 	
@@ -38,11 +44,12 @@ public class TuPrologSolution<S> extends Solution<S> {
 	/**
 	 * Creates an object, using which the solutions of a query can be accessed.
 	 * 
-	 * @param prolog tuProlog engine
+	 * @param prover the tuProlog prover
 	 * @param goal the goal to be solved
 	 */
-	TuPrologSolution(Prolog prolog, Term goal) {
-		this.prolog = prolog;
+	TuPrologSolution(TuPrologProver prover, Term goal) {
+		this.prover = prover;
+		this.prolog = prover.getEngine();
 		solution = prolog.solve(goal);
 		success = solution.isSuccess();
 		if (!success) {
@@ -78,7 +85,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 	public <A> A get(String variable) {
 		try {
 			if (clazz == null) {
-				return Terms.<A> toObject(solution.getVarValue(variable));
+				return (A) prover.getConversionPolicy().convertTerm(solution.getVarValue(variable));
 			}
 			return (A) get(variable, clazz);
 		} catch (NoSolutionException e) {
@@ -89,8 +96,8 @@ public class TuPrologSolution<S> extends Solution<S> {
 	@Override
 	public <A> A get(String variable, Class<A> type) {
 		try {
-			return Terms.toObject(solution.getVarValue(variable),
-					type);
+			return (A) prover.getConversionPolicy().
+				convertTerm(solution.getVarValue(variable), type);
 		} catch (NoSolutionException e) {
 			throw new RuntimeException(e);
 		}
@@ -110,16 +117,18 @@ public class TuPrologSolution<S> extends Solution<S> {
 	@Override
 	public List<?>[] toLists() {
 		List<?>[] lists = new List<?>[vars.size() - 1];
-		for (int i = 0; i < lists.length; ++i)
+		for (int i = 0; i < lists.length; ++i) {
 			lists[i] = new ArrayList();
+		}
 		collect(lists);
 		return lists;
 	}
 
+	@Override
 	protected void fetch() {
 		try {
 			hasNext = prolog.hasOpenAlternatives()
-			&& (solution = prolog.solveNext()).isSuccess();
+					&& (solution = prolog.solveNext()).isSuccess();
 			// if (!hasNext)
 			// prolog.solveHalt();
 			fetched = true;

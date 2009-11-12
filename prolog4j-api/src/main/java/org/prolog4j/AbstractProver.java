@@ -28,7 +28,8 @@ public abstract class AbstractProver implements Prover, Serializable {
 	
 	@Override
 	public boolean match(Object term1, Object term2) {
-		throw new UnsupportedOperationException();
+		return false;
+//		throw new UnsupportedOperationException();
 	}
 	
 //	/**

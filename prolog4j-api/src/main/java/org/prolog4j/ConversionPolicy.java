@@ -43,7 +43,7 @@ public class ConversionPolicy {
 	 * converter can be applied.
 	 */
 	@SuppressWarnings("unchecked")
-	private HashMap<Class<?>, Converter> objectConverters;
+	private HashMap<Object, Converter> objectConverters;
 	
 	/**
 	 * Represents the reverse insertion order of the keys to 
@@ -52,7 +52,7 @@ public class ConversionPolicy {
 	 * cannot be iterated through reversely, at second the insertion order is
 	 * not affected if a key is re-inserted into the map.)
 	 */
-	private LinkedList<Class<?>> objectPatterns;
+	private LinkedList<Object> objectPatterns;
 	
 	/**
 	 * Constructs an empty <code>ConversionPolicy</code>.
@@ -64,8 +64,24 @@ public class ConversionPolicy {
 		this.prover = prover;
 		termConverters = new HashMap<Object, Converter>();
 		termPatterns = new LinkedList<Object>();
-		objectConverters = new HashMap<Class<?>, Converter>();
-		objectPatterns = new LinkedList<Class<?>>();
+		objectConverters = new HashMap<Object, Converter>();
+		objectPatterns = new LinkedList<Object>();
+	}
+	
+	/**
+	 * Registers a new term converter into the policy. The converter will have
+	 * priority over other converters whose pattern matches the same objects.
+	 * 
+	 * The pattern matches a term if the class of the term is a subclass of
+	 * the pattern.
+	 * 
+	 * @param <T> the type of the terms to convert
+	 * @param pattern the pattern to select the converter to use later
+	 * @param converter the converter
+	 */
+	public <T> void addTermConverter(Class<T> pattern, Converter<T> converter) {
+		termConverters.put(pattern, converter);
+		termPatterns.addFirst(pattern);
 	}
 	
 	/**
@@ -101,6 +117,22 @@ public class ConversionPolicy {
 	}
 	
 	/**
+	 * Registers a new object converter into the policy. The converter will have
+	 * priority over other converters whose pattern matches the same objects.
+	 * 
+	 * The pattern matches an object if the class of the object is a subclass of
+	 * the pattern.
+	 * 
+	 * @param <T> the type of the objects to convert
+	 * @param pattern the pattern to select the converter to use later
+	 * @param converter the converter
+	 */
+	public <T> void addObjectConverter(T pattern, Converter<T> converter) {
+		objectConverters.put(pattern, converter);
+		objectPatterns.addFirst(pattern);
+	}
+	
+	/**
 	 * Converts a term to a regular Java object. If the term is <code>null
 	 * </code> (that represents an unbound Prolog variable) then 
 	 * <code>null</code> is returned.
@@ -123,8 +155,45 @@ public class ConversionPolicy {
 			return null;
 		}
 		for (Object pattern: termPatterns) {
-			if (prover.match(pattern, term)) {
+			if ((pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass()))
+				|| prover.match(pattern, term)) {
 				Object result = termConverters.get(pattern).convert(term);
+				if (result != null) {
+					return result;
+				}
+			}
+		}
+		throw new RuntimeException("No suitable converter found.");
+	}
+	
+	/**
+	 * Converts a term to a regular Java object. If the term is <code>null
+	 * </code> (that represents an unbound Prolog variable) then 
+	 * <code>null</code> is returned.
+	 * 
+	 * The method starts to match the term with the patterns of the term 
+	 * converters in their reverse insertion order. If the term matches one
+	 * then it will be converted by the converter assigned to the pattern. If
+	 * the converter returns <code>null</code> then another applicable converter
+	 * will be looked for.
+	 * 
+	 * An exception is thrown if there is no applicable converter. (The 
+	 * implementations of the Prolog4J API should prevent this situation.)
+	 * 
+	 * @param <T> the type to convert to
+	 * @param term the term to convert
+	 * @param type the type to convert to
+	 * @return the result of the conversion
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T convertTerm(Object term, Class<T> type) {
+		if (term == null) {
+			return null;
+		}
+		for (Object pattern: termPatterns) {
+			if ((pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass()))
+				|| prover.match(pattern, term)) {
+				T result = (T) termConverters.get(pattern).convert(term, type);
 				if (result != null) {
 					return result;
 				}
@@ -157,8 +226,9 @@ public class ConversionPolicy {
 			return null;
 		}
 		Class objectClass = object.getClass();
-		for (Class pattern: objectPatterns) {
-			if (pattern.isAssignableFrom(objectClass)) {
+		for (Object pattern: objectPatterns) {
+			if ((pattern instanceof Class) 
+					&& ((Class) pattern).isAssignableFrom(objectClass)) {
 				return objectConverters.get(pattern).convert(object);
 			}
 		}
