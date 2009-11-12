@@ -91,7 +91,7 @@ public class JLogProver extends AbstractProver {
 	 * The JLog engine that is used for storing the knowledge base and 
 	 * solving queries on it.
 	 */
-	private final jPrologAPI engine;
+	private final transient jPrologAPI engine;
 
 	/**
 	 * Performs no translation at all. Returns the original term as represented
@@ -108,7 +108,7 @@ public class JLogProver extends AbstractProver {
 	/**
 	 * Transforms objects to terms by {@link Terms.toTerm(Object)}.
 	 */
-	private final iObjectToTerm OBJECT_CONVERTER = new iObjectToTerm() {
+	private final transient iObjectToTerm OBJECT_CONVERTER = new iObjectToTerm() {
 		@Override
 		public jTerm createTermFromObject(Object object) {
 			return (jTerm) getConversionPolicy().convertObject(object);

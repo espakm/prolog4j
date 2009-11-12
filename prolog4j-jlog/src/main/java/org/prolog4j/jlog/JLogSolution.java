@@ -18,6 +18,7 @@ import ubc.cs.JLog.Foundation.jPrologAPI;
  */
 public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 
+	/** The JLog prover that is used for solving the query. */
 	private JLogProver prover;
 	
 	/** The JLog engine that is used for solving the query. */
@@ -65,6 +66,13 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 //		translator.RegisterTermToObjectConverter(jNullList.class, listToArray);
 //	}
 	
+	/**
+	 * Constructs a JLogSolution instance.
+	 * 
+	 * @param prover the JLog prover, using which the solutions have to be found
+	 * @param goal the Prolog goal to solve
+	 * @param initialBindings the initial bindings of the variables
+	 */
 	JLogSolution(JLogProver prover, String goal, Hashtable<String, Object> initialBindings) {
 		this.prover = prover;
 		this.prolog = prover.getEngine();

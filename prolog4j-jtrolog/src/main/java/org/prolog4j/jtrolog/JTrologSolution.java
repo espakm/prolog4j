@@ -109,7 +109,6 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 			fetched = true;
 		} catch (NoMorePrologSolutions e) {
 			// Should not happen.
-			throw null;
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

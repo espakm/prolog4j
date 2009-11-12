@@ -59,7 +59,6 @@ public class TuPrologSolution<S> extends Solution<S> {
 			vars = solution.getBindingVars();
 		} catch (NoSolutionException e) {
 			// It cannot happen.
-			throw null;
 		}
 		if (vars.size() > 0) {
 			defaultOutputVariable = varName(vars.size() - 1);

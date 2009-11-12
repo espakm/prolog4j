@@ -67,26 +67,29 @@ public class TuPrologProver extends AbstractProver {
 		}
 	};
 	/** Converts an alice.tuprolog.Long term to a Long object. */
-	private static final Converter<alice.tuprolog.Long> LONG_TERM_CONVERTER = new Converter<alice.tuprolog.Long>() {
-		@Override
-		public Object convert(alice.tuprolog.Long value) {
-			return value.longValue();
-		}
-	};
+	private static final Converter<alice.tuprolog.Long> LONG_TERM_CONVERTER =
+		new Converter<alice.tuprolog.Long>() {
+			@Override
+			public Object convert(alice.tuprolog.Long value) {
+				return value.longValue();
+			}
+		};
 	/** Converts an alice.tuprolog.Float term to a Float object. */
-	private static final Converter<alice.tuprolog.Float> FLOAT_TERM_CONVERTER = new Converter<alice.tuprolog.Float>() {
-		@Override
-		public Object convert(alice.tuprolog.Float value) {
-			return value.floatValue();
-		}
-	};
+	private static final Converter<alice.tuprolog.Float> FLOAT_TERM_CONVERTER =
+		new Converter<alice.tuprolog.Float>() {
+			@Override
+			public Object convert(alice.tuprolog.Float value) {
+				return value.floatValue();
+			}
+		};
 	/** Converts an alice.tuprolog.Double term to a Double object. */
-	private static final Converter<alice.tuprolog.Double> DOUBLE_TERM_CONVERTER = new Converter<alice.tuprolog.Double>() {
-		@Override
-		public Object convert(alice.tuprolog.Double value) {
-			return value.doubleValue();
-		}
-	};
+	private static final Converter<alice.tuprolog.Double> DOUBLE_TERM_CONVERTER =
+		new Converter<alice.tuprolog.Double>() {
+			@Override
+			public Object convert(alice.tuprolog.Double value) {
+				return value.doubleValue();
+			}
+		};
 
 	// static {
 	// GLOBAL.engine.addWarningListener(new WarningListener() {
@@ -115,10 +118,6 @@ public class TuPrologProver extends AbstractProver {
 	 */
 	TuPrologProver() {
 		engine = new Prolog();
-		initConversionPolicy();
-	}
-
-	private void initConversionPolicy() {
 		final ConversionPolicy policy = getConversionPolicy();
 		policy.addObjectConverter(Long.class, LONG_CONVERTER);
 		policy.addObjectConverter(Float.class, FLOAT_CONVERTER);

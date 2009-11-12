@@ -21,11 +21,13 @@ public abstract class Converter<T> {
 	 * Converts an object to another one of a specific type. If the conversion
 	 * is not applicable then it returns <code>null</code>.
 	 * 
-	 * <R> the type 
+	 * @param <R> the type 
 	 * @param object the object to convert
+	 * @param to the type to convert to
 	 * @return the result of the conversion or <code>null</code> if the object
 	 *         cannot be converted
 	 */
+	@SuppressWarnings("unchecked")
 	public <R> R convert(T object, Class<R> to) {
 		if (to == Object.class) {
 			return (R) convert(object);

@@ -22,6 +22,7 @@ import alice.tuprolog.Var;
  */
 class TuPrologQuery extends Query {
 	
+	/** The tuProlog prover used to process this query. */
 	private TuPrologProver prover;
 	
 	/** The tuProlog engine used to process this query. */
@@ -42,7 +43,7 @@ class TuPrologQuery extends Query {
 	/**
 	 * Creates a TuProlog query object.
 	 * 
-	 * @param engine the tuProlog engine to process the query
+	 * @param prover the tuProlog prover to process the query
 	 * @param goal the Prolog goal to be solved
 	 */
 	TuPrologQuery(TuPrologProver prover, String goal) {

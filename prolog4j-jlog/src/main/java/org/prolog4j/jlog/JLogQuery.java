@@ -5,31 +5,26 @@ import java.util.Hashtable;
 import org.prolog4j.Query;
 import org.prolog4j.Solution;
 
-import ubc.cs.JLog.Foundation.jPrologAPI;
-
 /**
  * The JLog implementation of the Query class.
  */
 class JLogQuery extends Query {
 
+	/** The JLog prover used to process this query. */
 	private final JLogProver prover;
 	
-	/** The JLog engine used to process this query. */
-	private final jPrologAPI engine;
-
 	/** Stores the initial binding of variables. */
 	private Hashtable<String, Object> bindings;
 
 	/**
 	 * Creates an object that represents a Prolog query in JLog.
 	 * 
-	 * @param engine the JLog engine
+	 * @param prover the JLog prover
 	 * @param goal the Prolog goal
 	 */
 	JLogQuery(JLogProver prover, String goal) {
 		super(goal);
 		this.prover = prover;
-		this.engine = prover.getEngine();
 		this.bindings = new Hashtable<String, Object>(getPlaceholderNames().size());
 	}
 
