@@ -55,8 +55,8 @@ public class TuPrologProver extends AbstractProver {
 	/** Converts a String object to a term. */
 	private static final Converter<String> STRING_CONVERTER = new Converter<String>() {
 		@Override
-		public Object convert(String s) {
-			return new Struct(s);
+		public Object convert(String value) {
+			return new Struct(value);
 		}
 	};
 	/** Converts an alice.tuprolog.Int term to an Integer object. */
@@ -117,6 +117,7 @@ public class TuPrologProver extends AbstractProver {
 	 * Creates a tuProlog prover of the given name.
 	 */
 	TuPrologProver() {
+		super();
 		engine = new Prolog();
 		final ConversionPolicy policy = getConversionPolicy();
 		policy.addObjectConverter(Long.class, LONG_CONVERTER);
@@ -145,6 +146,18 @@ public class TuPrologProver extends AbstractProver {
 							.previous()), pList);
 				}
 				return pList;
+			}
+		});
+		policy.addObjectConverter(Compound.class, new Converter<Compound>() {
+			@Override
+			public Object convert(Compound value) {
+				String functor = value.getFunctor();
+				Object[] args = value.getArgs();
+				Term[] tArgs = new Term[value.getArity()];
+				for (int i = 0; i < args.length; ++i) {
+					tArgs[i] = (Term) policy.convertObject(args[i]);
+				}
+				return new Struct(functor, tArgs);
 			}
 		});
 		policy.addTermConverter(Int.class, INT_TERM_CONVERTER);

@@ -53,7 +53,7 @@ class TuPrologQuery extends Query {
 		inputVars = new Var[getPlaceholderNames().size()];
 		try {
 			Parser parser = new Parser(getGoal());
-			sGoal = (Struct) parser.nextTerm(false);
+			sGoal = (Struct) parser.nextTerm(true);
 			for (int i = 0, index = 0; i < getPlaceholderNames().size(); ++i, ++index) {
 				Var argVar = new Var(getPlaceholderNames().get(i));
 				Var arg = new Var("J$" + argVar.getOriginalName());

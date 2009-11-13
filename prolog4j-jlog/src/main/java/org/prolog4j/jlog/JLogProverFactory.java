@@ -29,6 +29,7 @@ public final class JLogProverFactory extends AbstractProverFactory {
 	 * Private constructor to prevent instantiation.
 	 */
 	private JLogProverFactory() {
+		super();
 	}
 
 	@Override

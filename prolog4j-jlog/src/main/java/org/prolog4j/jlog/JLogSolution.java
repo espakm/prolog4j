@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.prolog4j.InvalidQuery;
 import org.prolog4j.SolutionIterator;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
+import ubc.cs.JLog.Parser.SyntaxErrorException;
 
 /**
  * The <tt>Solution</tt> class is responsible for traversing through the
@@ -74,9 +76,14 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	 * @param initialBindings the initial bindings of the variables
 	 */
 	JLogSolution(JLogProver prover, String goal, Hashtable<String, Object> initialBindings) {
+		super();
 		this.prover = prover;
 		this.prolog = prover.getEngine();
-		solution = prolog.query(goal, initialBindings);
+		try {
+			solution = prolog.query(goal, initialBindings);
+		} catch (SyntaxErrorException e) {
+			throw new InvalidQuery(goal, e);
+		}
 		success = solution != null;
 		if (!success || solution.size() == 0) {
 			return;

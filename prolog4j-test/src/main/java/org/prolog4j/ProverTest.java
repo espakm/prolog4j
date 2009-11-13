@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,28 +47,19 @@ public class ProverTest {
 	}
 
 	/**
-	 * Determines whether somebody is mortal or not.
-	 * 
-	 * @param somebody a name
-	 * @return <code>true</code> if the entity is mortal, otherwise 
-	 * 		<code>false</code>
+	 * Tests {@link InvalidQuery}.
 	 */
-	public static boolean isMortal(String somebody) {
-		return p.solve("mortal(X{}).", somebody).isSuccess();
+	@Test(expected = InvalidQuery.class)
+	public void testInvalidQuery1() {
+		p.solve("mortal(socrates");
 	}
 
 	/**
-	 * Returns the name of all mortal beings.
-	 * 
-	 * @return the list of the name of all mortal beings
+	 * Tests {@link InvalidQuery}.
 	 */
-	public static List<String> getMortals() {
-		List<String> mortals = new ArrayList<String>();
-		// for (String s : p.<String>solve("mortal(X).", (Object) null))
-		for (String s : p.<String> solve("mortal(X).")) {
-			mortals.add(s);
-		}
-		return mortals;
+	@Test(expected = InvalidQuery.class)
+	public void testInvalidQuery2() {
+		p.solve("mortal(socrates)");
 	}
 
 	/**
@@ -75,7 +67,8 @@ public class ProverTest {
 	 */
 	@Test
 	public void testIsSuccess() {
-		assertTrue(isMortal("socrates"));
+		assertTrue(p.solve("mortal(socrates).").isSuccess());
+		assertFalse(p.solve("mortal(zeus).").isSuccess());
 	}
 
 	/**
@@ -83,22 +76,37 @@ public class ProverTest {
 	 * {@link Query#Query(String)}.
 	 */
 	@Test
-	public void testArgumentPlace() {
+	public void testPlaceHolders() {
 		assertTrue(p.solve("mortal({}).", "socrates").isSuccess());
 		assertFalse(p.solve("mortal({}).", "zeus").isSuccess());
+		assertTrue(p.solve("mortal(X{}).", "socrates").isSuccess());
+		assertFalse(p.solve("mortal(X{}).", "zeus").isSuccess());
 		assertTrue(p.solve("member(X, {}).", Arrays.asList(0, 1, 2)).isSuccess());
+		List<Integer> list = new ArrayList<Integer>(); 
 		for (Integer i: p.solve("member(X, {}).", Arrays.asList(0, 1, 2)).<Integer>on("X")) {
-			System.out.println("ProverTest.testIsSuccess2() " + i);
+			list.add(i);
 		}
+		assertEquals(Arrays.asList(0, 1, 2), list);
 	}
 
+//	/**
+//	 * Tests {@link UnknownVariable}.
+//	 */
+//	@Test(expected = UnknownVariable.class)
+//	public void testUnknownVariable() {
+//		p.solve("mortal(socrates).").get("X");
+//	}
+
 	/**
-	 * Tests the iteration over solutins.
+	 * Tests the iteration over solutions.
 	 */
 	@Test
 	public void testIterable() {
-		List<String> mortals = getMortals();
-		assertEquals(mortals, Arrays.asList("socrates", "plato"));
+		List<String> mortals = new ArrayList<String>();
+		for (String s : p.<String> solve("mortal(X).")) {
+			mortals.add(s);
+		}
+		assertEquals(Arrays.asList("socrates", "plato"), mortals);
 
 		int i = 0;
 		for (Object o: p.solve("member(X, [0, 1, 2]).")) {
@@ -107,13 +115,15 @@ public class ProverTest {
 		assertTrue(i == 3);
 		
 		for (Object o: p.solve("member(X, 1).")) {
+			fail();
 		}
 		for (Object o: p.solve("member(X, 1).").on("X")) {
+			fail();
 		}
 	}
 
 	/**
-	 * Tests the correct behaviour of the member/2 predicate.
+	 * Tests the correct behavior of the member/2 predicate.
 	 */
 	@Test
 	public void testIsMember() {
@@ -130,10 +140,62 @@ public class ProverTest {
 		List<String> philosophers = Arrays.asList("socrates", "plato");
 		List<String> list = new ArrayList<String>(2);
 		Solution<String> solution = p.solve("member(X, List{}).", philosophers);
-		for (String s : solution.<String> on("X")) {
+		for (String s: solution.<String> on("X")) {
 			list.add(s);
 		}
-		assertEquals(list, Arrays.asList("socrates", "plato"));
+		assertEquals(Arrays.asList("socrates", "plato"), list);
+	}
+	
+	/**
+	 * Tests the default term converters added to the prover.
+	 */
+	@Test
+	public void testTermConverters() {
+		int iVal = p.<Integer>solve("X=1.").get();
+		assertEquals(1, iVal);
+//		long lVal = p.<Long>solve("X=1L.").get();
+//		assertEquals(1L, lVal);
+//		float fVal = p.<Float>solve("X=1.0f.").get();
+//		assertEquals(1.0f, fVal, 0.0);
+		double dVal = p.<Double>solve("X=1.0.").get();
+		assertEquals(1.0, dVal, 0.0);
+		String sVal = p.<String>solve("X=prolog4j.").get();
+		assertEquals("prolog4j", sVal);
+		
+		Object[] iaVal = p.<Integer[]>solve("X = [0, 1, 2].").get();
+		assertArrayEquals(new Object[]{0, 1, 2}, iaVal);
+		Object[] saVal = p.<Object[]>solve("X = [a, b, c].").get();
+		assertArrayEquals(new Object[]{"a", "b", "c"}, saVal);
+		
+		Object cVal = p.solve("X = functor(arg1, arg2).").get();
+		assertEquals(new Compound("functor", "arg1", "arg2"), cVal);
+	}
+
+	/**
+	 * Tests the default term converters added to the prover.
+	 */
+	@Test
+	public void testObjectConverters() {
+		assertTrue(p.solve("{}=1.", 1).isSuccess());
+		assertFalse(p.solve("{}=1.", 1.0).isSuccess());
+		assertFalse(p.solve("{}=1.", 2).isSuccess());
+//		assertTrue(p.solve("{}=1L.", 1L).isSuccess());
+//		assertTrue(p.solve("{}=1.0f.", 1.0f).isSuccess());
+		assertTrue(p.solve("{}=1.0.", 1.0).isSuccess());
+		assertFalse(p.solve("{}=1.0.", 1).isSuccess());
+		assertFalse(p.solve("{}=1.0.", 2.0).isSuccess());
+		assertTrue(p.solve("{}=prolog4j.", "prolog4j").isSuccess());
+		assertTrue(p.solve("{}='Prolog4J'.", "Prolog4J").isSuccess());
+		assertFalse(p.solve("{}=prolog4j.", "Prolog4j").isSuccess());
+		assertFalse(p.solve("{}=prolog4j.", "'prolog4j'").isSuccess());
+		assertTrue(p.solve("{}='2'.", "2").isSuccess());
+		assertFalse(p.solve("{}=2.", "2").isSuccess());
+		assertFalse(p.solve("{}='2'.", 2).isSuccess());
+
+		assertTrue(p.solve("{}=[0, 1, 2].", (Object) new Integer[]{0, 1, 2}).isSuccess());
+		assertTrue(p.solve("{}=[a, b, c].", (Object) new String[]{"a", "b", "c"}).isSuccess());
+
+		assertTrue(p.solve("{}=f(1, 2).", new Compound("f", 1, 2)).isSuccess());
 	}
 
 	/**
@@ -150,7 +212,7 @@ public class ProverTest {
 		Iterator<Object[]> it = solution.<Object[]>on("L12").iterator();
 		assertTrue(it.hasNext());
 		Object[] sol = it.next();
-		assertArrayEquals(sol, new Object[]{"socrates", "thales", "plato"});
+		assertArrayEquals(new Object[]{"socrates", "thales", "plato"}, sol);
 		assertFalse(it.hasNext());
 	}
 	
@@ -161,11 +223,10 @@ public class ProverTest {
 	@Test
 	public void testTestListResult() {
 		List<String> h1 = Arrays.asList("socrates");
-//		List<String> h2 = Arrays.asList("thales", "plato");
 		List<String> h3 = Arrays.asList("socrates", "homeros", "demokritos");
-		for (List<String> humans : p.solve("append(L1{}, L2, L12{}).", h1, h3).
+		for (List<String> humans: p.solve("append(L1{}, L2, L12{}).", h1, h3).
 				on("L2", List.class)) {
-			for (String h : humans) {
+			for (String h: humans) {
 				System.out.println(h); // homeros and demokritos
 			}
 		}

@@ -38,16 +38,6 @@ Not of high priority.
 
 ================================================================================
 
-Refactorings, clean-ups
------------------------
-
-Add missing JavaDoc comments, improve the code style according to the checkstyle
-plugin.
-
-Scheduled for 0.2.0
-
-================================================================================
-
 JUnit tests
 -----------
 
@@ -60,7 +50,9 @@ Scheduled for 0.2.0
 Prolog4J site
 -------------
 
-When the site is ready, 
+Overview, tutorial, FAQ, etc.
+
+Downloads.
 
 Scheduled for 0.2.0
 

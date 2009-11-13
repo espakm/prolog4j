@@ -52,12 +52,12 @@ import org.prolog4j.impl.StaticProverBinder;
 public final class ProverFactory {
 
 //	static final String NO_STATICPROVERBINDER_URL = 
-//		"http://www.slf4j.org/codes.html#StaticLoggerBinder";
-//	static final String MULTIPLE_BINDINGS_URL = "http://www.slf4j.org/codes.html#multiple_bindings";
-//	static final String NULL_LF_URL = "http://www.slf4j.org/codes.html#null_LF";
-//	static final String VERSION_MISMATCH = "http://www.slf4j.org/codes.html#version_mismatch";
+//		"http://prolog4j.org/codes.html#StaticProverBinder";
+//	static final String MULTIPLE_BINDINGS_URL = "http://prolog4j.org/codes.html#multiple_bindings";
+//	static final String NULL_LF_URL = "http://prolog4j.org/codes.html#null_LF";
+//	static final String VERSION_MISMATCH = "http://prolog4j.org/codes.html#version_mismatch";
 
-//	static final String UNSUCCESSFUL_INIT_URL = "http://www.slf4j.org/codes.html#unsuccessfulInit";
+//	static final String UNSUCCESSFUL_INIT_URL = "http://prolog4j.org/codes.html#unsuccessfulInit";
 	
 	/**
 	 * The error message when the initialization of the prover factory was 
@@ -268,7 +268,7 @@ public final class ProverFactory {
 	 * @param message the message
 	 * @param t the exception or error that caused the failure
 	 */
-	public static void reportFailure(String message, Throwable t) {
+	private static void reportFailure(String message, Throwable t) {
 		System.err.println(message);
 		System.err.println("Reported exception:");
 		t.printStackTrace();
@@ -279,7 +279,7 @@ public final class ProverFactory {
 	 * 
 	 * @param message the message
 	 */
-	public static void reportFailure(String message) {
+	private static void reportFailure(String message) {
 		System.err.printf("Prolog4J: %s", message);
 	}
 

@@ -3,8 +3,10 @@ package org.prolog4j.jlog;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Vector;
 
 import org.prolog4j.AbstractProver;
+import org.prolog4j.Compound;
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Converter;
 import org.prolog4j.Query;
@@ -13,10 +15,12 @@ import ubc.cs.JLog.Foundation.jPrologAPI;
 import ubc.cs.JLog.Terms.iObjectToTerm;
 import ubc.cs.JLog.Terms.iTermToObject;
 import ubc.cs.JLog.Terms.jAtom;
+import ubc.cs.JLog.Terms.jCompoundTerm;
 import ubc.cs.JLog.Terms.jInteger;
 import ubc.cs.JLog.Terms.jList;
 import ubc.cs.JLog.Terms.jListPair;
 import ubc.cs.JLog.Terms.jNullList;
+import ubc.cs.JLog.Terms.jPredicate;
 import ubc.cs.JLog.Terms.jReal;
 import ubc.cs.JLog.Terms.jTerm;
 import ubc.cs.JLog.Terms.jTermTranslation;
@@ -62,21 +66,26 @@ public class JLogProver extends AbstractProver {
 			return new jAtom(s);
 		}
 	};
-	/** Converts an jTrolog.terms.Int term to an Integer object. */
+	/** Converts an jInteger term to an Integer object. */
 	private static final Converter<jInteger> INT_TERM_CONVERTER = new Converter<jInteger>() {
 		@Override
 		public Object convert(jInteger value) {
 			return value.getIntegerValue();
 		}
 	};
-	/** Converts an jTrolog.terms.Float term to a Float object. */
+	/** 
+	 * Converts an jReal term to a Float object. 
+	 * Note that, although JLog does not support double values (only float), 
+	 * here a double value is returned. This is for compatibility with other
+	 * implementations.
+	 */
 	private static final Converter<jReal> FLOAT_TERM_CONVERTER = new Converter<jReal>() {
 		@Override
 		public Object convert(jReal value) {
-			return value.getRealValue();
+			return new Double(value.getRealValue());
 		}
 	};
-	/** Converts an jTrolog.terms.StructAtom term to a String object. */
+	/** Converts an jAtom term to a String object. */
 	private static final Converter<jAtom> ATOM_TERM_CONVERTER = new Converter<jAtom>() {
 		@Override
 		public Object convert(jAtom value) {
@@ -119,6 +128,7 @@ public class JLogProver extends AbstractProver {
 	 * Creates a JLog prover.
 	 */
 	JLogProver() {
+		super();
 		engine = new jPrologAPI("");
 		final ConversionPolicy policy = getConversionPolicy();
 		policy.addObjectConverter(Long.class, LONG_CONVERTER);
@@ -146,6 +156,18 @@ public class JLogProver extends AbstractProver {
 							.previous()), pList);
 				}
 				return pList;
+			}
+		});
+		policy.addObjectConverter(Compound.class, new Converter<Compound>() {
+			@Override
+			public Object convert(Compound value) {
+				String functor = value.getFunctor();
+				Object[] args = value.getArgs();
+				Vector<jTerm> tArgs = new Vector<jTerm>(value.getArity());
+				for (int i = 0; i < args.length; ++i) {
+					tArgs.add((jTerm) policy.convertObject(args[i]));
+				}
+				return new jPredicate(functor, new jCompoundTerm(tArgs));
 			}
 		});
 
@@ -186,6 +208,18 @@ public class JLogProver extends AbstractProver {
 					return (R) list;
 				}
 				return null;
+			}
+		});
+		policy.addTermConverter(jPredicate.class, new Converter<jPredicate>() {
+			@Override
+			public Object convert(jPredicate value) {
+				int length = value.getArity();
+				Object[] array = new Object[length];
+				jCompoundTerm arguments = value.getArguments();
+				for (int i = 0; i < length; ++i) {
+					array[i] = policy.convertTerm(arguments.elementAt(i).getTerm());
+				}
+				return new Compound(value.getName(), array);
 			}
 		});
 		

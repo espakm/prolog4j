@@ -124,6 +124,7 @@ public class JTrologProver extends AbstractProver {
 	 * Creates a jTrolog prover of the given name.
 	 */
 	JTrologProver() {
+		super();
 		engine = new Prolog();
 		final ConversionPolicy policy = getConversionPolicy();
 		policy.addObjectConverter(Long.class, LONG_CONVERTER);
@@ -152,6 +153,18 @@ public class JTrologProver extends AbstractProver {
 							.previous()), pList});
 				}
 				return pList;
+			}
+		});
+		policy.addObjectConverter(Compound.class, new Converter<Compound>() {
+			@Override
+			public Object convert(Compound value) {
+				String functor = value.getFunctor();
+				Object[] args = value.getArgs();
+				Term[] tArgs = new Term[value.getArity()];
+				for (int i = 0; i < args.length; ++i) {
+					tArgs[i] = (Term) policy.convertObject(args[i]);
+				}
+				return new Struct(functor, tArgs);
 			}
 		});
 		policy.addTermConverter(Int.class, INT_TERM_CONVERTER);

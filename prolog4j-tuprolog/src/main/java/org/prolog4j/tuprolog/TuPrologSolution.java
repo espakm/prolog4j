@@ -7,6 +7,7 @@ import java.util.List;
 import org.prolog4j.Prover;
 import org.prolog4j.Solution;
 import org.prolog4j.SolutionIterator;
+import org.prolog4j.UnknownVariable;
 
 import alice.tuprolog.NoMoreSolutionException;
 import alice.tuprolog.NoSolutionException;
@@ -88,7 +89,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 			}
 			return (A) get(variable, clazz);
 		} catch (NoSolutionException e) {
-			throw new RuntimeException(e);
+			throw new UnknownVariable(variable, e);
 		}
 	}
 

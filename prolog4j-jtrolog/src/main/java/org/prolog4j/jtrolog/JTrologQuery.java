@@ -52,7 +52,7 @@ public class JTrologQuery extends Query {
 		this.prover = prover;
 		Parser parser = new Parser(getGoal());
 		try {
-			sGoal = (Struct) parser.nextTerm(false);
+			sGoal = (Struct) parser.nextTerm(true);
 		} catch (InvalidTermException e) {
 			throw new InvalidQuery(getGoal());
 		}

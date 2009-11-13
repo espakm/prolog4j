@@ -29,6 +29,7 @@ public final class JTrologProverFactory extends AbstractProverFactory {
 	 * Private constructor to prevent instantiation.
 	 */
 	private JTrologProverFactory() {
+		super();
 	}
 
 	@Override
