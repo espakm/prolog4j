@@ -170,6 +170,12 @@ public class JLogProver extends AbstractProver {
 				return new jPredicate(functor, new jCompoundTerm(tArgs));
 			}
 		});
+		policy.addObjectConverter(jTerm.class, new Converter<jTerm>() {
+			@Override
+			public Object convert(jTerm value) {
+				return value;
+			}
+		});
 
 		policy.addTermConverter(jInteger.class, INT_TERM_CONVERTER);
 		policy.addTermConverter(jReal.class, FLOAT_TERM_CONVERTER);

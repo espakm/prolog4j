@@ -22,32 +22,29 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.prolog4j.impl;
-
-import org.prolog4j.IProverFactory;
-import org.prolog4j.jlog.JLogProverFactory;
+package org.prolog4j;
 
 /**
  * The binding of {@link ProverFactory} class with an actual instance of
  * {@link IProverFactory} is performed using information returned by this class.
  * 
- * This is the JLog binding for the Prolog4J API.
- * 
- * @author Ceki G&uuml;lc&uuml;
+ * This class is meant to provide a dummy ProverFactoryBinder to the prolog4j-api
+ * module. Real implementations are found in each Prolog4J binding project, e.g.
+ * prolog4j-tuprolog, prolog4j-jtrolog etc.
  */
-public final class StaticProverBinder {
+public final class ProverFactoryBinder {
 
 	/**
 	 * The unique instance of this class.
 	 */
-	private static final StaticProverBinder SINGLETON = new StaticProverBinder();
+	private static final ProverFactoryBinder SINGLETON = new ProverFactoryBinder();
 
 	/**
 	 * Returns the single instance of this class.
 	 * 
-	 * @return the StaticProverBinder instance for JLog
+	 * @return the ProverFactoryBinder instance for a specific implementation
 	 */
-	public static StaticProverBinder getSingleton() {
+	public static ProverFactoryBinder getSingleton() {
 		return SINGLETON;
 	}
 
@@ -58,18 +55,12 @@ public final class StaticProverBinder {
 	 */
 	public static String REQUESTED_API_VERSION = "0.1.2";
 
-	/** The name of the ProverFactory class provided by this binding. */
-	private static final String PROVER_FACTORY_CLASS_NAME = JLogProverFactory.class.getName();
-
-	/**
-	 * The IProverFactory instance returned by the {@link #getProverFactory}.
-	 */
-	private final IProverFactory proverFactory = JLogProverFactory.getInstance();
-
 	/**
 	 * Private constructor to prevent instantiation.
 	 */
-	private StaticProverBinder() {
+	private ProverFactoryBinder() {
+		// Note: JCL gets substituted at build time by an appropriate Ant task
+		throw new UnsupportedOperationException("This code should have never made it into the jar.");
 	}
 
 	/**
@@ -77,7 +68,7 @@ public final class StaticProverBinder {
 	 * @return a factory for creating provers
 	 */
 	public IProverFactory getProverFactory() {
-		return proverFactory;
+		throw new UnsupportedOperationException("This code should never make it into the jar.");
 	}
 
 	/**
@@ -85,6 +76,6 @@ public final class StaticProverBinder {
 	 * @return the name of the factory prover class
 	 */
 	public String getProverFactoryClassName() {
-		return PROVER_FACTORY_CLASS_NAME;
+		throw new UnsupportedOperationException("This code should never make it into the jar.");
 	}
 }

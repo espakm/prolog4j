@@ -20,10 +20,10 @@ import alice.tuprolog.Var;
 /**
  * The tuProlog implementation of the Query class.
  */
-class TuPrologQuery extends Query {
+public class TuPrologQuery extends Query {
 	
 	/** The tuProlog prover used to process this query. */
-	private TuPrologProver prover;
+	private final TuPrologProver prover;
 	
 	/** The tuProlog engine used to process this query. */
 	private final Prolog engine;
@@ -72,7 +72,6 @@ class TuPrologQuery extends Query {
 		int i = 0;
 		for (Var var: unboundVars) {
 			var.free();
-//			engine.unify(var, terms.toTerm(actualArgs[i++]));
 			engine.unify(var, (Term) prover.getConversionPolicy().convertObject(actualArgs[i++]));
 		}
 		return new TuPrologSolution<A>(prover, sGoal);

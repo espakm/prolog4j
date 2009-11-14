@@ -46,7 +46,7 @@ public abstract class Solution<S> implements Iterable<S> {
 	public abstract boolean isSuccess();
 
 	/**
-	 * Returns another {@link java.util.Iterable Iterable} object that supports
+	 * Changes the state of this solution object so that it supports
 	 * traversing the solutions according to another variable.
 	 * 
 	 * @param <A>
@@ -54,17 +54,17 @@ public abstract class Solution<S> implements Iterable<S> {
 	 *            interest
 	 * @param variable
 	 *            the name of the variable
-	 * @return an <tt>Iterable</tt> object
+	 * @return the same object
 	 */
 	@SuppressWarnings("unchecked")
-	public <A> Iterable<A> on(final String variable) {
+	public <A> Solution<A> on(final String variable) {
 		defaultOutputVariable = variable;
 		clazz = null;
 		return (Solution<A>) this;
 	}
 	
 	/**
-	 * Returns another {@link java.util.Iterable Iterable} object that supports
+	 * Changes the state of this solution object so that it supports
 	 * traversing the solutions according to another variable. The returned 
 	 * object will convert the traversed elements to the specified type.
 	 * 
@@ -75,10 +75,10 @@ public abstract class Solution<S> implements Iterable<S> {
 	 *            the name of the variable
 	 * @param clazz
 	 *            the type to which the elements have to be converted
-	 * @return an <tt>Iterable</tt> object
+	 * @return the same object
 	 */
 	@SuppressWarnings("unchecked")
-	public <A> Iterable<A> on(final String variable, final Class<A> clazz) {
+	public <A> Solution<A> on(final String variable, final Class<A> clazz) {
 		defaultOutputVariable = variable;
 		this.clazz = (Class<S>) clazz;
 		return (Solution<A>) this;
@@ -92,6 +92,21 @@ public abstract class Solution<S> implements Iterable<S> {
 	 */
 	public S get() {
 		return this.<S> get(defaultOutputVariable);
+	}
+	
+	/**
+	 * Returns the value of the variable last occurring in the goal bound to by
+	 * the first solution of the goal. The required type of the value can be 
+	 * specified explicitly. This is useful when not the default type is desired.
+	 * 
+	 * @param <A>
+	 *            the type of the value
+	 * @param type
+	 *            the type which the value should be converted to
+	 * @return the value bound to the variable
+	 */
+	public <A> A get(Class<A> type) {
+		return this.<A> get(defaultOutputVariable, type);
 	}
 	
 	/**

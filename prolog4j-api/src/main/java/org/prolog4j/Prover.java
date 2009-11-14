@@ -63,16 +63,5 @@ public interface Prover {
 	 * @return the conversion policy
 	 */
 	ConversionPolicy getConversionPolicy();
-	
-	/**
-	 * Decides whether two terms match or not. The comparison is similar to
-	 * {@link Object#equals(Object)} apart of that <code>null</code> matches any
-	 * object.
-	 * 
-	 * @param term1 the first term
-	 * @param term2 the second object
-	 * @return <code>true</code> if the terms match, otherwise <code>false</code>
-	 */
-	boolean match(Object term1, Object term2);
-	
+		
 }

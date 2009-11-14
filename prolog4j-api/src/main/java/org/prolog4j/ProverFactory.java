@@ -31,8 +31,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.prolog4j.impl.StaticProverBinder;
-
 /**
  * The <code>ProverFactory</code> is a utility class producing Provers for
  * various Prolog APIs, most notably for tuProlog, jTrolog and JLog.
@@ -51,8 +49,8 @@ import org.prolog4j.impl.StaticProverBinder;
  */
 public final class ProverFactory {
 
-//	static final String NO_STATICPROVERBINDER_URL = 
-//		"http://prolog4j.org/codes.html#StaticProverBinder";
+//	static final String NO_PROVER_FACTORY_BINDER_URL = 
+//		"http://prolog4j.org/codes.html#ProverFactoryBinder";
 //	static final String MULTIPLE_BINDINGS_URL = "http://prolog4j.org/codes.html#multiple_bindings";
 //	static final String NULL_LF_URL = "http://prolog4j.org/codes.html#null_LF";
 //	static final String VERSION_MISMATCH = "http://prolog4j.org/codes.html#version_mismatch";
@@ -136,9 +134,9 @@ public final class ProverFactory {
 			initState = InitializationState.FAILED;
 			String msg = ncde.getMessage();
 			if (msg != null
-					&& msg.indexOf("org/prolog4j/impl/StaticProverBinder") != -1) {
-				reportFailure("Failed to load class \"org.prolog4j.impl.StaticProverBinder\".");
-//				reportFailure("See " + NO_STATICPROVERBINDER_URL
+					&& msg.indexOf("org/prolog4j/ProverFactoryBinder") != -1) {
+				reportFailure("Failed to load class \"org.prolog4j.ProverFactoryBinder\".");
+//				reportFailure("See " + NO_PROVER_FACTORY_BINDER_URL
 //						+ " for further details.");
 			}
 			throw ncde;
@@ -155,7 +153,7 @@ public final class ProverFactory {
 	 */
 	private static void versionSanityCheck() {
 		try {
-			String requested = StaticProverBinder.REQUESTED_API_VERSION;
+			String requested = ProverFactoryBinder.REQUESTED_API_VERSION;
 
 			for (String compatibleVersion : API_COMPATIBILITY_LIST) {
 				if (compatibleVersion.equals(requested)) {
@@ -175,11 +173,11 @@ public final class ProverFactory {
 	}
 
 	/**
-	 * We need to use the name of the StaticProverBinder class, we can't
+	 * We need to use the name of the ProverFactoryBinder class, we can't
 	 * reference the class itself.
 	 */
-	private static final String STATIC_PROVER_BINDER_PATH =
-			"org/prolog4j/impl/StaticProverBinder.class";
+	private static final String PROVER_FACTORY_BINDER_PATH =
+			"org/prolog4j/ProverFactoryBinder.class";
 
 	/**
 	 * Checks if there is only one Prolog4J binding in the class path.
@@ -187,7 +185,7 @@ public final class ProverFactory {
 	private static void singleImplementationSanityCheck() {
 		try {
 			Enumeration<URL> paths = ProverFactory.class.getClassLoader()
-					.getResources(STATIC_PROVER_BINDER_PATH);
+					.getResources(PROVER_FACTORY_BINDER_PATH);
 			List<URL> implementationList = new ArrayList<URL>();
 			while (paths.hasMoreElements()) {
 				implementationList.add(paths.nextElement());
@@ -208,8 +206,8 @@ public final class ProverFactory {
 	 * Returns the ProverFactory instance.
 	 * @return the ProverFactory instance
 	 */
-	private static StaticProverBinder getSingleton() {
-		return StaticProverBinder.getSingleton();
+	private static ProverFactoryBinder getSingleton() {
+		return ProverFactoryBinder.getSingleton();
 	}
 
 	/**
@@ -245,7 +243,7 @@ public final class ProverFactory {
 	 * 
 	 * @return the IProverFactory instance in use
 	 */
-	public static IProverFactory getIProverFactory() {
+	private static IProverFactory getIProverFactory() {
 		if (initState == InitializationState.UNINITIALIZED) {
 			initState = InitializationState.ONGOING;
 			performInitialization();

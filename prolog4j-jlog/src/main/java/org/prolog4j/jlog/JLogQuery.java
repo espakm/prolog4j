@@ -8,7 +8,7 @@ import org.prolog4j.Solution;
 /**
  * The JLog implementation of the Query class.
  */
-class JLogQuery extends Query {
+public class JLogQuery extends Query {
 
 	/** The JLog prover used to process this query. */
 	private final JLogProver prover;

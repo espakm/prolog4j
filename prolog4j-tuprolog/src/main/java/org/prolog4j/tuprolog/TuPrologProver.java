@@ -160,6 +160,12 @@ public class TuPrologProver extends AbstractProver {
 				return new Struct(functor, tArgs);
 			}
 		});
+		policy.addObjectConverter(Term.class, new Converter<Term>() {
+			@Override
+			public Object convert(Term value) {
+				return value;
+			}
+		});
 		policy.addTermConverter(Int.class, INT_TERM_CONVERTER);
 		policy.addTermConverter(alice.tuprolog.Long.class, LONG_TERM_CONVERTER);
 		policy.addTermConverter(alice.tuprolog.Float.class,

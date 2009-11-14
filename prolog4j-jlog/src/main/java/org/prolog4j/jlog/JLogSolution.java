@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.prolog4j.ConversionPolicy;
 import org.prolog4j.InvalidQuery;
 import org.prolog4j.SolutionIterator;
 
@@ -20,8 +21,8 @@ import ubc.cs.JLog.Parser.SyntaxErrorException;
  */
 public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 
-	/** The JLog prover that is used for solving the query. */
-	private JLogProver prover;
+	/** The conversion policy used by the JLog prover that is used for solving the query. */
+	private final ConversionPolicy conversionPolicy;
 	
 	/** The JLog engine that is used for solving the query. */
 	private final jPrologAPI prolog;
@@ -35,39 +36,6 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	/** True if the query has a solution, otherwise false. */
 	private final boolean success;
 
-//	final static jTermTranslation translator;
-//	static {
-//		translator = new jTermTranslation();
-//		translator.setDefaults();
-//		iTermToObject atomToString = new iTermToObject() {
-//			@Override
-//			public Object createObjectFromTerm(jTerm term) {
-//				if (term instanceof jAtom)
-//					return term.getName();
-//				return null;
-//			}
-//		};
-//		translator.RegisterTermToObjectConverter(jAtom.class, atomToString);
-//		iTermToObject listToArray = new iTermToObject() {
-//			public Object createObjectFromTerm(jTerm term) {
-//				if (term instanceof jList) {
-//					jList list = (jList) term;
-//					Enumeration e = list.elements(translator);
-//					ArrayList<Object> al = new ArrayList<Object>();
-//
-//					while (e.hasMoreElements())
-//						al.add(e.nextElement());
-//
-//					return al.toArray();		
-//				}
-//
-//				throw new RuntimeException("Expected jList term."); 
-//			}
-//		};
-//		translator.RegisterTermToObjectConverter(jListPair.class, listToArray);
-//		translator.RegisterTermToObjectConverter(jNullList.class, listToArray);
-//	}
-	
 	/**
 	 * Constructs a JLogSolution instance.
 	 * 
@@ -77,7 +45,7 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	 */
 	JLogSolution(JLogProver prover, String goal, Hashtable<String, Object> initialBindings) {
 		super();
-		this.prover = prover;
+		this.conversionPolicy = prover.getConversionPolicy();
 		this.prolog = prover.getEngine();
 		try {
 			solution = prolog.query(goal, initialBindings);
@@ -104,17 +72,14 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	@Override
 	public <A> A get(String variable) {
 		if (clazz == null) {
-//			return Terms.<A> toObject((jTerm) solution.get(variable));
-			return (A) prover.getConversionPolicy().convertTerm(solution.get(variable));
-//			return (A) solution.get(variable);
+			return (A) conversionPolicy.convertTerm(solution.get(variable));
 		}
 		return (A) get(variable, clazz);
 	}
 
 	@Override
 	public <A> A get(String variable, Class<A> type) {
-//		return Terms.toObject((jTerm) solution.get(variable), type);
-		return (A) prover.getConversionPolicy().convertTerm(solution.get(variable), type);
+		return (A) conversionPolicy.convertTerm(solution.get(variable), type);
 	}
 
 	@Override

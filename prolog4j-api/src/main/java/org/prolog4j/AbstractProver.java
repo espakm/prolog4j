@@ -14,7 +14,7 @@ public abstract class AbstractProver implements Prover, Serializable {
 	/**
 	 * The conversion policy used by this prover.
 	 */
-	private final ConversionPolicy conversionPolicy = new ConversionPolicy(this);
+	private final ConversionPolicy conversionPolicy = new ConversionPolicy();
 	
 	@Override
 	public final <A> Solution<A> solve(final String goal, final Object... actualArgs) {
@@ -24,12 +24,6 @@ public abstract class AbstractProver implements Prover, Serializable {
 	@Override
 	public ConversionPolicy getConversionPolicy() {
 		return conversionPolicy;
-	}
-	
-	@Override
-	public boolean match(Object term1, Object term2) {
-		return false;
-//		throw new UnsupportedOperationException();
 	}
 	
 //	/**

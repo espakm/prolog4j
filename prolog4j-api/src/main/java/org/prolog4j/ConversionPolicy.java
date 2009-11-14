@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * An instance of this class represent how terms are converted to regular Java
+ * An instance of this class represents how terms are converted to regular Java
  * objects (POJOs) and vice versa. The transformation is performed by 
  * converters. The implementations of the Prolog4J API should provide a fully 
  * functional instance of this class.
@@ -15,11 +15,6 @@ import java.util.LinkedList;
  */
 public class ConversionPolicy {
 
-	/**
-	 * The Prover which this policy belongs to.
-	 */
-	private Prover prover;
-	
 	/**
 	 * Stores the converters for transforming terms to regular objects. The keys
 	 * of the map are the patterns. If a pattern matches a term then its 
@@ -56,12 +51,9 @@ public class ConversionPolicy {
 	
 	/**
 	 * Constructs an empty <code>ConversionPolicy</code>.
-	 * 
-	 * @param prover the prover
 	 */
 	@SuppressWarnings("unchecked")
-	protected ConversionPolicy(Prover prover) {
-		this.prover = prover;
+	protected ConversionPolicy() {
 		termConverters = new HashMap<Object, Converter>();
 		termPatterns = new LinkedList<Object>();
 		objectConverters = new HashMap<Object, Converter>();
@@ -155,8 +147,7 @@ public class ConversionPolicy {
 			return null;
 		}
 		for (Object pattern: termPatterns) {
-			if ((pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass()))
-				|| prover.match(pattern, term)) {
+			if (pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass())) {
 				Object result = termConverters.get(pattern).convert(term);
 				if (result != null) {
 					return result;
@@ -191,8 +182,7 @@ public class ConversionPolicy {
 			return null;
 		}
 		for (Object pattern: termPatterns) {
-			if ((pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass()))
-				|| prover.match(pattern, term)) {
+			if (pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass())) {
 				T result = (T) termConverters.get(pattern).convert(term, type);
 				if (result != null) {
 					return result;
@@ -234,5 +224,16 @@ public class ConversionPolicy {
 		}
 		return null;
 	}
+
+//	/**
+//	 * Decides whether two terms match or not. The comparison is similar to
+//	 * {@link Object#equals(Object)} apart of that <code>null</code> matches any
+//	 * object.
+//	 * 
+//	 * @param term1 the first term
+//	 * @param term2 the second object
+//	 * @return <code>true</code> if the terms match, otherwise <code>false</code>
+//	 */
+//	boolean match(Object term1, Object term2);
 
 }

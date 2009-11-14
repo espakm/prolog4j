@@ -31,8 +31,8 @@
                 </executions>
                 <configuration>
                     <tasks>
-                        <echo>Removing prolog4j-api's dummy StaticProverBinder</echo>
-                        <delete dir="target/classes/org/prolog4j/impl" />
+                        <echo>Removing prolog4j-api's dummy ProverFactoryBinder</echo>
+                        <delete file="target/classes/org/prolog4j/ProverFactoryBinder.class" />
                     </tasks>
                 </configuration>
             </plugin>

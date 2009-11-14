@@ -22,30 +22,29 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.prolog4j.impl;
+package org.prolog4j;
 
-import org.prolog4j.IProverFactory;
-import org.prolog4j.jtrolog.JTrologProverFactory;
+import org.prolog4j.tuprolog.TuPrologProverFactory;
 
 /**
  * The binding of {@link ProverFactory} class with an actual instance of
  * {@link IProverFactory} is performed using information returned by this class.
  * 
- * This is the jTrolog binding for the Prolog4J API.
+ * This is the tuProlog binding for the Prolog4J API.
  */
-public final class StaticProverBinder {
+public final class ProverFactoryBinder {
 
 	/**
 	 * The unique instance of this class.
 	 */
-	private static final StaticProverBinder SINGLETON = new StaticProverBinder();
+	private static final ProverFactoryBinder SINGLETON = new ProverFactoryBinder();
 
 	/**
 	 * Returns the single instance of this class.
 	 * 
-	 * @return the StaticProverBinder instance for jTrolog
+	 * @return the ProverFactoryBinder instance for tuProlog
 	 */
-	public static StaticProverBinder getSingleton() {
+	public static ProverFactoryBinder getSingleton() {
 		return SINGLETON;
 	}
 
@@ -57,17 +56,18 @@ public final class StaticProverBinder {
 	public static String REQUESTED_API_VERSION = "0.1.2";
 
 	/** The name of the ProverFactory class provided by this binding. */
-	private static final String PROVER_FACTORY_CLASS_NAME = JTrologProverFactory.class.getName();
+	private static final String PROVER_FACTORY_CLASS_NAME = TuPrologProverFactory.class.getName();
 
 	/**
-	 * The IProverFactory instance returned by the {@link #getProverFactory}.
+	 * The IProverFactory instance returned by the {@link #getProverFactory}
+	 * method.
 	 */
-	private final IProverFactory proverFactory = JTrologProverFactory.getInstance();
+	private final IProverFactory proverFactory = TuPrologProverFactory.getInstance();
 
 	/**
 	 * Private constructor to prevent instantiation.
 	 */
-	private StaticProverBinder() {
+	private ProverFactoryBinder() {
 	}
 
 	/**
