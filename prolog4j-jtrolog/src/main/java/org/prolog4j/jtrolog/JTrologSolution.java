@@ -5,11 +5,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.prolog4j.SolutionIterator;
+import org.prolog4j.UnknownVariable;
 
 import jTrolog.errors.NoMorePrologSolutions;
 import jTrolog.engine.Prolog;
 import jTrolog.engine.Solution;
 import jTrolog.terms.Struct;
+import jTrolog.terms.Term;
 
 /**
  * The <tt>Solution</tt> class is responsible for traversing through the
@@ -68,14 +70,22 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	@Override
 	public <A> A get(String variable) {
 		if (clazz == null) {
-			return (A) prover.getConversionPolicy().convertTerm(solution.getBinding(variable));
+			Term binding = solution.getBinding(variable);
+			if (binding == null) {
+				throw new UnknownVariable(variable);
+			}
+			return (A) prover.getConversionPolicy().convertTerm(binding);
 		}
 		return (A) get(variable, clazz);
 	}
 
 	@Override
 	public <A> A get(String variable, Class<A> type) {
-		return (A) prover.getConversionPolicy().convertTerm(solution.getBinding(variable), type);
+		Term binding = solution.getBinding(variable);
+		if (binding == null) {
+			throw new UnknownVariable(variable);
+		}
+		return (A) prover.getConversionPolicy().convertTerm(binding, type);
 	}
 
 	@Override

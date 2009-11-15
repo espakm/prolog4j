@@ -3,7 +3,9 @@ package org.prolog4j.tuprolog;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Prover;
 import org.prolog4j.Solution;
 import org.prolog4j.SolutionIterator;
@@ -14,6 +16,7 @@ import alice.tuprolog.NoSolutionException;
 import alice.tuprolog.Prolog;
 import alice.tuprolog.SolveInfo;
 import alice.tuprolog.Term;
+import alice.tuprolog.UnknownVarException;
 import alice.tuprolog.Var;
 
 /**
@@ -27,6 +30,9 @@ public class TuPrologSolution<S> extends Solution<S> {
 
 	/** The tuProlog prover that is used for solving this query. */
 	private Prover prover;
+
+	/** The conversion policy of the tuProlog prover that is used for solving this query. */
+	private final ConversionPolicy cp;
 
 //	private static final Terms terms = Terms.getInstance();
 
@@ -50,6 +56,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 	 */
 	TuPrologSolution(TuPrologProver prover, Term goal) {
 		this.prover = prover;
+		this.cp = prover.getConversionPolicy();
 		this.prolog = prover.getEngine();
 		solution = prolog.solve(goal);
 		success = solution.isSuccess();
@@ -85,21 +92,28 @@ public class TuPrologSolution<S> extends Solution<S> {
 	public <A> A get(String variable) {
 		try {
 			if (clazz == null) {
-				return (A) prover.getConversionPolicy().convertTerm(solution.getVarValue(variable));
+				Term term = solution.getVarValue(variable);
+				if (term == null) {
+					throw new UnknownVariable(variable);
+				}
+				return (A) cp.convertTerm(term);
 			}
 			return (A) get(variable, clazz);
 		} catch (NoSolutionException e) {
-			throw new UnknownVariable(variable, e);
+			throw new NoSuchElementException();
 		}
 	}
 
 	@Override
 	public <A> A get(String variable, Class<A> type) {
 		try {
-			return (A) prover.getConversionPolicy().
-				convertTerm(solution.getVarValue(variable), type);
+			Term term = solution.getVarValue(variable);
+			if (term == null) {
+				throw new UnknownVariable(variable);
+			}
+			return (A) cp.convertTerm(term, type);
 		} catch (NoSolutionException e) {
-			throw new RuntimeException(e);
+			throw new NoSuchElementException();
 		}
 	}
 

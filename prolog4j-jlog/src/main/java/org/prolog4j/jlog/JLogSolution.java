@@ -8,6 +8,7 @@ import java.util.List;
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.InvalidQuery;
 import org.prolog4j.SolutionIterator;
+import org.prolog4j.UnknownVariable;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
 import ubc.cs.JLog.Parser.SyntaxErrorException;
@@ -72,14 +73,22 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	@Override
 	public <A> A get(String variable) {
 		if (clazz == null) {
-			return (A) conversionPolicy.convertTerm(solution.get(variable));
+			Object term = solution.get(variable);
+			if (term == null) {
+				throw new UnknownVariable(variable);
+			}
+			return (A) conversionPolicy.convertTerm(term);
 		}
 		return (A) get(variable, clazz);
 	}
 
 	@Override
 	public <A> A get(String variable, Class<A> type) {
-		return (A) conversionPolicy.convertTerm(solution.get(variable), type);
+		Object term = solution.get(variable);
+		if (term == null) {
+			throw new UnknownVariable(variable);
+		}
+		return (A) conversionPolicy.convertTerm(term, type);
 	}
 
 	@Override

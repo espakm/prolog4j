@@ -89,13 +89,13 @@ public class ProverTest {
 		assertEquals(Arrays.asList(0, 1, 2), list);
 	}
 
-//	/**
-//	 * Tests {@link UnknownVariable}.
-//	 */
-//	@Test(expected = UnknownVariable.class)
-//	public void testUnknownVariable() {
-//		p.solve("mortal(socrates).").get("X");
-//	}
+	/**
+	 * Tests {@link UnknownVariable}.
+	 */
+	@Test(expected = UnknownVariable.class)
+	public void testUnknownVariable() {
+		p.solve("mortal(socrates).").get("X");
+	}
 
 	/**
 	 * Tests the iteration over solutions.

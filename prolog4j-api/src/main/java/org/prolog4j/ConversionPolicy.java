@@ -154,7 +154,7 @@ public class ConversionPolicy {
 				}
 			}
 		}
-		throw new RuntimeException("No suitable converter found.");
+		throw new RuntimeException("No suitable converter found for " + term);
 	}
 	
 	/**
@@ -189,7 +189,7 @@ public class ConversionPolicy {
 				}
 			}
 		}
-		throw new RuntimeException("No suitable converter found.");
+		throw new RuntimeException("No suitable converter found for " + term);
 	}
 	
 	/**
