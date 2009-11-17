@@ -3,18 +3,6 @@ These should be added to the GForge site of the project. :)
 
 ================================================================================
 
-Exception handling
-------------------
-
-Only two kinds of exceptions are needed: one for the invalid syntax of a query
-and one for the case when you want to get the value(s) of a variable not exis-
-ting in the goal. Both should be unchecked exceptions.
-
-Later these situations should be checked statically, if they are specified by 
-literals. (It is supposed to be typical.)
-
-================================================================================
-
 Term <-> Object conversions
 ---------------------------
 

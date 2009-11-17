@@ -13,7 +13,7 @@ import java.util.LinkedList;
  * 
  * @see Converter
  */
-public class ConversionPolicy {
+public abstract class ConversionPolicy {
 
 	/**
 	 * Stores the converters for transforming terms to regular objects. The keys
@@ -225,15 +225,17 @@ public class ConversionPolicy {
 		return null;
 	}
 
-//	/**
-//	 * Decides whether two terms match or not. The comparison is similar to
-//	 * {@link Object#equals(Object)} apart of that <code>null</code> matches any
-//	 * object.
-//	 * 
-//	 * @param term1 the first term
-//	 * @param term2 the second object
-//	 * @return <code>true</code> if the terms match, otherwise <code>false</code>
-//	 */
-//	boolean match(Object term1, Object term2);
+	/**
+	 * Decides whether two terms match or not. The comparison is similar to
+	 * {@link Object#equals(Object)} apart of that <code>null</code> matches any
+	 * object.
+	 * 
+	 * @param term1 the first term
+	 * @param term2 the second object
+	 * @return <code>true</code> if the terms match, otherwise <code>false</code>
+	 */
+	public abstract boolean match(Object term1, Object term2);
 
+	public abstract Object compound(String name, Object... args);
+	
 }

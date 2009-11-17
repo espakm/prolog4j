@@ -172,7 +172,7 @@ public class ProverTest {
 	}
 
 	/**
-	 * Tests the default term converters added to the prover.
+	 * Tests the default object converters added to the prover.
 	 */
 	@Test
 	public void testObjectConverters() {
@@ -196,6 +196,33 @@ public class ProverTest {
 		assertTrue(p.solve("{}=[a, b, c].", (Object) new String[]{"a", "b", "c"}).isSuccess());
 
 		assertTrue(p.solve("{}=f(1, 2).", new Compound("f", 1, 2)).isSuccess());
+	}
+
+	/**
+	 * Tests the user defined object converters added to the prover.
+	 */
+	@Test
+	public void testCustomObjectConverters() {
+		final ConversionPolicy cp = p.getConversionPolicy();
+		class Human {
+			String name;
+
+			public Human(String name) {
+				super();
+				this.name = name;
+			}
+		}
+		cp.addObjectConverter(Human.class, new Converter<Human>() {
+			@Override
+			public Object convert(Human human) {
+				return cp.compound("human", human.name);
+			}
+		});
+		Human socrates = new Human("socrates");
+		assertTrue(p.solve("{}=human(socrates).", socrates).isSuccess());
+		assertTrue(p.solve("{}=human(_).", socrates).isSuccess());
+		assertFalse(p.solve("{}=human(socrates, plato).", socrates).isSuccess());
+		assertFalse(p.solve("{}=socrates.", socrates).isSuccess());
 	}
 
 	/**

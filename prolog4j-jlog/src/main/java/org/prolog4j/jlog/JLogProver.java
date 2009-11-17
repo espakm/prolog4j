@@ -1,27 +1,12 @@
 package org.prolog4j.jlog;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Vector;
-
 import org.prolog4j.AbstractProver;
-import org.prolog4j.Compound;
 import org.prolog4j.ConversionPolicy;
-import org.prolog4j.Converter;
 import org.prolog4j.Query;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
 import ubc.cs.JLog.Terms.iObjectToTerm;
 import ubc.cs.JLog.Terms.iTermToObject;
-import ubc.cs.JLog.Terms.jAtom;
-import ubc.cs.JLog.Terms.jCompoundTerm;
-import ubc.cs.JLog.Terms.jInteger;
-import ubc.cs.JLog.Terms.jList;
-import ubc.cs.JLog.Terms.jListPair;
-import ubc.cs.JLog.Terms.jNullList;
-import ubc.cs.JLog.Terms.jPredicate;
-import ubc.cs.JLog.Terms.jReal;
 import ubc.cs.JLog.Terms.jTerm;
 import ubc.cs.JLog.Terms.jTermTranslation;
 
@@ -30,68 +15,6 @@ import ubc.cs.JLog.Terms.jTermTranslation;
  * on it. The prover itself is not responsible for processing the solutions.
  */
 public class JLogProver extends AbstractProver {
-
-	/** Converts an Integer object to a term. */
-	private static final Converter<Integer> INTEGER_CONVERTER = new Converter<Integer>() {
-		@Override
-		public Object convert(Integer i) {
-			return new jInteger(i);
-		}
-	};
-	/** Converts a Long object to a term. */
-	private static final Converter<Long> LONG_CONVERTER = new Converter<Long>() {
-		@Override
-		public Object convert(Long value) {
-			return new jInteger(value.intValue());
-		}
-	};
-	/** Converts a Float object to a term. */
-	private static final Converter<Float> FLOAT_CONVERTER = new Converter<Float>() {
-		@Override
-		public Object convert(Float value) {
-			return new jReal(value);
-		}
-	};
-	/** Converts a Double object to a term. */
-	private static final Converter<Double> DOUBLE_CONVERTER = new Converter<Double>() {
-		@Override
-		public Object convert(Double value) {
-			return new jReal(value.floatValue());
-		}
-	};
-	/** Converts a String object to a term. */
-	private static final Converter<String> STRING_CONVERTER = new Converter<String>() {
-		@Override
-		public Object convert(String s) {
-			return new jAtom(s);
-		}
-	};
-	/** Converts an jInteger term to an Integer object. */
-	private static final Converter<jInteger> INT_TERM_CONVERTER = new Converter<jInteger>() {
-		@Override
-		public Object convert(jInteger value) {
-			return value.getIntegerValue();
-		}
-	};
-	/** 
-	 * Converts an jReal term to a Float object. 
-	 * Note that, although JLog does not support double values (only float), 
-	 * here a double value is returned. This is for compatibility with other
-	 * implementations.
-	 */
-	private static final Converter<jReal> FLOAT_TERM_CONVERTER = new Converter<jReal>() {
-		@Override
-		public Object convert(jReal value) {
-			return new Double(value.getRealValue());
-		}
-	};
-	/** Converts an jAtom term to a String object. */
-	private static final Converter<jAtom> ATOM_TERM_CONVERTER = new Converter<jAtom>() {
-		@Override
-		public Object convert(jAtom value) {
-			return value.getName();
-		}
-	};
 
 	/** Class version for serialization. */
 	private static final long serialVersionUID = 1L;
@@ -102,10 +25,12 @@ public class JLogProver extends AbstractProver {
 	 */
 	private final transient jPrologAPI engine;
 
+	private final ConversionPolicy conversionPolicy;
+	
 	/**
 	 * Performs no translation at all. Returns the original term as represented
-	 * in JLog. This disables the automatic translation of JLog, so terms has to
-	 * be converted manually later.
+	 * in JLog. This disables the automatic translation of JLog, so terms have 
+	 * to be converted manually later.
 	 */
 	private static final iTermToObject IDEMPOTENT_TERM_TRANSLATOR = new iTermToObject() {
 		@Override
@@ -115,12 +40,14 @@ public class JLogProver extends AbstractProver {
 	};
 
 	/**
-	 * Transforms objects to terms by {@link Terms.toTerm(Object)}.
+	 * Performs no translation at all. Expects that the object is a jTerm,
+	 * indeed, and returns it simply. This disables the automatic translation of
+	 * JLog, so objects have to be converted manually, in advance.
 	 */
-	private final transient iObjectToTerm OBJECT_CONVERTER = new iObjectToTerm() {
+	private static final iObjectToTerm IDEMPOTENT_OBJECT_TRANSLATOR = new iObjectToTerm() {
 		@Override
 		public jTerm createTermFromObject(Object object) {
-			return (jTerm) getConversionPolicy().convertObject(object);
+			return (jTerm) object;
 		}
 	};
 
@@ -130,108 +57,11 @@ public class JLogProver extends AbstractProver {
 	JLogProver() {
 		super();
 		engine = new jPrologAPI("");
-		final ConversionPolicy policy = getConversionPolicy();
-		policy.addObjectConverter(Long.class, LONG_CONVERTER);
-		policy.addObjectConverter(Float.class, FLOAT_CONVERTER);
-		policy.addObjectConverter(Double.class, DOUBLE_CONVERTER);
-		policy.addObjectConverter(Integer.class, INTEGER_CONVERTER);
-		policy.addObjectConverter(String.class, STRING_CONVERTER);
-		policy.addObjectConverter(Object[].class, new Converter<Object[]>() {
-			@Override
-			public Object convert(Object[] array) {
-				jList pList = jNullList.NULL_LIST;
-				for (int i = array.length - 1; i >= 0; --i) {
-					pList = new jListPair((jTerm) policy.convertObject(array[i]), pList);
-				}
-				return pList;
-			}
-		});
-		policy.addObjectConverter(List.class, new Converter<List>() {
-			@Override
-			public Object convert(List list) {
-				jList pList = jNullList.NULL_LIST;
-				ListIterator<?> it = list.listIterator(list.size());
-				while (it.hasPrevious()) {
-					pList = new jListPair((jTerm) policy.convertObject(it
-							.previous()), pList);
-				}
-				return pList;
-			}
-		});
-		policy.addObjectConverter(Compound.class, new Converter<Compound>() {
-			@Override
-			public Object convert(Compound value) {
-				String functor = value.getFunctor();
-				Object[] args = value.getArgs();
-				Vector<jTerm> tArgs = new Vector<jTerm>(value.getArity());
-				for (int i = 0; i < args.length; ++i) {
-					tArgs.add((jTerm) policy.convertObject(args[i]));
-				}
-				return new jPredicate(functor, new jCompoundTerm(tArgs));
-			}
-		});
-		policy.addObjectConverter(jTerm.class, new Converter<jTerm>() {
-			@Override
-			public Object convert(jTerm value) {
-				return value;
-			}
-		});
-
-		policy.addTermConverter(jInteger.class, INT_TERM_CONVERTER);
-		policy.addTermConverter(jReal.class, FLOAT_TERM_CONVERTER);
-		policy.addTermConverter(jAtom.class, ATOM_TERM_CONVERTER);
-		policy.addTermConverter(jList.class, new Converter<jList>() {
-			@Override
-			public Object convert(jList value) {
-				int length = listSize(value);
-				Object[] array = new Object[length];
-				for (int i = 0; i < length; ++i) {
-					jListPair listPair = (jListPair) value;
-					array[i] = policy.convertTerm((listPair.getHead().getTerm()));
-					value = (jList) listPair.getTail().getTerm();
-				}
-				return array;
-//				int arity = value.arity;
-//				Object[] args = new Object[arity];
-//				for (int i = 0; i < arity; ++i) {
-////					args[i] = policy.convertTerm(value.getArg(i).getTerm());
-//					args[i] = policy.convertTerm(value.getArg(i));
-//				}
-//				return new Compound(value.name, args);
-//				// return Terms.getInstance().toObject(value);
-			}
-
-			@Override
-			public <R> R convert(jList value, java.lang.Class<R> to) {
-				if (isList(value) && to == List.class) {
-					int length = listSize(value);
-					List list = new ArrayList(length);
-					for (int i = 0; i < length; ++i) {
-						jListPair listPair = (jListPair) value;
-						list.add(policy.convertTerm((listPair.getHead().getTerm())));
-						value = (jList) listPair.getTail().getTerm();
-					}
-					return (R) list;
-				}
-				return null;
-			}
-		});
-		policy.addTermConverter(jPredicate.class, new Converter<jPredicate>() {
-			@Override
-			public Object convert(jPredicate value) {
-				int length = value.getArity();
-				Object[] array = new Object[length];
-				jCompoundTerm arguments = value.getArguments();
-				for (int i = 0; i < length; ++i) {
-					array[i] = policy.convertTerm(arguments.elementAt(i).getTerm());
-				}
-				return new Compound(value.getName(), array);
-			}
-		});
+		conversionPolicy = new JLogConversionPolicy();
 		
 		jTermTranslation tt = new jTermTranslation();
 		tt.RegisterDefaultTermToObjectConverter(IDEMPOTENT_TERM_TRANSLATOR);
-		tt.RegisterDefaultObjectToTermConverter(OBJECT_CONVERTER);
+		tt.RegisterDefaultObjectToTermConverter(IDEMPOTENT_OBJECT_TRANSLATOR);
 		engine.setTranslation(tt);
 	}
 
@@ -267,28 +97,9 @@ public class JLogProver extends AbstractProver {
 		engine.consultSource(sb.toString());
 	}
 
-	/**
-	 * Determines whether a term is a list or not.
-	 * 
-	 * @param term the term
-	 * @return <code>true</code> if the term is a list, otherwise <code>false</code>
-	 */
-	private static boolean isList(jTerm term) {
-		return term instanceof jList;
+	@Override
+	public ConversionPolicy getConversionPolicy() {
+		return conversionPolicy;
 	}
 
-	/**
-	 * Returns the size of a list.
-	 * 
-	 * @param list the list
-	 * @return the size of the list
-	 */
-	private static int listSize(jList list) {
-		int size = 0;
-		while (list != jNullList.NULL_LIST) {
-			++size;
-			list = (jList) ((jListPair) list).getTail().getTerm();
-		}
-		return size;
-	}
 }
