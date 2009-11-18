@@ -6,13 +6,17 @@ These should be added to the GForge site of the project. :)
 Term <-> Object conversions
 ---------------------------
 
-A unified way should be provided for the conversions. The common interface of 
-the conversion methods in the implementations should be pulled up to the 
-prolog4j-api module. Also, users should be allowed to define their own way for
-conversions.
+The behavior of the conversion policies has to be improved. Currently, it does
+not support object patterns, only classes. (However, it could now be implemented
+by ConversionPolicy#match(Object, Object).)
 
-JLog provides a nice way for doing this, however it does not allow to set up the
-two converters (Object -> Term and Term -> Object) separately.
+Also, the customization of the policy does not work on a per prover base because
+the provers always return the default policy. This is a bug, since if you modify
+the conversion policy of a prover, you do it on the global one, indeed, changing
+the behavior of other provers, incidentally.
+
+Also, a better algorithm should be provided for finding the appropriate 
+converter.
 
 ================================================================================
 

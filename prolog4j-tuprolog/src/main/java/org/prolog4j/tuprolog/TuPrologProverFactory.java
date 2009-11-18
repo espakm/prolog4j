@@ -1,6 +1,7 @@
 package org.prolog4j.tuprolog;
 
 import org.prolog4j.AbstractProverFactory;
+import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Prover;
 
 /**
@@ -16,6 +17,9 @@ public final class TuPrologProverFactory extends AbstractProverFactory {
 	 */
 	private static final TuPrologProverFactory INSTANCE = new TuPrologProverFactory();
 	
+	/** The default conversion policy. */
+	private final ConversionPolicy conversionPolicy = new TuPrologConversionPolicy();
+
 	/**
 	 * Returns the single instance of this class.
 	 * 
@@ -34,5 +38,10 @@ public final class TuPrologProverFactory extends AbstractProverFactory {
 	@Override
 	protected Prover createProver() {
 		return new TuPrologProver();
+	}
+
+	@Override
+	public ConversionPolicy getConversionPolicy() {
+		return conversionPolicy;
 	}
 }

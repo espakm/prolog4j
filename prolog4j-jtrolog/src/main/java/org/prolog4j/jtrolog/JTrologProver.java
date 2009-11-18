@@ -1,7 +1,6 @@
 package org.prolog4j.jtrolog;
 
 import org.prolog4j.AbstractProver;
-import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Query;
 
 import jTrolog.errors.InvalidLibraryException;
@@ -36,15 +35,12 @@ public class JTrologProver extends AbstractProver {
 	 */
 	private final Prolog engine;
 
-	private final ConversionPolicy cp;
-	
 	/**
 	 * Creates a jTrolog prover of the given name.
 	 */
 	JTrologProver() {
 		super();
 		engine = new Prolog();
-		cp = new JTrologConversionPolicy();
 	}
 
 	/**
@@ -89,11 +85,6 @@ public class JTrologProver extends AbstractProver {
 		} catch (PrologException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public ConversionPolicy getConversionPolicy() {
-		return cp;
 	}
 
 }

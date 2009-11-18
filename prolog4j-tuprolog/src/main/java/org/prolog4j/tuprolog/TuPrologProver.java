@@ -1,7 +1,6 @@
 package org.prolog4j.tuprolog;
 
 import org.prolog4j.AbstractProver;
-import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Query;
 
 import alice.tuprolog.InvalidLibraryException;
@@ -37,15 +36,12 @@ public class TuPrologProver extends AbstractProver {
 	 */
 	private final Prolog engine;
 
-	private final ConversionPolicy cp;
-	
 	/**
 	 * Creates a tuProlog prover of the given name.
 	 */
 	TuPrologProver() {
 		super();
 		engine = new Prolog();
-		cp = new TuPrologConversionPolicy();
 	}
 
 	/**
@@ -91,11 +87,6 @@ public class TuPrologProver extends AbstractProver {
 		} catch (InvalidTheoryException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public ConversionPolicy getConversionPolicy() {
-		return cp;
 	}
 
 }

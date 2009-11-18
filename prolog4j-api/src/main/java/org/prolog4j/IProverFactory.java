@@ -25,34 +25,48 @@
 package org.prolog4j;
 
 /**
- * <code>IProverFactory</code> instances manufacture {@link Prover}
- * instances by name.
+ * <code>IProverFactory</code> instances manufacture {@link Prover} instances by
+ * name.
  * 
- * <p>Most users retrieve {@link Prover} instances through the static
+ * <p>
+ * Most users retrieve {@link Prover} instances through the static
  * {@link ProverFactory#getProver(String)} method. An instance of of this
- * interface is bound internally with {@link ProverFactory} class at
- * compile time.
+ * interface is bound internally with {@link ProverFactory} class at compile
+ * time.
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
 public interface IProverFactory {
 
-  /**
-   * Return an appropriate {@link Prover} instance as specified by the
-   * <code>name</code> parameter.
-   *
-   * <p>If the name parameter is equal to {@link Prover#ROOT_PROVER_NAME}, that is
-   * the string value "ROOT" (case insensitive), then the root prover of the
-   * underlying Prolog system is returned. TODO
-   *
-   * <p>Null-valued name arguments are considered invalid.
-   *
-   * <p>Certain extremely simple Prolog systems, e.g. NOP, may always
-   * return the same prover instance regardless of the requested name.
-   *
-   * @param name the name of the Prover to return
-   * @return a prover instance with the specified name
-   */
-  Prover getProver(String name);
+	/**
+	 * Return an appropriate {@link Prover} instance as specified by the
+	 * <code>name</code> parameter.
+	 * 
+	 * <p>
+	 * If the name parameter is equal to {@link Prover#ROOT_PROVER_NAME}, that
+	 * is the string value "ROOT" (case insensitive), then the root prover of
+	 * the underlying Prolog system is returned. TODO
+	 * 
+	 * <p>
+	 * Null-valued name arguments are considered invalid.
+	 * 
+	 * <p>
+	 * Certain extremely simple Prolog systems, may always return the same
+	 * prover instance regardless of the requested name.
+	 * 
+	 * @param name
+	 *            the name of the Prover to return
+	 * @return a prover instance with the specified name
+	 */
+	Prover getProver(String name);
+
+	/**
+	 * Returns the conversion policy used by provers at default. The 
+	 * modification of this policy effects all provers. The policy can also be
+	 * customized on a per prover base by getting their own policy.
+	 * 
+	 * @return the default conversion policy
+	 */
+	ConversionPolicy getConversionPolicy();
 
 }

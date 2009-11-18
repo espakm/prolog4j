@@ -222,6 +222,19 @@ public abstract class ConversionPolicy {
 				return objectConverters.get(pattern).convert(object);
 			}
 		}
+//		do {
+//			Converter converter = objectConverters.get(objectClass);
+//			if (converter != null) {
+//				return converter.convert(object);
+//			}
+//			for (Class interf: objectClass.getInterfaces()) {
+//				converter = objectConverters.get(interf);
+//				if (converter != null) {
+//					return converter.convert(object);
+//				}
+//			}	
+//			objectClass = objectClass.getSuperclass();
+//		} while (objectClass != null);
 		return null;
 	}
 

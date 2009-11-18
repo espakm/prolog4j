@@ -1,6 +1,7 @@
 package org.prolog4j.jlog;
 
 import org.prolog4j.AbstractProverFactory;
+import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Prover;
 
 /**
@@ -11,11 +12,12 @@ import org.prolog4j.Prover;
  */
 public final class JLogProverFactory extends AbstractProverFactory {
 
-	/**
-	 * The unique instance of this class.
-	 */
+	/** The unique instance of this class. */
 	private static final JLogProverFactory INSTANCE = new JLogProverFactory();
 	
+	/** The default conversion policy. */
+	private final ConversionPolicy conversionPolicy = new JLogConversionPolicy();
+
 	/**
 	 * Returns the single instance of this class.
 	 * 
@@ -36,4 +38,10 @@ public final class JLogProverFactory extends AbstractProverFactory {
 	protected Prover createProver() {
 		return new JLogProver();
 	}
+
+	@Override
+	public ConversionPolicy getConversionPolicy() {
+		return conversionPolicy;
+	}
+	
 }

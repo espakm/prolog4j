@@ -234,6 +234,10 @@ public final class ProverFactory {
 	public static Prover getProver(final Class<?> clazz) {
 		return getProver(clazz.getName());
 	}
+	
+	public static ConversionPolicy getConversionPolicy() {
+		return getIProverFactory().getConversionPolicy();
+	}
 
 	/**
 	 * Return the {@link IProverFactory} instance in use.

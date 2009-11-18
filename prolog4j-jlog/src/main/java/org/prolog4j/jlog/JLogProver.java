@@ -1,7 +1,6 @@
 package org.prolog4j.jlog;
 
 import org.prolog4j.AbstractProver;
-import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Query;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
@@ -25,31 +24,30 @@ public class JLogProver extends AbstractProver {
 	 */
 	private final transient jPrologAPI engine;
 
-	private final ConversionPolicy conversionPolicy;
-	
 	/**
-	 * Performs no translation at all. Returns the original term as represented
-	 * in JLog. This disables the automatic translation of JLog, so terms have 
-	 * to be converted manually later.
-	 */
-	private static final iTermToObject IDEMPOTENT_TERM_TRANSLATOR = new iTermToObject() {
-		@Override
-		public Object createObjectFromTerm(jTerm term) {
-			return term;
-		}
-	};
-
-	/**
-	 * Performs no translation at all. Expects that the object is a jTerm,
+	 * Performs no translation at all. For terms it returns the original term as
+	 * represented in JLog. This disables the automatic translation of JLog, so 
+	 * terms have to be converted manually later.
+	 * <p> For objects, it expects that the object is a <tt>jTerm</tt> instance,
 	 * indeed, and returns it simply. This disables the automatic translation of
 	 * JLog, so objects have to be converted manually, in advance.
 	 */
-	private static final iObjectToTerm IDEMPOTENT_OBJECT_TRANSLATOR = new iObjectToTerm() {
-		@Override
-		public jTerm createTermFromObject(Object object) {
-			return (jTerm) object;
-		}
-	};
+	private static final jTermTranslation IDEMPOTENT_TRANSLATION;
+	static {
+		IDEMPOTENT_TRANSLATION = new jTermTranslation();
+		IDEMPOTENT_TRANSLATION.RegisterDefaultTermToObjectConverter(new iTermToObject() {
+			@Override
+			public Object createObjectFromTerm(jTerm term) {
+				return term;
+			}
+		});
+		IDEMPOTENT_TRANSLATION.RegisterDefaultObjectToTermConverter(new iObjectToTerm() {
+			@Override
+			public jTerm createTermFromObject(Object object) {
+				return (jTerm) object;
+			}
+		});
+	}
 
 	/**
 	 * Creates a JLog prover.
@@ -57,12 +55,7 @@ public class JLogProver extends AbstractProver {
 	JLogProver() {
 		super();
 		engine = new jPrologAPI("");
-		conversionPolicy = new JLogConversionPolicy();
-		
-		jTermTranslation tt = new jTermTranslation();
-		tt.RegisterDefaultTermToObjectConverter(IDEMPOTENT_TERM_TRANSLATOR);
-		tt.RegisterDefaultObjectToTermConverter(IDEMPOTENT_OBJECT_TRANSLATOR);
-		engine.setTranslation(tt);
+		engine.setTranslation(IDEMPOTENT_TRANSLATION);
 	}
 
 	/**
@@ -95,11 +88,6 @@ public class JLogProver extends AbstractProver {
 			sb.append(factOrRule).append('\n');
 		}
 		engine.consultSource(sb.toString());
-	}
-
-	@Override
-	public ConversionPolicy getConversionPolicy() {
-		return conversionPolicy;
 	}
 
 }
