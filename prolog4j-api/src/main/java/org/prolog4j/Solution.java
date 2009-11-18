@@ -26,15 +26,11 @@ public abstract class Solution<S> implements Iterable<S> {
 	 */
 	protected Class<S> clazz;
 	
-	/**
-	 * Stores whether the next solution has already been fetched or not.
-	 */
-	protected boolean fetched;
+	/** Stores whether the next solution has already been fetched or not. */
+	private boolean fetched;
 	
-	/**
-	 * Stores whether there is another solution or not.
-	 */
-	protected boolean hasNext;
+	/** Stores whether there is another solution or not. */
+	private boolean hasNext;
 	
 	/**
 	 * Returns whether there exists a solution or not. Does not depend on the
@@ -180,7 +176,8 @@ public abstract class Solution<S> implements Iterable<S> {
 			@Override
 			public boolean hasNext() {
 				if (!fetched) {
-					fetch();
+					hasNext = fetch();
+					fetched = true;
 				}
 				return hasNext;
 			}
@@ -254,8 +251,11 @@ public abstract class Solution<S> implements Iterable<S> {
 	public abstract List<?>[] toLists();
 
 	/**
-	 * Fetches the next solution.
+	 * Fetches the next solution if there is one.
+	 * 
+	 * @return <code>true</code> if there was another solution, otherwise
+	 * 		<code>false</code>
 	 */
-	protected abstract void fetch();
+	protected abstract boolean fetch();
 	
 }

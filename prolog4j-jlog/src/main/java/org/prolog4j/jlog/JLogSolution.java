@@ -113,10 +113,9 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	}
 
 	@Override
-	protected void fetch() {
+	protected boolean fetch() {
 		solution = prolog.retry();
-		hasNext = solution != null;
-		fetched = true;
+		return solution != null;
 	}
 
 }

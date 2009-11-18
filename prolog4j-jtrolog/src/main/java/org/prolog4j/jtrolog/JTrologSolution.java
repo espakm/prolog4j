@@ -110,18 +110,17 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	}
 
 	@Override
-	protected void fetch() {
+	protected boolean fetch() {
 		try {
-			hasNext = engine.hasOpenAlternatives()
+			return engine.hasOpenAlternatives()
 						&& (solution = engine.solveNext()).success();
 			// if (!hasNext)
 			// engine.solveHalt();
-			fetched = true;
 		} catch (NoMorePrologSolutions e) {
 			// Should not happen.
+			throw new IllegalStateException(e);
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 

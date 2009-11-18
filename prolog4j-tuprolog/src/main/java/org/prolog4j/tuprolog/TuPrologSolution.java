@@ -16,7 +16,6 @@ import alice.tuprolog.NoSolutionException;
 import alice.tuprolog.Prolog;
 import alice.tuprolog.SolveInfo;
 import alice.tuprolog.Term;
-import alice.tuprolog.UnknownVarException;
 import alice.tuprolog.Var;
 
 /**
@@ -66,7 +65,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 		try {
 			vars = solution.getBindingVars();
 		} catch (NoSolutionException e) {
-			// It cannot happen.
+			throw new IllegalStateException(e);
 		}
 		if (vars.size() > 0) {
 			defaultOutputVariable = varName(vars.size() - 1);
@@ -139,15 +138,16 @@ public class TuPrologSolution<S> extends Solution<S> {
 	}
 
 	@Override
-	protected void fetch() {
+	protected boolean fetch() {
 		try {
-			hasNext = prolog.hasOpenAlternatives()
+			boolean hasNext = prolog.hasOpenAlternatives()
 					&& (solution = prolog.solveNext()).isSuccess();
-			// if (!hasNext)
-			// prolog.solveHalt();
-			fetched = true;
+//			if (!hasNext)
+//				prolog.solveHalt();
+			return hasNext;
 		} catch (NoMoreSolutionException e) {
 			// Should not happen.
+			throw new IllegalStateException(e);
 		}
 	}
 
