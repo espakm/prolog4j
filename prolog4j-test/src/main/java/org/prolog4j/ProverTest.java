@@ -217,7 +217,8 @@ public class ProverTest {
 		cp.addObjectConverter(Human.class, new Converter<Human>() {
 			@Override
 			public Object convert(Human human) {
-				return cp.compound("human", human.name);
+//				return cp.compound("human", human.name);
+				return cp.compound("human", cp.convertObject(human.name));
 			}
 		});
 		Human socrates = new Human("socrates");

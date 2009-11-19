@@ -192,6 +192,7 @@ public class TuPrologConversionPolicy extends ConversionPolicy {
 		Term[] tArgs = new Term[args.length];
 		for (int i = 0; i < tArgs.length; ++i) {
 			tArgs[i] = (Term) convertObject(args[i]);
+//			tArgs[i] = (Term) args[i];
 		}
 		return new Struct(name, tArgs);
 	}
