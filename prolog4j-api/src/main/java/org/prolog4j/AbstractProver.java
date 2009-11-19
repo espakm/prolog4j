@@ -18,10 +18,10 @@ public abstract class AbstractProver implements Prover, Serializable {
 	/** The default conversion policy used by the current implementation. */
 	private static final ConversionPolicy GLOBAL_POLICY = ProverFactory.getConversionPolicy();
 
-	@Override
-	public ConversionPolicy getConversionPolicy() {
-		return conversionPolicy;
-	}
+//	@Override
+//	public ConversionPolicy getConversionPolicy() {
+//		return conversionPolicy;
+//	}
 
 	/** 
 	 * This policy tries to do the conversion by themself at first, and if it is

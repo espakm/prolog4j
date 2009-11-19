@@ -10,7 +10,9 @@ import jTrolog.terms.Struct;
 import jTrolog.terms.Term;
 import jTrolog.terms.Var;
 
+import org.prolog4j.ConversionPolicy;
 import org.prolog4j.InvalidQuery;
+import org.prolog4j.ProverFactory;
 import org.prolog4j.Query;
 import org.prolog4j.Solution;
 import org.prolog4j.UnknownVariable;
@@ -19,6 +21,9 @@ import org.prolog4j.UnknownVariable;
  * The jTrolog implementation of the Query class.
  */
 public class JTrologQuery extends Query {
+
+//	final ConversionPolicy cp = p.getConversionPolicy();
+	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
 
 	/** The jTrolog prover used to process this query. */
 	private JTrologProver prover;
@@ -84,7 +89,8 @@ public class JTrologQuery extends Query {
 						",", 
 						new Term[]{
 								new Struct("=", new Term[]{var, 
-										(Term) prover.getConversionPolicy().
+//										(Term) prover.getConversionPolicy().
+										(Term) cp.
 										convertObject(actualArgs[i++])}),
 								sGoal});
 		}
@@ -97,7 +103,8 @@ public class JTrologQuery extends Query {
 		sGoal = new Struct(
 					",", 
 					new Term[]{new Struct("=", new Term[]{var, 
-							(Term) prover.getConversionPolicy().convertObject(value)}), sGoal});
+//							(Term) prover.getConversionPolicy().convertObject(value)}), sGoal});
+							(Term) cp.convertObject(value)}), sGoal});
 		unboundVars.remove(var);
 		return this;
 	}
@@ -113,7 +120,8 @@ public class JTrologQuery extends Query {
 						new Term[]{
 								new Struct("=", 
 										new Term[]{v, 
-										(Term) prover.getConversionPolicy().
+//										(Term) prover.getConversionPolicy().
+										(Term) cp.
 										convertObject(value)}), sGoal});
 				it.remove();
 				return this;

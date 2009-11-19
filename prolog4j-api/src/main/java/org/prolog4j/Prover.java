@@ -58,11 +58,11 @@ public interface Prover {
 	 */
 	void addTheory(String... theory);
 
-	/**
-	 * Returns the conversion policy used by the prover.
-	 * 
-	 * @return the conversion policy
-	 */
-	ConversionPolicy getConversionPolicy();
+//	/**
+//	 * Returns the conversion policy used by the prover.
+//	 * 
+//	 * @return the conversion policy
+//	 */
+//	ConversionPolicy getConversionPolicy();
 
 }

@@ -207,7 +207,8 @@ public class ProverTest {
 	 */
 	@Test
 	public void testCustomObjectConverters() {
-		final ConversionPolicy cp = p.getConversionPolicy();
+//		final ConversionPolicy cp = p.getConversionPolicy();
+		final ConversionPolicy cp = ProverFactory.getConversionPolicy();
 		class Human {
 			private final String name;
 			Human(String name) {
@@ -233,7 +234,8 @@ public class ProverTest {
 	 */
 	@Test
 	public void testCustomTermConverters() {
-		final ConversionPolicy cp = p.getConversionPolicy();
+//		final ConversionPolicy cp = p.getConversionPolicy();
+		final ConversionPolicy cp = ProverFactory.getConversionPolicy();
 		class Human {
 			private final String name;
 			Human(String name) {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.prolog4j.ConversionPolicy;
+import org.prolog4j.ProverFactory;
 import org.prolog4j.SolutionIterator;
 import org.prolog4j.UnknownVariable;
 
@@ -22,6 +24,8 @@ import jTrolog.terms.Term;
  */
 public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 
+	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
+	
 	/** The jTrolog prover used to process this query. */
 	private JTrologProver prover;
 	
@@ -74,7 +78,8 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 			if (binding == null) {
 				throw new UnknownVariable(variable);
 			}
-			return (A) prover.getConversionPolicy().convertTerm(binding);
+//			return (A) prover.getConversionPolicy().convertTerm(binding);
+			return (A) cp.convertTerm(binding);
 		}
 		return (A) get(variable, clazz);
 	}
@@ -85,7 +90,8 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 		if (binding == null) {
 			throw new UnknownVariable(variable);
 		}
-		return (A) prover.getConversionPolicy().convertTerm(binding, type);
+//		return (A) prover.getConversionPolicy().convertTerm(binding, type);
+		return (A) cp.convertTerm(binding, type);
 	}
 
 	@Override

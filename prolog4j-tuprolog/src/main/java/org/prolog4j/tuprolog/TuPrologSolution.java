@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Prover;
+import org.prolog4j.ProverFactory;
 import org.prolog4j.Solution;
 import org.prolog4j.SolutionIterator;
 import org.prolog4j.UnknownVariable;
@@ -30,8 +31,11 @@ public class TuPrologSolution<S> extends Solution<S> {
 	/** The tuProlog prover that is used for solving this query. */
 	private Prover prover;
 
+//	/** The conversion policy of the tuProlog prover that is used for solving this query. */
+//	private final ConversionPolicy cp;
+
 	/** The conversion policy of the tuProlog prover that is used for solving this query. */
-	private final ConversionPolicy cp;
+	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
 
 //	private static final Terms terms = Terms.getInstance();
 
@@ -55,7 +59,7 @@ public class TuPrologSolution<S> extends Solution<S> {
 	 */
 	TuPrologSolution(TuPrologProver prover, Term goal) {
 		this.prover = prover;
-		this.cp = prover.getConversionPolicy();
+//		this.cp = prover.getConversionPolicy();
 		this.prolog = prover.getEngine();
 		solution = prolog.solve(goal);
 		success = solution.isSuccess();

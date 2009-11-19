@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.prolog4j.ConversionPolicy;
 import org.prolog4j.InvalidQuery;
+import org.prolog4j.ProverFactory;
 import org.prolog4j.Query;
 import org.prolog4j.Solution;
 import org.prolog4j.UnknownVariable;
@@ -21,6 +23,8 @@ import alice.tuprolog.Var;
  * The tuProlog implementation of the Query class.
  */
 public class TuPrologQuery extends Query {
+	
+	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
 	
 	/** The tuProlog prover used to process this query. */
 	private final TuPrologProver prover;
@@ -72,7 +76,8 @@ public class TuPrologQuery extends Query {
 		int i = 0;
 		for (Var var: unboundVars) {
 			var.free();
-			engine.unify(var, (Term) prover.getConversionPolicy().convertObject(actualArgs[i++]));
+//			engine.unify(var, (Term) prover.getConversionPolicy().convertObject(actualArgs[i++]));
+			engine.unify(var, (Term) cp.convertObject(actualArgs[i++]));
 		}
 		return new TuPrologSolution<A>(prover, sGoal);
 	}
@@ -80,7 +85,8 @@ public class TuPrologQuery extends Query {
 	@Override
 	public Query bind(int argument, Object value) {
 		inputVars[argument].free();
-		engine.unify(inputVars[argument], (Term) prover.getConversionPolicy().convertObject(value));
+//		engine.unify(inputVars[argument], (Term) prover.getConversionPolicy().convertObject(value));
+		engine.unify(inputVars[argument], (Term) cp.convertObject(value));
 		unboundVars.remove(inputVars[argument]);
 		return this;
 	}
@@ -92,7 +98,8 @@ public class TuPrologQuery extends Query {
 			Var v = it.next();
 			if (v.getName().equals(variable)) {
 				v.free();
-				engine.unify(v, (Term) prover.getConversionPolicy().convertObject(value));
+//				engine.unify(v, (Term) prover.getConversionPolicy().convertObject(value));
+				engine.unify(v, (Term) cp.convertObject(value));
 				it.remove();
 				return this;
 			}

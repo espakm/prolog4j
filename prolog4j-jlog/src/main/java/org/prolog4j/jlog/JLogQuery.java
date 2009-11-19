@@ -3,6 +3,7 @@ package org.prolog4j.jlog;
 import java.util.Hashtable;
 
 import org.prolog4j.ConversionPolicy;
+import org.prolog4j.ProverFactory;
 import org.prolog4j.Query;
 import org.prolog4j.Solution;
 
@@ -17,7 +18,8 @@ public class JLogQuery extends Query {
 	/** Stores the initial binding of variables. */
 	private Hashtable<String, Object> bindings;
 
-	private final ConversionPolicy cp;
+//	private final ConversionPolicy cp;
+	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
 	
 	/**
 	 * Creates an object that represents a Prolog query in JLog.
@@ -28,7 +30,7 @@ public class JLogQuery extends Query {
 	JLogQuery(JLogProver prover, String goal) {
 		super(goal);
 		this.prover = prover;
-		cp = prover.getConversionPolicy();
+//		cp = prover.getConversionPolicy();
 		this.bindings = new Hashtable<String, Object>(getPlaceholderNames().size());
 	}
 
