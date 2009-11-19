@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -176,6 +177,9 @@ public class ProverTest {
 	 */
 	@Test
 	public void testObjectConverters() {
+		System.out.println("ProverTest.testObjectConverters()");
+		System.out.println(List[].class.getSuperclass());
+		System.out.println(List.class.getSuperclass());
 		assertTrue(p.solve("{}=1.", 1).isSuccess());
 		assertFalse(p.solve("{}=1.", 1.0).isSuccess());
 		assertFalse(p.solve("{}=1.", 2).isSuccess());

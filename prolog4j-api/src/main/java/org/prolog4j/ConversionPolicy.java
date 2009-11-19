@@ -236,26 +236,35 @@ public abstract class ConversionPolicy {
 			return null;
 		}
 		Class objectClass = object.getClass();
-		do {
-			Converter converter = objectConverters.get(objectClass);
-			if (converter != null) {
-				return converter.convert(object);
-			}
-			if (!objectClass.isArray()) {
-				for (Class interf: objectClass.getInterfaces()) {
-					converter = objectConverters.get(interf);
-					if (converter != null) {
-						return converter.convert(object);
-					}
-				}	
-				objectClass = objectClass.getSuperclass();
-			} else {
-				Class componentType = objectClass.getComponentType();
-				componentType = componentType.getSuperclass();
-				// TODO It does not handle dimensions correctly.
-				objectClass = Array.newInstance(componentType, new int[]{0}).getClass();
-			}
-		} while (objectClass != null);
+		if (objectClass.isArray()) {
+			Converter converter = objectConverters.get(Object[].class);
+			return converter.convert(object);
+		}
+		else {
+			do {
+				Converter converter = objectConverters.get(objectClass);
+				if (converter != null) {
+					return converter.convert(object);
+				}
+				if (!objectClass.isArray()) {
+					for (Class interf: objectClass.getInterfaces()) {
+						converter = objectConverters.get(interf);
+						if (converter != null) {
+							return converter.convert(object);
+						}
+					}	
+					objectClass = objectClass.getSuperclass();
+				} else {
+					// TODO It does not handle interfaces and dimensions correctly.
+//					Class componentType = objectClass.getComponentType();
+//					componentType = componentType.getSuperclass();
+//					if (componentType == null) {
+//						break;
+//					}
+//					objectClass = Array.newInstance(componentType, new int[]{0}).getClass();
+				}
+			} while (objectClass != null);
+		}
 		throw new RuntimeException("No suitable converter found for " + object);
 	}
 

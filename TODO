@@ -8,6 +8,10 @@ Term <-> Object conversions
 
 Almost complete but should be reviewed. Much more test cases needed.
 
+Always the converter assigned to Object[].class is used for converting arrays.
+This is not ideal, but covers the most use cases. (Arrays of interfaces or 
+primitive types should be handled specially as well.)
+
 ================================================================================
 
 Alternative implementations
