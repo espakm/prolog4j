@@ -6,11 +6,7 @@ These should be added to the GForge site of the project. :)
 Term <-> Object conversions
 ---------------------------
 
-The behavior of the conversion policies has to be improved. Currently, it does
-not support term patterns, only classes.
-
-Also, a better algorithm should be provided for finding the appropriate 
-converter.
+Almost complete but should be reviewed. Much more test cases needed.
 
 ================================================================================
 

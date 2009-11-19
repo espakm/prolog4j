@@ -244,4 +244,29 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 		return new Struct(name, tArgs);
 	}
 
+	@Override
+	protected String getSpecification(Object term) {
+		if (term instanceof StructAtom) {
+			return ((StructAtom) term).name;
+		}
+		if (term instanceof Struct) {
+			Struct struct = (Struct) term;
+			return String.format("%s/%d", struct.name, struct.arity);
+		}
+		return null;
+	}
+
+	@Override
+	protected Object[] getArgs(Object compound) {
+		if (compound instanceof Struct) {
+			Struct struct = (Struct) compound;
+			Object[] args = new Object[struct.arity];
+			for (int i = 0; i < args.length; ++i) {
+				args[i] = struct.getArg(i);
+			}
+			return args;
+		}
+		return null;
+	}
+
 }

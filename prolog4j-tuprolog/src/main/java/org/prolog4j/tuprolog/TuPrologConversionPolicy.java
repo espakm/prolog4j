@@ -196,4 +196,29 @@ public class TuPrologConversionPolicy extends ConversionPolicy {
 		return new Struct(name, tArgs);
 	}
 
+	@Override
+	protected String getSpecification(Object term) {
+		if (((Term) term).isAtom()) {
+			return ((Struct) term).getName();
+		}
+		if (term instanceof Struct) {
+			Struct struct = (Struct) term;
+			return String.format("%s/%d", struct.getName(), struct.getArity());
+		}
+		return null;
+	}
+
+	@Override
+	protected Object[] getArgs(Object compound) {
+		if (compound instanceof Struct) {
+			Struct struct = (Struct) compound;
+			Object[] args = new Object[struct.getArity()];
+			for (int i = 0; i < args.length; ++i) {
+				args[i] = struct.getArg(i);
+			}
+			return args;
+		}
+		return null;
+	}
+
 }

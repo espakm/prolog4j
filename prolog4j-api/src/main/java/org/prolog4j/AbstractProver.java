@@ -65,6 +65,16 @@ public abstract class AbstractProver implements Prover, Serializable {
 		public boolean match(Object term1, Object term2) {
 			return GLOBAL_POLICY.match(term1, term2);
 		}
+
+		@Override
+		protected String getSpecification(Object term) {
+			return GLOBAL_POLICY.getSpecification(term);
+		}
+
+		@Override
+		protected Object[] getArgs(Object compound) {
+			return GLOBAL_POLICY.getArgs(compound);
+		}
 	};
 	
 	// /**

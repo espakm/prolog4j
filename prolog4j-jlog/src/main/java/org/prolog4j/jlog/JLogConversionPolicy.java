@@ -230,4 +230,34 @@ public class JLogConversionPolicy extends ConversionPolicy {
 		}
 		return new jPredicate(name, new jCompoundTerm(tArgs));
 	}
+
+	@Override
+	protected String getSpecification(Object term) {
+		if (term instanceof jAtom) {
+			return ((jAtom) term).getName();
+		}
+		if (term instanceof jPredicate) {
+			jPredicate p = (jPredicate) term;
+			return String.format("%s/%d", p.getName(), p.getArity());
+		}
+		return null;
+	}
+
+	@Override
+	protected Object[] getArgs(Object compound) {
+		if (compound instanceof jAtom) {
+			return new Object[0];
+		}
+		if (compound instanceof jPredicate) {
+			jPredicate pred = (jPredicate) compound;
+			jCompoundTerm arguments = pred.getArguments();
+			Object[] args = new Object[arguments.size()];
+			for (int i = 0; i < args.length; ++i) {
+				args[i] = arguments.elementAt(i);
+			}
+			return args;
+		}
+		return null;
+	}
+
 }

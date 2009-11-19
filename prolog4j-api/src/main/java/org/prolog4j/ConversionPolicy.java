@@ -3,6 +3,7 @@ package org.prolog4j;
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * An instance of this class represents how terms are converted to regular Java
@@ -31,7 +32,7 @@ public abstract class ConversionPolicy {
 	 * cannot be iterated through reversely, at second the insertion order is
 	 * not affected if a key is re-inserted into the map.)
 	 */
-	private LinkedList<Object> termPatterns;
+	private Map<String, Converter<Object[]>> termPatterns;
 	
 	/**
 	 * Stores the converters for transforming regular objects to terms. The keys
@@ -47,7 +48,7 @@ public abstract class ConversionPolicy {
 	@SuppressWarnings("unchecked")
 	protected ConversionPolicy() {
 		termConverters = new HashMap<Object, Converter>();
-		termPatterns = new LinkedList<Object>();
+		termPatterns = new HashMap<String, Converter<Object[]>>();
 		objectConverters = new HashMap<Class, Converter>();
 	}
 	
@@ -73,13 +74,11 @@ public abstract class ConversionPolicy {
 	 * The matching of the pattern is decided by 
 	 * {@link Prover#match(Object, Object)}.
 	 * 
-	 * @param <T> the type of the objects to convert
 	 * @param pattern the pattern to select the converter to use later
 	 * @param converter the converter
 	 */
-	public <T> void addTermConverter(String pattern, Converter<T> converter) {
-		termConverters.put(pattern, converter);
-		termPatterns.addFirst(pattern);
+	public void addTermConverter(String pattern, Converter<Object[]> converter) {
+		termPatterns.put(pattern, converter);
 	}
 
 	/**
@@ -119,31 +118,51 @@ public abstract class ConversionPolicy {
 		if (term == null) {
 			return null;
 		}
-//		for (Object pattern: termPatterns) {
-//			if (pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass())) {
-//				Object result = termConverters.get(pattern).convert(term);
-//				if (result != null) {
-//					return result;
-//				}
-//			}
-//		}
+		String spec = getSpecification(term);
+		if (spec != null) {
+			Converter converter = termPatterns.get(spec);
+			if (converter != null) {
+				Object result = converter.convert(getArgs(term));
+				if (result != null) {
+					return result;
+				}
+			}
+		}
 		Class termClass = term.getClass();
 		do {
 			Converter converter = termConverters.get(termClass);
 			if (converter != null) {
-				return converter.convert(term);
+				Object result = converter.convert(term);
+				if (result != null) {
+					return result;
+				}
 			}
-//			for (Class interf: termClass.getInterfaces()) {
-//				converter = termConverters.get(interf);
-//				if (converter != null) {
-//					return converter.convert(term);
-//				}
-//			}
 			termClass = termClass.getSuperclass();
 		} while (termClass != null);
 		throw new RuntimeException("No suitable converter found for " + term);
 	}
 	
+	/**
+	 * Extracts the arguments of a compound and returns them in an array. For
+	 * atoms it returns an empty {@link Object} array. If the argument is not an
+	 * atom or a compound then it returns <code>null</code>.
+	 * 
+	 * @param compound the compound
+	 * @return the arguments of the compound or <code>null</code>
+	 */
+	protected abstract Object[] getArgs(Object compound);
+
+	/**
+	 * Returns the specification of a term. The specification of an atom is the
+	 * atom itself. The specification of compound terms is "functor/arity". For
+	 * other kind of terms (variables, numbers) the method returns 
+	 * <code>null</code>.
+	 * 
+	 * @param compound a term
+	 * @return the specification of the term or <code>null</code> if there is no
+	 */
+	protected abstract String getSpecification(Object compound);
+
 	/**
 	 * Converts a term to a regular Java object. If the term is <code>null
 	 * </code> (that represents an unbound Prolog variable) then 
