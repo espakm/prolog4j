@@ -15,11 +15,58 @@ public abstract class AbstractProver implements Prover, Serializable {
 		return query(goal).solve(actualArgs);
 	}
 
+	/** The default conversion policy used by the current implementation. */
+	private static final ConversionPolicy GLOBAL_POLICY = ProverFactory.getConversionPolicy();
+
 	@Override
 	public ConversionPolicy getConversionPolicy() {
-		return ProverFactory.getConversionPolicy();
+		return conversionPolicy;
 	}
 
+	/** 
+	 * This policy tries to do the conversion by themself at first, and if it is
+	 * not possible then delegates the task to the default conversion policy. 
+	 */
+	private final ConversionPolicy conversionPolicy = new ConversionPolicy() {
+		
+		@Override
+		public Object convertObject(Object object) {
+			try {
+				return super.convertObject(object);
+			} catch (RuntimeException e) {
+				return GLOBAL_POLICY.convertObject(object);
+			}
+		}
+		
+		@Override
+		public Object convertTerm(Object term) {
+			try {
+				return super.convertTerm(term);
+			} catch (RuntimeException e) {
+				return GLOBAL_POLICY.convertTerm(term);
+			}
+		}
+		
+		@Override
+		public <T> T convertTerm(Object term, java.lang.Class<T> type) {
+			try {
+				return super.convertTerm(term, type);
+			} catch (RuntimeException e) {
+				return GLOBAL_POLICY.convertTerm(term, type);
+			}
+		}
+
+		@Override
+		public Object compound(String name, Object... args) {
+			return GLOBAL_POLICY.compound(name, args);
+		}
+
+		@Override
+		public boolean match(Object term1, Object term2) {
+			return GLOBAL_POLICY.match(term1, term2);
+		}
+	};
+	
 	// /**
 	// * Replace this instance with a homonymous (same name) prover returned by
 	// * ProverFactory. Note that this method is only called during

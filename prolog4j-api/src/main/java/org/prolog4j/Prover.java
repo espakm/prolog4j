@@ -1,10 +1,10 @@
 package org.prolog4j;
 
 /**
- * A Prover object represents a Prolog knowledge base, on which you can create 
- * and solve queries. The implementations of this interface should not provide 
- * public constructors. The Prover instances should be created through {@link 
- * ProverFactory#getProver()}.
+ * A Prover object represents a Prolog knowledge base, on which you can create
+ * and solve queries. The implementations of this interface should not provide
+ * public constructors. The Prover instances should be created through
+ * {@link ProverFactory#getProver()}.
  */
 public interface Prover {
 
@@ -25,7 +25,7 @@ public interface Prover {
 	<A> Solution<A> solve(String goal, Object... actualArgs);
 
 	/**
-	 * Creates a Prolog query that can be solved later. 
+	 * Creates a Prolog query that can be solved later.
 	 * 
 	 * @param goal
 	 *            the Prolog goal
@@ -36,7 +36,8 @@ public interface Prover {
 	/**
 	 * Loads in a Prolog library of the specified name.
 	 * 
-	 * @param library the name of the library
+	 * @param library
+	 *            the name of the library
 	 */
 	void loadLibrary(String library);
 
@@ -63,5 +64,5 @@ public interface Prover {
 	 * @return the conversion policy
 	 */
 	ConversionPolicy getConversionPolicy();
-		
+
 }

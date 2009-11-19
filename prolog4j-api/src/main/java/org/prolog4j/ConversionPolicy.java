@@ -1,5 +1,6 @@
 package org.prolog4j;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -38,16 +39,7 @@ public abstract class ConversionPolicy {
 	 * converter can be applied.
 	 */
 	@SuppressWarnings("unchecked")
-	private HashMap<Object, Converter> objectConverters;
-	
-	/**
-	 * Represents the reverse insertion order of the keys to 
-	 * {@link #objectConverters}.
-	 * (Note that LinkedHashMap is not suitable for two reasons. At first, it
-	 * cannot be iterated through reversely, at second the insertion order is
-	 * not affected if a key is re-inserted into the map.)
-	 */
-	private LinkedList<Object> objectPatterns;
+	private HashMap<Class, Converter> objectConverters;
 	
 	/**
 	 * Constructs an empty <code>ConversionPolicy</code>.
@@ -56,8 +48,7 @@ public abstract class ConversionPolicy {
 	protected ConversionPolicy() {
 		termConverters = new HashMap<Object, Converter>();
 		termPatterns = new LinkedList<Object>();
-		objectConverters = new HashMap<Object, Converter>();
-		objectPatterns = new LinkedList<Object>();
+		objectConverters = new HashMap<Class, Converter>();
 	}
 	
 	/**
@@ -73,7 +64,6 @@ public abstract class ConversionPolicy {
 	 */
 	public <T> void addTermConverter(Class<T> pattern, Converter<T> converter) {
 		termConverters.put(pattern, converter);
-		termPatterns.addFirst(pattern);
 	}
 	
 	/**
@@ -87,7 +77,7 @@ public abstract class ConversionPolicy {
 	 * @param pattern the pattern to select the converter to use later
 	 * @param converter the converter
 	 */
-	public <T> void addTermConverter(T pattern, Converter<T> converter) {
+	public <T> void addTermConverter(String pattern, Converter<T> converter) {
 		termConverters.put(pattern, converter);
 		termPatterns.addFirst(pattern);
 	}
@@ -105,23 +95,6 @@ public abstract class ConversionPolicy {
 	 */
 	public <T> void addObjectConverter(Class<T> pattern, Converter<T> converter) {
 		objectConverters.put(pattern, converter);
-		objectPatterns.addFirst(pattern);
-	}
-	
-	/**
-	 * Registers a new object converter into the policy. The converter will have
-	 * priority over other converters whose pattern matches the same objects.
-	 * 
-	 * The pattern matches an object if the class of the object is a subclass of
-	 * the pattern.
-	 * 
-	 * @param <T> the type of the objects to convert
-	 * @param pattern the pattern to select the converter to use later
-	 * @param converter the converter
-	 */
-	public <T> void addObjectConverter(T pattern, Converter<T> converter) {
-		objectConverters.put(pattern, converter);
-		objectPatterns.addFirst(pattern);
 	}
 	
 	/**
@@ -146,14 +119,28 @@ public abstract class ConversionPolicy {
 		if (term == null) {
 			return null;
 		}
-		for (Object pattern: termPatterns) {
-			if (pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass())) {
-				Object result = termConverters.get(pattern).convert(term);
-				if (result != null) {
-					return result;
-				}
+//		for (Object pattern: termPatterns) {
+//			if (pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass())) {
+//				Object result = termConverters.get(pattern).convert(term);
+//				if (result != null) {
+//					return result;
+//				}
+//			}
+//		}
+		Class termClass = term.getClass();
+		do {
+			Converter converter = termConverters.get(termClass);
+			if (converter != null) {
+				return converter.convert(term);
 			}
-		}
+//			for (Class interf: termClass.getInterfaces()) {
+//				converter = termConverters.get(interf);
+//				if (converter != null) {
+//					return converter.convert(term);
+//				}
+//			}
+			termClass = termClass.getSuperclass();
+		} while (termClass != null);
 		throw new RuntimeException("No suitable converter found for " + term);
 	}
 	
@@ -181,14 +168,28 @@ public abstract class ConversionPolicy {
 		if (term == null) {
 			return null;
 		}
-		for (Object pattern: termPatterns) {
-			if (pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass())) {
-				T result = (T) termConverters.get(pattern).convert(term, type);
-				if (result != null) {
-					return result;
-				}
+//		for (Object pattern: termPatterns) {
+//			if (pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass())) {
+//				T result = (T) termConverters.get(pattern).convert(term, type);
+//				if (result != null) {
+//					return result;
+//				}
+//			}
+//		}
+		Class termClass = term.getClass();
+		do {
+			Converter converter = termConverters.get(termClass);
+			if (converter != null) {
+				return (T) converter.convert(term, type);
 			}
-		}
+//			for (Class interf: termClass.getInterfaces()) {
+//				converter = termConverters.get(interf);
+//				if (converter != null) {
+//					return converter.convert(term);
+//				}
+//			}
+			termClass = termClass.getSuperclass();
+		} while (termClass != null);
 		throw new RuntimeException("No suitable converter found for " + term);
 	}
 	
@@ -216,26 +217,27 @@ public abstract class ConversionPolicy {
 			return null;
 		}
 		Class objectClass = object.getClass();
-		for (Object pattern: objectPatterns) {
-			if ((pattern instanceof Class) 
-					&& ((Class) pattern).isAssignableFrom(objectClass)) {
-				return objectConverters.get(pattern).convert(object);
+		do {
+			Converter converter = objectConverters.get(objectClass);
+			if (converter != null) {
+				return converter.convert(object);
 			}
-		}
-//		do {
-//			Converter converter = objectConverters.get(objectClass);
-//			if (converter != null) {
-//				return converter.convert(object);
-//			}
-//			for (Class interf: objectClass.getInterfaces()) {
-//				converter = objectConverters.get(interf);
-//				if (converter != null) {
-//					return converter.convert(object);
-//				}
-//			}	
-//			objectClass = objectClass.getSuperclass();
-//		} while (objectClass != null);
-		return null;
+			if (!objectClass.isArray()) {
+				for (Class interf: objectClass.getInterfaces()) {
+					converter = objectConverters.get(interf);
+					if (converter != null) {
+						return converter.convert(object);
+					}
+				}	
+				objectClass = objectClass.getSuperclass();
+			} else {
+				Class componentType = objectClass.getComponentType();
+				componentType = componentType.getSuperclass();
+				// TODO It does not handle dimensions correctly.
+				objectClass = Array.newInstance(componentType, new int[]{0}).getClass();
+			}
+		} while (objectClass != null);
+		throw new RuntimeException("No suitable converter found for " + object);
 	}
 
 	/**

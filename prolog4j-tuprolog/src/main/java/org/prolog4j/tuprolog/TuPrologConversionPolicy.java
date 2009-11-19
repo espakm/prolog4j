@@ -182,6 +182,11 @@ public class TuPrologConversionPolicy extends ConversionPolicy {
 		return false;
 	}
 
+//	@Override
+//	public Object variable() {
+//		return new Var();
+//	}
+
 	@Override
 	public Object compound(String name, Object... args) {
 		Term[] tArgs = new Term[args.length];

@@ -205,10 +205,8 @@ public class ProverTest {
 	public void testCustomObjectConverters() {
 		final ConversionPolicy cp = p.getConversionPolicy();
 		class Human {
-			String name;
-
-			public Human(String name) {
-				super();
+			private final String name;
+			Human(String name) {
 				this.name = name;
 			}
 		}
@@ -224,6 +222,32 @@ public class ProverTest {
 		assertFalse(p.solve("{}=human(socrates, plato).", socrates).isSuccess());
 		assertFalse(p.solve("{}=socrates.", socrates).isSuccess());
 	}
+
+//	/**
+//	 * Tests the user defined term converters added to the prover.
+//	 */
+//	@Test
+//	public void testCustomTermConverters() {
+//		final ConversionPolicy cp = p.getConversionPolicy();
+//		class Human {
+//			private final String name;
+//			Human(String name) {
+//				this.name = name;
+//			}
+//			@Override
+//			public boolean equals(Object obj) {
+//				return obj instanceof Human && name.equals(((Human) obj).name);
+//			}
+//		}
+//		cp.addTermConverter(new Compound("human", (Object) null), new Converter<Compound>() {
+//			@Override
+//			public Object convert(Compound human) {
+//				return new Human((String) human.getArg(0));
+//			}
+//		});
+//		Human socrates = p.<Human>solve("H=human(socrates).").get();
+//		assertEquals(new Human("socrates"), socrates);
+//	}
 
 	/**
 	 * Tests {@link Solution#on(String)} and the conversion of the result 

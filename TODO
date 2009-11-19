@@ -7,13 +7,7 @@ Term <-> Object conversions
 ---------------------------
 
 The behavior of the conversion policies has to be improved. Currently, it does
-not support object patterns, only classes. (However, it could now be implemented
-by ConversionPolicy#match(Object, Object).)
-
-Also, the customization of the policy does not work on a per prover base because
-the provers always return the default policy. This is a bug, since if you modify
-the conversion policy of a prover, you do it on the global one, indeed, changing
-the behavior of other provers, incidentally.
+not support term patterns, only classes.
 
 Also, a better algorithm should be provided for finding the appropriate 
 converter.

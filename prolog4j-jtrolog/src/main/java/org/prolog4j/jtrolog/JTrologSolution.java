@@ -114,8 +114,6 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 		try {
 			return engine.hasOpenAlternatives()
 						&& (solution = engine.solveNext()).success();
-			// if (!hasNext)
-			// engine.solveHalt();
 		} catch (NoMorePrologSolutions e) {
 			// Should not happen.
 			throw new IllegalStateException(e);
