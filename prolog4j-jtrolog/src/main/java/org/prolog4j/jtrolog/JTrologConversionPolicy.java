@@ -14,6 +14,9 @@ import org.prolog4j.Compound;
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Converter;
 
+/**
+ * jTrolog implementation of the conversion policy.
+ */
 public class JTrologConversionPolicy extends ConversionPolicy {
 
 	/** Converts an Integer object to a term. */
@@ -90,6 +93,9 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 		}
 	};
 
+	/**
+	 * Constructs a conversion policy for jTrolog.
+	 */
 	public JTrologConversionPolicy() {
 		addObjectConverter(Long.class, LONG_CONVERTER);
 		addObjectConverter(Float.class, FLOAT_CONVERTER);
@@ -236,7 +242,42 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 	}
 
 	@Override
-	public Object compound(String name, Object... args) {
+	public boolean isInteger(Object term) {
+		return term instanceof Int;
+	}
+
+	@Override
+	public boolean isDouble(Object term) {
+		return term instanceof jTrolog.terms.Double;
+	}
+
+	@Override
+	public boolean isAtom(Object term) {
+		return term instanceof StructAtom;
+	}
+
+	@Override
+	public boolean isCompound(Object term) {
+		return term instanceof Struct;
+	}
+
+	@Override
+	public Object term(int value) {
+		return new Int(value);
+	}
+
+	@Override
+	public Object term(double value) {
+		return new jTrolog.terms.Double(value);
+	}
+
+	@Override
+	public Object term(String name) {
+		return new StructAtom(name);
+	}
+
+	@Override
+	public Object term(String name, Object... args) {
 		Term[] tArgs = new Term[args.length];
 		for (int i = 0; i < tArgs.length; ++i) {
 			tArgs[i] = (Term) convertObject(args[i]);
@@ -245,28 +286,34 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 	}
 
 	@Override
-	protected String getSpecification(Object term) {
-		if (term instanceof StructAtom) {
-			return ((StructAtom) term).name;
-		}
-		if (term instanceof Struct) {
-			Struct struct = (Struct) term;
-			return String.format("%s/%d", struct.name, struct.arity);
-		}
-		return null;
+	public int intValue(Object term) {
+		return ((jTrolog.terms.Number) term).intValue();
 	}
 
 	@Override
-	protected Object[] getArgs(Object compound) {
-		if (compound instanceof Struct) {
-			Struct struct = (Struct) compound;
-			Object[] args = new Object[struct.arity];
-			for (int i = 0; i < args.length; ++i) {
-				args[i] = struct.getArg(i);
-			}
-			return args;
-		}
-		return null;
+	public double doubleValue(Object term) {
+		return ((jTrolog.terms.Number) term).doubleValue();
 	}
+
+	@Override
+	protected String getName(Object compound) {
+		return ((Struct) compound).name;
+	}
+
+	@Override
+	protected int getArity(Object compound) {
+		return ((Struct) compound).arity;
+	}
+
+	@Override
+	protected Object getArg(Object compound, int index) {
+		return convertTerm(((Struct) compound).getArg(index));
+	}
+
+//	@Override
+//	public org.prolog4j.Term pattern(String term) {
+//		// TODO
+//		throw new UnsupportedOperationException();
+//	}
 
 }

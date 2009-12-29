@@ -35,7 +35,7 @@ public final class JLogProverFactory extends AbstractProverFactory {
 	}
 
 	@Override
-	protected Prover createProver() {
+	public Prover getProver() {
 		return new JLogProver();
 	}
 

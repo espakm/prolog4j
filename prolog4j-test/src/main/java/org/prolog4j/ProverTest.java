@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -207,8 +206,8 @@ public class ProverTest {
 	 */
 	@Test
 	public void testCustomObjectConverters() {
-//		final ConversionPolicy cp = p.getConversionPolicy();
-		final ConversionPolicy cp = ProverFactory.getConversionPolicy();
+		final ConversionPolicy cp = p.getConversionPolicy();
+//		final ConversionPolicy cp = ProverFactory.getConversionPolicy();
 		class Human {
 			private final String name;
 			Human(String name) {
@@ -219,7 +218,8 @@ public class ProverTest {
 			@Override
 			public Object convert(Human human) {
 //				return cp.compound("human", human.name);
-				return cp.compound("human", cp.convertObject(human.name));
+				return cp.term("human", cp.convertObject(human.name));
+//				return cp.term("human({})", human.name);
 			}
 		});
 		Human socrates = new Human("socrates");
@@ -234,8 +234,8 @@ public class ProverTest {
 	 */
 	@Test
 	public void testCustomTermConverters() {
-//		final ConversionPolicy cp = p.getConversionPolicy();
-		final ConversionPolicy cp = ProverFactory.getConversionPolicy();
+		final ConversionPolicy cp = p.getConversionPolicy();
+//		final ConversionPolicy cp = ProverFactory.getConversionPolicy();
 		class Human {
 			private final String name;
 			Human(String name) {
@@ -246,16 +246,28 @@ public class ProverTest {
 				return obj instanceof Human && name.equals(((Human) obj).name);
 			}
 		}
-		cp.addTermConverter("human/1", new Converter<Object[]>() {
+		cp.addTermConverter("human({})", new Converter<Object>() {
 			@Override
-			public Object convert(Object[] args) {
-				return new Human((String) cp.convertTerm(args[0]));
+			public Object convert(Object term) {
+//				return new Human((String) cp.convertTerm(cp.getArg(term, 0)));
+				return new Human((String) cp.getArg(term, 0));
 			}
 		});
 		Human socrates = p.<Human>solve("H=human(socrates).").get();
 		assertEquals(new Human("socrates"), socrates);
 	}
 
+	/**
+	 * Tests the default term converters added to the prover.
+	 */
+	@Test
+	public void testStringTermConverters() {
+		final ConversionPolicy cp = ProverFactory.getConversionPolicy();
+		Object o = cp.term("[a, b, c]");
+		// TODO
+//		Object o2 = cp.convertTerm("[a, b, c]");
+	}
+	
 	/**
 	 * Tests {@link Solution#on(String)} and the conversion of the result 
 	 * into an array.
@@ -294,7 +306,7 @@ public class ProverTest {
 	 * Tests adding theories to the prover.
 	 */
 	@Test
-	public void theoryTest() {
+	public void testAddTheory() {
 		p.addTheory("greek(socrates).");
 		p.addTheory("greek(plato).");
 		p.addTheory("greek(demokritos).");
@@ -310,7 +322,7 @@ public class ProverTest {
 	 * Tests the dynamic assertion of theories.
 	 */
 	@Test
-	public void assertTest() {
+	public void testAssert() {
 		p.solve("assertz(roman(michelangelo)).");
 		p.solve("assertz(roman(davinci)).");
 		p.solve("assertz(roman(iulius)).");
@@ -322,4 +334,43 @@ public class ProverTest {
 		assertEquals(romansExpected, romans);
 	}
 	
+	
+	/**
+	 * Tests the dynamic assertion of theories.
+	 */
+	@Test
+	public void testWeakFacts() {
+		System.out.println("ProverTest.assertWeakTest()");
+		// TODO
+		p.assertz("roman2(michelangelo).");
+		p.assertz("roman2(davinci).");
+		p.assertz("roman2(iulius).");
+		Set<Object> romans = p.solve("roman2(H).").toSet();
+		Set<Object> romansExpected = new HashSet<Object>();
+		romansExpected.add("michelangelo");
+		romansExpected.add("davinci");
+		romansExpected.add("iulius");
+		assertEquals(romansExpected, romans);
+		p.retract("roman2(iulius).");
+		romans = p.solve("roman2(H).").toSet();
+		romansExpected.remove("iulius");
+		assertEquals(romansExpected, romans);
+	}
+
+	/**
+	 * Tests the format elements
+	 */
+	@Test
+	public void testFormatElements() {
+		assertTrue(p.solve("member({}, [1, 2, 3]).", 1).isSuccess());
+		assertTrue(p.solve("member({weak}, [1, 2, 3]).", 1).isSuccess());
+	}
+
+//	/**
+//	 * Tests the format elements
+//	 */
+//	@Test(expected = InvalidQuery.class)
+//	public void testFormatElements2() {
+//		assertTrue(p.solve("member({xy}, [1, 2, 3]).", 1).isSuccess());
+//	}
 }

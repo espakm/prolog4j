@@ -39,6 +39,13 @@ package org.prolog4j;
 public interface IProverFactory {
 
 	/**
+	 * Creates a new prover.
+	 * 
+	 * @return a new prover
+	 */
+	Prover getProver();
+
+	/**
 	 * Return an appropriate {@link Prover} instance as specified by the
 	 * <code>name</code> parameter.
 	 * 

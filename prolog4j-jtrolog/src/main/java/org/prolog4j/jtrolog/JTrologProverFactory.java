@@ -35,7 +35,7 @@ public final class JTrologProverFactory extends AbstractProverFactory {
 	}
 
 	@Override
-	protected Prover createProver() {
+	public Prover getProver() {
 		return new JTrologProver();
 	}
 

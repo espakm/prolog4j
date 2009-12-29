@@ -24,7 +24,6 @@
 
 package org.prolog4j;
 
-import org.prolog4j.IProverFactory;
 import org.prolog4j.jlog.JLogProverFactory;
 
 /**

@@ -211,6 +211,16 @@ public final class ProverFactory {
 	}
 
 	/**
+	 * Creates a prover using the statically bound {@link IProverFactory} 
+	 * instance.
+	 * 
+	 * @return prover
+	 */
+	public static Prover getProver() {
+		return getIProverFactory().getProver();
+	}
+
+	/**
 	 * Return a prover named according to the name parameter using the
 	 * statically bound {@link IProverFactory} instance.
 	 * 
@@ -219,8 +229,7 @@ public final class ProverFactory {
 	 * @return prover
 	 */
 	public static Prover getProver(String name) {
-		IProverFactory iProverFactory = getIProverFactory();
-		return iProverFactory.getProver(name);
+		return getIProverFactory().getProver(name);
 	}
 
 	/**
@@ -235,6 +244,12 @@ public final class ProverFactory {
 		return getProver(clazz.getName());
 	}
 	
+	/**
+	 * Returns the global conversion policy. Every prover use this policy by
+	 * default.
+	 * 
+	 * @return the global conversion policy
+	 */
 	public static ConversionPolicy getConversionPolicy() {
 		return getIProverFactory().getConversionPolicy();
 	}
@@ -282,7 +297,7 @@ public final class ProverFactory {
 	 * @param message the message
 	 */
 	private static void reportFailure(String message) {
-		System.err.printf("Prolog4J: %s", message);
+		System.err.printf("Prolog4J: %s\n", message);
 	}
 
 }

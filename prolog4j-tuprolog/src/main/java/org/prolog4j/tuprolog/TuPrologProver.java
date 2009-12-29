@@ -1,6 +1,7 @@
 package org.prolog4j.tuprolog;
 
 import org.prolog4j.AbstractProver;
+import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Query;
 
 import alice.tuprolog.InvalidLibraryException;
@@ -87,6 +88,11 @@ public class TuPrologProver extends AbstractProver {
 		} catch (InvalidTheoryException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected ConversionPolicy createConversionPolicy() {
+		return new TuPrologConversionPolicy();
 	}
 
 }

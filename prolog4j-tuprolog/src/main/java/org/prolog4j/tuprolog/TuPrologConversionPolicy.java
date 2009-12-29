@@ -12,6 +12,9 @@ import alice.tuprolog.Int;
 import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 
+/**
+ * tuProlog implementation of the conversion policy.
+ */
 public class TuPrologConversionPolicy extends ConversionPolicy {
 
 	/** Converts an Integer object to a term. */
@@ -57,27 +60,33 @@ public class TuPrologConversionPolicy extends ConversionPolicy {
 		}
 	};
 	/** Converts an alice.tuprolog.Long term to a Long object. */
-	private static final Converter<alice.tuprolog.Long> LONG_TERM_CONVERTER = new Converter<alice.tuprolog.Long>() {
+	private static final Converter<alice.tuprolog.Long> LONG_TERM_CONVERTER =
+		new Converter<alice.tuprolog.Long>() {
 		@Override
 		public Object convert(alice.tuprolog.Long value) {
 			return value.longValue();
 		}
 	};
 	/** Converts an alice.tuprolog.Float term to a Float object. */
-	private static final Converter<alice.tuprolog.Float> FLOAT_TERM_CONVERTER = new Converter<alice.tuprolog.Float>() {
+	private static final Converter<alice.tuprolog.Float> FLOAT_TERM_CONVERTER = 
+		new Converter<alice.tuprolog.Float>() {
 		@Override
 		public Object convert(alice.tuprolog.Float value) {
 			return value.floatValue();
 		}
 	};
 	/** Converts an alice.tuprolog.Double term to a Double object. */
-	private static final Converter<alice.tuprolog.Double> DOUBLE_TERM_CONVERTER = new Converter<alice.tuprolog.Double>() {
+	private static final Converter<alice.tuprolog.Double> DOUBLE_TERM_CONVERTER = 
+		new Converter<alice.tuprolog.Double>() {
 		@Override
 		public Object convert(alice.tuprolog.Double value) {
 			return value.doubleValue();
 		}
 	};
 
+	/**
+	 * Constructs a conversion policy for tuProlog.
+	 */
 	public TuPrologConversionPolicy() {
 		super();
 		addObjectConverter(Long.class, LONG_CONVERTER);
@@ -128,10 +137,8 @@ public class TuPrologConversionPolicy extends ConversionPolicy {
 		});
 		addTermConverter(Int.class, INT_TERM_CONVERTER);
 		addTermConverter(alice.tuprolog.Long.class, LONG_TERM_CONVERTER);
-		addTermConverter(alice.tuprolog.Float.class,
-				FLOAT_TERM_CONVERTER);
-		addTermConverter(alice.tuprolog.Double.class,
-				DOUBLE_TERM_CONVERTER);
+		addTermConverter(alice.tuprolog.Float.class, FLOAT_TERM_CONVERTER);
+		addTermConverter(alice.tuprolog.Double.class, DOUBLE_TERM_CONVERTER);
 		addTermConverter(Struct.class, new Converter<Struct>() {
 			@Override
 			public Object convert(Struct value) {
@@ -188,7 +195,22 @@ public class TuPrologConversionPolicy extends ConversionPolicy {
 //	}
 
 	@Override
-	public Object compound(String name, Object... args) {
+	public Object term(int value) {
+		return new Int(value);
+	}
+
+	@Override
+	public Object term(double value) {
+		return new alice.tuprolog.Double(value);
+	}
+
+	@Override
+	public Object term(String name) {
+		return new Struct(name);
+	}
+
+	@Override
+	public Object term(String name, Object... args) {
 		Term[] tArgs = new Term[args.length];
 		for (int i = 0; i < tArgs.length; ++i) {
 			tArgs[i] = (Term) convertObject(args[i]);
@@ -197,29 +219,75 @@ public class TuPrologConversionPolicy extends ConversionPolicy {
 		return new Struct(name, tArgs);
 	}
 
-	@Override
-	protected String getSpecification(Object term) {
-		if (((Term) term).isAtom()) {
-			return ((Struct) term).getName();
+//	@Override
+//	public org.prolog4j.Term pattern(String term) {
+//		return null;
+////		return new TuPrologTerm(term);
+//	}
+
+	/**
+	 * Creates a new variable name that does not occurs in the goal.
+	 * 
+	 * @param goal the goal
+	 * @return a new, not conflicting variable name
+	 */
+	private String findNewVarPrefix(String goal) {
+		if (!goal.contains("P4J_")) {
+			return "P4J_";
 		}
-		if (term instanceof Struct) {
-			Struct struct = (Struct) term;
-			return String.format("%s/%d", struct.getName(), struct.getArity());
+		for (int i = 0; true; ++i) {
+			String s = String.valueOf(i);
+			if (!goal.contains(s)) {
+				return "P4J_" + s;
+			}
 		}
-		return null;
 	}
 
 	@Override
-	protected Object[] getArgs(Object compound) {
-		if (compound instanceof Struct) {
-			Struct struct = (Struct) compound;
-			Object[] args = new Object[struct.getArity()];
-			for (int i = 0; i < args.length; ++i) {
-				args[i] = struct.getArg(i);
-			}
-			return args;
-		}
-		return null;
+	public int intValue(Object term) {
+		return ((alice.tuprolog.Number) term).intValue();
+	}
+
+	@Override
+	public double doubleValue(Object term) {
+		return ((alice.tuprolog.Number) term).doubleValue();
+	}
+
+	@Override
+	protected String getName(Object compound) {
+		return ((Struct) compound).getName();
+	}
+
+	@Override
+	protected int getArity(Object compound) {
+		return ((Struct) compound).getArity();
+	}
+
+
+	@Override
+	protected Object getArg(Object compound, int index) {
+//		return ((Struct) compound).getArg(index).getTerm();
+		return convertTerm(((Struct) compound).getArg(index).getTerm());
+	}
+
+	@Override
+	public boolean isAtom(Object term) {
+		return ((Term) term).isAtom();
+	}
+
+	@Override
+	public boolean isCompound(Object term) {
+		return term instanceof Struct;
+	}
+
+	@Override
+	public boolean isDouble(Object term) {
+		return term instanceof alice.tuprolog.Double;
+	}
+
+	@Override
+	public boolean isInteger(Object term) {
+		return term instanceof Int;
 	}
 
 }

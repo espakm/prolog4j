@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.prolog4j.ConversionPolicy;
-import org.prolog4j.ProverFactory;
 import org.prolog4j.SolutionIterator;
 import org.prolog4j.UnknownVariable;
 
@@ -24,10 +23,8 @@ import jTrolog.terms.Term;
  */
 public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 
-	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
-	
-	/** The jTrolog prover used to process this query. */
-	private JTrologProver prover;
+	/** The conversion policy of the prover that is used for solving this query. */
+	private final ConversionPolicy cp;
 	
 	/** The jTrolog engine that is used for solving the query. */
 	private final Prolog engine;
@@ -54,7 +51,7 @@ public class JTrologSolution<S> extends org.prolog4j.Solution<S> {
 	 */
 	JTrologSolution(JTrologProver prover, Struct sGoal, String defaultVarName, 
 			String[] outputVarNames) {
-		this.prover = prover;
+		this.cp = prover.getConversionPolicy();
 		this.engine = prover.getEngine();
 		this.defaultOutputVariable = defaultVarName;
 		this.outputVarNames = outputVarNames;

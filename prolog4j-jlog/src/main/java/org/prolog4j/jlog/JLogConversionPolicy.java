@@ -10,6 +10,8 @@ import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Converter;
 
 import ubc.cs.JLog.Foundation.jUnifiedVector;
+import ubc.cs.JLog.Terms.iName;
+import ubc.cs.JLog.Terms.iNameArity;
 import ubc.cs.JLog.Terms.jAtom;
 import ubc.cs.JLog.Terms.jCompoundTerm;
 import ubc.cs.JLog.Terms.jInteger;
@@ -20,6 +22,9 @@ import ubc.cs.JLog.Terms.jPredicate;
 import ubc.cs.JLog.Terms.jReal;
 import ubc.cs.JLog.Terms.jTerm;
 
+/**
+ * JLog implementation of the conversion policy.
+ */
 public class JLogConversionPolicy extends ConversionPolicy {
 
 	/** Converts an Integer object to a term. */
@@ -29,6 +34,7 @@ public class JLogConversionPolicy extends ConversionPolicy {
 			return new jInteger(i);
 		}
 	};
+	
 	/** Converts a Long object to a term. */
 	private static final Converter<Long> LONG_CONVERTER = new Converter<Long>() {
 		@Override
@@ -36,6 +42,7 @@ public class JLogConversionPolicy extends ConversionPolicy {
 			return new jInteger(value.intValue());
 		}
 	};
+	
 	/** Converts a Float object to a term. */
 	private static final Converter<Float> FLOAT_CONVERTER = new Converter<Float>() {
 		@Override
@@ -43,6 +50,7 @@ public class JLogConversionPolicy extends ConversionPolicy {
 			return new jReal(value);
 		}
 	};
+	
 	/** Converts a Double object to a term. */
 	private static final Converter<Double> DOUBLE_CONVERTER = new Converter<Double>() {
 		@Override
@@ -50,6 +58,7 @@ public class JLogConversionPolicy extends ConversionPolicy {
 			return new jReal(value.floatValue());
 		}
 	};
+	
 	/** Converts a String object to a term. */
 	private static final Converter<String> STRING_CONVERTER = new Converter<String>() {
 		@Override
@@ -57,6 +66,7 @@ public class JLogConversionPolicy extends ConversionPolicy {
 			return new jAtom(s);
 		}
 	};
+	
 	/** Converts an jInteger term to an Integer object. */
 	private static final Converter<jInteger> INT_TERM_CONVERTER = new Converter<jInteger>() {
 		@Override
@@ -77,6 +87,7 @@ public class JLogConversionPolicy extends ConversionPolicy {
 			return new Double(value.getRealValue());
 		}
 	};
+	
 	/** Converts an jAtom term to a String object. */
 	private static final Converter<jAtom> ATOM_TERM_CONVERTER = new Converter<jAtom>() {
 		@Override
@@ -85,6 +96,9 @@ public class JLogConversionPolicy extends ConversionPolicy {
 		}
 	};
 
+	/**
+	 * Constructs a conversion policy for JLog.
+	 */
 	public JLogConversionPolicy() {
 		super();
 		addObjectConverter(Long.class, LONG_CONVERTER);
@@ -223,7 +237,25 @@ public class JLogConversionPolicy extends ConversionPolicy {
 	}
 
 	@Override
-	public Object compound(String name, Object... args) {
+	public Object term(int value) {
+		return new jInteger(value);
+	}
+
+	@Override
+	public Object term(double value) {
+		return new jReal((float) value);
+	}
+
+	@Override
+	public Object term(String name) {
+		return new jAtom(name);
+	}
+
+	@Override
+	public Object term(String name, Object... args) {
+		if (args.length == 0) {
+			return new jAtom(name);
+		}
 		Vector tArgs = new Vector(args.length);
 		for (Object arg: args) {
 			tArgs.add(convertObject(arg));
@@ -232,32 +264,54 @@ public class JLogConversionPolicy extends ConversionPolicy {
 	}
 
 	@Override
-	protected String getSpecification(Object term) {
-		if (term instanceof jAtom) {
-			return ((jAtom) term).getName();
-		}
-		if (term instanceof jPredicate) {
-			jPredicate p = (jPredicate) term;
-			return String.format("%s/%d", p.getName(), p.getArity());
-		}
-		return null;
+	public int intValue(Object term) {
+		return ((jInteger) term).getIntegerValue();
 	}
 
 	@Override
-	protected Object[] getArgs(Object compound) {
-		if (compound instanceof jAtom) {
-			return new Object[0];
-		}
-		if (compound instanceof jPredicate) {
-			jPredicate pred = (jPredicate) compound;
-			jCompoundTerm arguments = pred.getArguments();
-			Object[] args = new Object[arguments.size()];
-			for (int i = 0; i < args.length; ++i) {
-				args[i] = arguments.elementAt(i);
-			}
-			return args;
-		}
-		return null;
+	public double doubleValue(Object term) {
+		return ((jReal) term).getRealValue();
 	}
+
+	@Override
+	protected String getName(Object compound) {
+		return ((iName) compound).getName();
+	}
+
+	@Override
+	protected int getArity(Object compound) {
+		return ((iNameArity) compound).getArity();
+	}
+
+	@Override
+	protected Object getArg(Object compound, int index) {
+		return convertTerm(((jPredicate) compound).getArguments().elementAt(index));
+	}
+
+	@Override
+	public boolean isInteger(Object term) {
+		return term instanceof jInteger;
+	}
+
+	@Override
+	public boolean isDouble(Object term) {
+		return term instanceof jReal;
+	}
+
+	@Override
+	public boolean isAtom(Object term) {
+		return term instanceof jAtom;
+	}
+
+	@Override
+	public boolean isCompound(Object term) {
+		return term instanceof iNameArity;
+	}
+
+//	@Override
+//	public org.prolog4j.Term pattern(String term) {
+//		// TODO
+//		throw new UnsupportedOperationException();
+//	}
 
 }

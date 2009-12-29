@@ -31,16 +31,16 @@ public class TuPrologSolution<S> extends Solution<S> {
 	/** The tuProlog prover that is used for solving this query. */
 	private Prover prover;
 
-//	/** The conversion policy of the tuProlog prover that is used for solving this query. */
-//	private final ConversionPolicy cp;
-
 	/** The conversion policy of the tuProlog prover that is used for solving this query. */
-	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
+	private final ConversionPolicy cp;
+
+//	/** The conversion policy of the tuProlog prover that is used for solving this query. */
+//	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
 
 //	private static final Terms terms = Terms.getInstance();
 
 	/** The tuProlog engine that is used for solving the query. */
-	private final Prolog prolog;
+	private final Prolog engine;
 	
 	/** The list of variables occurring in the query. */
 	private List<Var> vars;
@@ -59,9 +59,9 @@ public class TuPrologSolution<S> extends Solution<S> {
 	 */
 	TuPrologSolution(TuPrologProver prover, Term goal) {
 		this.prover = prover;
-//		this.cp = prover.getConversionPolicy();
-		this.prolog = prover.getEngine();
-		solution = prolog.solve(goal);
+		this.cp = prover.getConversionPolicy();
+		this.engine = prover.getEngine();
+		solution = engine.solve(goal);
 		success = solution.isSuccess();
 		if (!success) {
 			return;
@@ -144,10 +144,10 @@ public class TuPrologSolution<S> extends Solution<S> {
 	@Override
 	protected boolean fetch() {
 		try {
-			boolean hasNext = prolog.hasOpenAlternatives()
-					&& (solution = prolog.solveNext()).isSuccess();
+			boolean hasNext = engine.hasOpenAlternatives()
+					&& (solution = engine.solveNext()).isSuccess();
 //			if (!hasNext)
-//				prolog.solveHalt();
+//				engine.solveHalt();
 			return hasNext;
 		} catch (NoMoreSolutionException e) {
 			// Should not happen.

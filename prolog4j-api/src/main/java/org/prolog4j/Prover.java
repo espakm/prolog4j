@@ -58,11 +58,26 @@ public interface Prover {
 	 */
 	void addTheory(String... theory);
 
-//	/**
-//	 * Returns the conversion policy used by the prover.
-//	 * 
-//	 * @return the conversion policy
-//	 */
-//	ConversionPolicy getConversionPolicy();
+	/**
+	 * Asserts a Prolog fact or rule to the knowledge base.
+	 * 
+	 * @param fact the Prolog fact
+	 * @param args the arguments of the fact            
+	 */
+	void assertz(String fact, Object... args);
+
+	/**
+	 * Retracts a Prolog fact or rule from the knowledge base.
+	 * 
+	 * @param fact the Prolog fact
+	 */
+	void retract(String fact);
+
+	/**
+	 * Returns the conversion policy used by the prover.
+	 * 
+	 * @return the conversion policy
+	 */
+	ConversionPolicy getConversionPolicy();
 
 }

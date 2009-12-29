@@ -3,6 +3,8 @@ These should be added to the GForge site of the project. :)
 
 ================================================================================
 
+Place holders could contain a number.
+
 Term <-> Object conversions
 ---------------------------
 
@@ -13,12 +15,12 @@ removed because of unresolved issues. The code of the incorrect implementation
 has been commented.)
 
 Always the converter assigned to Object[].class is used for converting arrays.
-This is not ideal, but covers the most use cases. (Arrays of interfaces or 
-primitive types should be handled specially as well.)
+This is not ideal. (Arrays of interfaces or primitive types should be handled 
+specially as well.)
 
 The behavior of the per prover conversion policies is incorrect. E.g. if there
 is a converter for lists (java.util.List) in the global converter, then it will
-convert the elements with itself, not with the policy of the prover. 
+convert the elements with itself, not with the policy of the prover.
 
 ================================================================================
 

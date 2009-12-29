@@ -12,7 +12,6 @@ import jTrolog.terms.Var;
 
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.InvalidQuery;
-import org.prolog4j.ProverFactory;
 import org.prolog4j.Query;
 import org.prolog4j.Solution;
 import org.prolog4j.UnknownVariable;
@@ -22,11 +21,11 @@ import org.prolog4j.UnknownVariable;
  */
 public class JTrologQuery extends Query {
 
-//	final ConversionPolicy cp = p.getConversionPolicy();
-	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
-
 	/** The jTrolog prover used to process this query. */
 	private JTrologProver prover;
+
+	/** The conversion policy of the prover that is used for solving this query. */
+	private final ConversionPolicy cp;
 
 	/** The names of the output variables of the goal. */
 	private String[] outputVarNames;
@@ -55,6 +54,7 @@ public class JTrologQuery extends Query {
 	protected JTrologQuery(JTrologProver prover, String goal) {
 		super(goal);
 		this.prover = prover;
+		this.cp = prover.getConversionPolicy();
 		Parser parser = new Parser(getGoal());
 		try {
 			sGoal = (Struct) parser.nextTerm(true);
@@ -89,9 +89,7 @@ public class JTrologQuery extends Query {
 						",", 
 						new Term[]{
 								new Struct("=", new Term[]{var, 
-//										(Term) prover.getConversionPolicy().
-										(Term) cp.
-										convertObject(actualArgs[i++])}),
+										(Term) cp.convertObject(actualArgs[i++])}),
 								sGoal});
 		}
 		return new JTrologSolution<A>(prover, sGoal, defaultVarName, outputVarNames);
@@ -103,7 +101,6 @@ public class JTrologQuery extends Query {
 		sGoal = new Struct(
 					",", 
 					new Term[]{new Struct("=", new Term[]{var, 
-//							(Term) prover.getConversionPolicy().convertObject(value)}), sGoal});
 							(Term) cp.convertObject(value)}), sGoal});
 		unboundVars.remove(var);
 		return this;
@@ -120,9 +117,7 @@ public class JTrologQuery extends Query {
 						new Term[]{
 								new Struct("=", 
 										new Term[]{v, 
-//										(Term) prover.getConversionPolicy().
-										(Term) cp.
-										convertObject(value)}), sGoal});
+										(Term) cp.convertObject(value)}), sGoal});
 				it.remove();
 				return this;
 			}

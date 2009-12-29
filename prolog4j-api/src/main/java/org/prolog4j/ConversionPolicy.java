@@ -2,8 +2,8 @@ package org.prolog4j;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * An instance of this class represents how terms are converted to regular Java
@@ -32,8 +32,8 @@ public abstract class ConversionPolicy {
 	 * cannot be iterated through reversely, at second the insertion order is
 	 * not affected if a key is re-inserted into the map.)
 	 */
-	private Map<String, Converter<Object[]>> termPatterns;
-	
+	private Map<String, Converter<Object>> termPatterns;
+
 	/**
 	 * Stores the converters for transforming regular objects to terms. The keys
 	 * of the map are the patterns. If a pattern matches an object then its 
@@ -48,7 +48,7 @@ public abstract class ConversionPolicy {
 	@SuppressWarnings("unchecked")
 	protected ConversionPolicy() {
 		termConverters = new HashMap<Object, Converter>();
-		termPatterns = new HashMap<String, Converter<Object[]>>();
+		termPatterns = new HashMap<String, Converter<Object>>();
 		objectConverters = new HashMap<Class, Converter>();
 	}
 	
@@ -63,7 +63,7 @@ public abstract class ConversionPolicy {
 	 * @param pattern the pattern to select the converter to use later
 	 * @param converter the converter
 	 */
-	public <T> void addTermConverter(Class<T> pattern, Converter<T> converter) {
+	protected <T> void addTermConverter(Class<T> pattern, Converter<T> converter) {
 		termConverters.put(pattern, converter);
 	}
 	
@@ -77,8 +77,17 @@ public abstract class ConversionPolicy {
 	 * @param pattern the pattern to select the converter to use later
 	 * @param converter the converter
 	 */
-	public void addTermConverter(String pattern, Converter<Object[]> converter) {
-		termPatterns.put(pattern, converter);
+	public void addTermConverter(String pattern, Converter<Object> converter) {
+		StringBuilder sb = new StringBuilder();
+		StringTokenizer st = new StringTokenizer(pattern, "(),");
+		int i = 0;
+		String functor = st.nextToken();
+		while (st.hasMoreTokens()) {
+			++i;
+			st.nextToken();
+		}
+		String spec = sb.append(functor).append('/').append(i).toString();
+		termPatterns.put(spec, converter);
 	}
 
 	/**
@@ -118,11 +127,13 @@ public abstract class ConversionPolicy {
 		if (term == null) {
 			return null;
 		}
-		String spec = getSpecification(term);
-		if (spec != null) {
+		if (isCompound(term)) {
+			String functor = getName(term);
+			StringBuilder specB = new StringBuilder(functor.length() + 2);
+			String spec = specB.append(functor).append('/').append(getArity(term)).toString();
 			Converter converter = termPatterns.get(spec);
 			if (converter != null) {
-				Object result = converter.convert(getArgs(term));
+				Object result = converter.convert(term);
 				if (result != null) {
 					return result;
 				}
@@ -141,27 +152,6 @@ public abstract class ConversionPolicy {
 		} while (termClass != null);
 		throw new RuntimeException("No suitable converter found for " + term);
 	}
-	
-	/**
-	 * Extracts the arguments of a compound and returns them in an array. For
-	 * atoms it returns an empty {@link Object} array. If the argument is not an
-	 * atom or a compound then it returns <code>null</code>.
-	 * 
-	 * @param compound the compound
-	 * @return the arguments of the compound or <code>null</code>
-	 */
-	protected abstract Object[] getArgs(Object compound);
-
-	/**
-	 * Returns the specification of a term. The specification of an atom is the
-	 * atom itself. The specification of compound terms is "functor/arity". For
-	 * other kind of terms (variables, numbers) the method returns 
-	 * <code>null</code>.
-	 * 
-	 * @param compound a term
-	 * @return the specification of the term or <code>null</code> if there is no
-	 */
-	protected abstract String getSpecification(Object compound);
 
 	/**
 	 * Converts a term to a regular Java object. If the term is <code>null
@@ -187,14 +177,6 @@ public abstract class ConversionPolicy {
 		if (term == null) {
 			return null;
 		}
-//		for (Object pattern: termPatterns) {
-//			if (pattern instanceof Class && ((Class) pattern).isAssignableFrom(term.getClass())) {
-//				T result = (T) termConverters.get(pattern).convert(term, type);
-//				if (result != null) {
-//					return result;
-//				}
-//			}
-//		}
 		Class termClass = term.getClass();
 		do {
 			Converter converter = termConverters.get(termClass);
@@ -239,8 +221,7 @@ public abstract class ConversionPolicy {
 		if (objectClass.isArray()) {
 			Converter converter = objectConverters.get(Object[].class);
 			return converter.convert(object);
-		}
-		else {
+		} else {
 			do {
 				Converter converter = objectConverters.get(objectClass);
 				if (converter != null) {
@@ -278,7 +259,122 @@ public abstract class ConversionPolicy {
 	 * @return <code>true</code> if the terms match, otherwise <code>false</code>
 	 */
 	public abstract boolean match(Object term1, Object term2);
-
-	public abstract Object compound(String name, Object... args);
 	
+	/**
+	 * Determines whether the Prolog term is an integer value.
+	 * 
+	 * @param term the term
+	 * @return <code>true</code> if the value is integer, otherwise 
+	 * 		<code>false</code>
+	 */
+	public abstract boolean isInteger(Object term);
+
+	/**
+	 * Determines whether the Prolog term is a double value.
+	 * 
+	 * @param term the term
+	 * @return <code>true</code> if the value is double, otherwise 
+	 * 		<code>false</code>
+	 */
+	public abstract boolean isDouble(Object term);
+	
+	/**
+	 * Determines whether the Prolog term is an atom.
+	 * 
+	 * @param term the term
+	 * @return <code>true</code> if the value is integer, otherwise 
+	 * 		<code>false</code>
+	 */
+	public abstract boolean isAtom(Object term);
+	
+	/**
+	 * Determines whether the Prolog term is compound. Atoms are regarded as
+	 * compound values with 0 arity.
+	 * 
+	 * @param term the term
+	 * @return <code>true</code> if the value is compound, otherwise 
+	 * 		<code>false</code>
+	 */
+	public abstract boolean isCompound(Object term);
+	
+	/**
+	 * Creates a integer term according to the actual implementation.
+	 * 
+	 * @param value the integer value
+	 * @return the created Prolog integer term
+	 */
+	public abstract Object term(int value);
+
+//	public abstract Object term(long value);
+//	public abstract Object term(float value);
+
+	/**
+	 * Creates a real term according to the actual implementation.
+	 * 
+	 * @param value the double value
+	 * @return the created Prolog real term
+	 */
+	public abstract Object term(double value);
+
+	/**
+	 * Creates an atom according to the actual implementation.
+	 * 
+	 * @param name the name of the atom
+	 * @return the created atom
+	 */
+	public abstract Object term(String name);
+
+	/**
+	 * Creates a compound term according to the actual implementation.
+	 * 
+	 * @param functor the functor of the compound term
+	 * @param args the arguments of the compound term
+	 * @return the created compound term
+	 */
+	public abstract Object term(String functor, Object... args);
+
+//	public abstract Term pattern(String term);
+
+	/**
+	 * Converts an integer term to an int value.
+	 * 
+	 * @param term a term representing an integer value
+	 * @return the int value of the term
+	 */
+	public abstract int intValue(Object term);
+//	public abstract long longValue(Object term);
+//	public abstract float floatValue(Object term);
+	/**
+	 * Converts a floating point term to a double value.
+	 * 
+	 * @param term a term representing a floating point value
+	 * @return the double value of the term
+	 */
+	public abstract double doubleValue(Object term);
+	
+	/**
+	 * Returns the functor of a compound term or the name of an atom.
+	 * 
+	 * @param compound the compound term or atom
+	 * @return the functor of the term
+	 */
+	protected abstract String getName(Object compound);
+	
+	/**
+	 * Returns the arity of a compound term or atom. For atoms it returns zero.
+	 * 
+	 * @param compound the compound term or atom
+	 * @return the arity of the term
+	 */
+	protected abstract int getArity(Object compound);
+	
+	/**
+	 * Returns an argument of a compound term. The numbering starts from zero.
+	 * 
+	 * @param compound the compound
+	 * @param index the index of the argument (>= 0)
+	 * @return the <tt>arg</tt>th argument of the compound
+	 */
+	protected abstract Object getArg(Object compound, int index);
+
 }

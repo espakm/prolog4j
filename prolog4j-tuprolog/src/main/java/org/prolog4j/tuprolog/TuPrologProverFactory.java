@@ -36,7 +36,7 @@ public final class TuPrologProverFactory extends AbstractProverFactory {
 	}
 	
 	@Override
-	protected Prover createProver() {
+	public Prover getProver() {
 		return new TuPrologProver();
 	}
 
@@ -44,4 +44,5 @@ public final class TuPrologProverFactory extends AbstractProverFactory {
 	public ConversionPolicy getConversionPolicy() {
 		return conversionPolicy;
 	}
+	
 }

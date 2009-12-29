@@ -13,15 +13,8 @@ The Prolog4J framework
   representation of terms in the system. In the current chapter, I propose a multiparadigm 
   programming framework for Java and Prolog, which do not suffer from this weakness.
 
-  The framework is called <Prolog4J> and it has two parts. Its Prolog part defines a library 
-  called <OOLibrary>, which allows object-oriented style programming in Prolog. The library 
-  allows to define a hierarchy of classes. The purpose of this hierarchy is to introduce 
-  <object polymorphism> into Prolog: although the instances of classes are ordinary (compound) 
-  terms, the instance of a subclass can stand for an instance of one of its superclass at any 
-  place of a program. The library is discussed in Section~\ref{sec:oolibrary}.
-
-  In Section~\ref{sec:prolog4j} I introduce the Java part of the framework that allows running 
-  Prolog queries easily from Java. I will show that using the OOLibrary in Prolog, Java types 
+  Prolog4J allows running 
+  Prolog queries easily from Java. Java types 
   can be mapped into Prolog types, which makes the conversion between Java objects and Prolog 
   terms automatic and natural. Furthermore, using the metadata facility of Java 5, a programming 
   interface can be specified for accessing Prolog rules from Java, through which logic queries 
@@ -76,29 +69,29 @@ The Prolog4J framework
   Other <<<Struct>>> objects are converted to <<<List>>> objects if they represent a Prolog list. 
   Otherwise, an instance of <<<Compound>>> will be created.
 
-*-----------------------------------------+--------------------------+
-|<Java type>                              |<tuProlog type>           |
-|(java.lang package)                      |(alice.tuprolog package)  |
-*-----------------------------------------+--------------------------+
-|<<<char>>>, <<<String>>>                 | <<<Struct>>>             |
-*-----------------------------------------+--------------------------+
-|<<<byte>>>, <<<short>>>, <<<int>>>,      | <<<Int>>>                |
-|<<<Integer>>>                            |                          |
-*-----------------------------------------+--------------------------+
-|<<<long>>>, <<<Long>>>                   | <<<Long>>>               |
-*-----------------------------------------+--------------------------+
-|<<<float>>>, <<<Float>>>                 | <<<Float>>>              |
-*-----------------------------------------+--------------------------+
-|<<<double>>>, <<<Double>>>               | <<<Double>>>             |
-*-----------------------------------------+--------------------------+
-|<<<byte[]>>>, <<<short[]>>>, <<<int[]>>>, <<<long[]>>>,       | <<<Struct>>> |
-|<<<float[]>>>, <<<double[]>>>, <<<char[]>>>, <<<boolean[]>>>, |              |
-|<<<Object[]>>>, <<<java.util.List\<E\>>>>                     |              |
-*-----------------------------------------+--------------------------+
-|<<<boolean>>>, <<<Boolean>>>             | <<<Struct>>> ('true' or 'false') |
-*-----------------------------------------+--------------------------+
-|<<<org.prolog4j.Compound>>>              | <<<Struct>>>             |
-*-----------------------------------------+--------------------------+
+*--------------------------------------------------------------+----------------------------------+
+|<Java type>                                                   |<tuProlog type>                   |
+|(java.lang package)                                           |(alice.tuprolog package)          |
+*--------------------------------------------------------------+----------------------------------+
+|<<<char>>>, <<<String>>>                                      | <<<Struct>>>                     |
+*--------------------------------------------------------------+----------------------------------+
+|<<<byte>>>, <<<short>>>, <<<int>>>,                           | <<<Int>>>                        |
+|<<<Integer>>>                                                 |                                  |
+*--------------------------------------------------------------+----------------------------------+
+|<<<long>>>, <<<Long>>>                                        | <<<Long>>>                       |
+*--------------------------------------------------------------+----------------------------------+
+|<<<float>>>, <<<Float>>>                                      | <<<Float>>>                      |
+*--------------------------------------------------------------+----------------------------------+
+|<<<double>>>, <<<Double>>>                                    | <<<Double>>>                     |
+*--------------------------------------------------------------+----------------------------------+
+|<<<byte[]>>>, <<<short[]>>>, <<<int[]>>>, <<<long[]>>>,       | <<<Struct>>>                     |
+|<<<float[]>>>, <<<double[]>>>, <<<char[]>>>, <<<boolean[]>>>, |                                  |
+|<<<Object[]>>>, <<<java.util.List\<E\>>>>                     |                                  |
+*--------------------------------------------------------------+----------------------------------+
+|<<<boolean>>>, <<<Boolean>>>                                  | <<<Struct>>> ('true' or 'false') |
+*--------------------------------------------------------------+----------------------------------+
+|<<<org.prolog4j.Compound>>>                                   | <<<Struct>>>                     |
+*--------------------------------------------------------------+----------------------------------+
   Type mapping
 
 

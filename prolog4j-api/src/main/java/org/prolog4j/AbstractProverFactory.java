@@ -16,6 +16,11 @@ public abstract class AbstractProverFactory implements IProverFactory {
 	 */
 	private Map<String, Prover> proverMap = new HashMap<String, Prover>();
 
+//	@Override
+//	public Prover getProver() {
+//		return createProver();
+//	}
+	
 	@Override
 	public Prover getProver(String name) {
 		Prover prover = null;
@@ -23,19 +28,11 @@ public abstract class AbstractProverFactory implements IProverFactory {
 		synchronized (this) {
 			prover = proverMap.get(name);
 			if (prover == null) {
-				prover = createProver();
+				prover = getProver();
 				proverMap.put(name, prover);
 			}
 		}
 		return prover;
 	}
 	
-	/**
-	 * Creates a new prover. Subclasses should override it providing their
-	 * implementation.
-	 * 
-	 * @return a new prover
-	 */
-	protected abstract Prover createProver();
-
 }

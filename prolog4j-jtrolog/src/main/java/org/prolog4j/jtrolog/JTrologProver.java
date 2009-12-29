@@ -1,6 +1,7 @@
 package org.prolog4j.jtrolog;
 
 import org.prolog4j.AbstractProver;
+import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Query;
 
 import jTrolog.errors.InvalidLibraryException;
@@ -85,6 +86,11 @@ public class JTrologProver extends AbstractProver {
 		} catch (PrologException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected ConversionPolicy createConversionPolicy() {
+		return new JTrologConversionPolicy();
 	}
 
 }

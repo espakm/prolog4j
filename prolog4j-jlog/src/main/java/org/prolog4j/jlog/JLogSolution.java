@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.InvalidQuery;
-import org.prolog4j.ProverFactory;
 import org.prolog4j.SolutionIterator;
 import org.prolog4j.UnknownVariable;
 
@@ -23,10 +22,10 @@ import ubc.cs.JLog.Parser.SyntaxErrorException;
  */
 public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 
-//	/** The conversion policy used by the JLog prover that is used for solving the query. */
-//	private final ConversionPolicy conversionPolicy;
+	/** The conversion policy used by the JLog prover that is used for solving the query. */
+	private final ConversionPolicy conversionPolicy;
 
-	private static final ConversionPolicy conversionPolicy = ProverFactory.getConversionPolicy();
+//	private static final ConversionPolicy conversionPolicy = ProverFactory.getConversionPolicy();
 	
 	/** The JLog engine that is used for solving the query. */
 	private final jPrologAPI prolog;
@@ -49,7 +48,7 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	 */
 	JLogSolution(JLogProver prover, String goal, Hashtable<String, Object> initialBindings) {
 		super();
-//		this.conversionPolicy = prover.getConversionPolicy();
+		this.conversionPolicy = prover.getConversionPolicy();
 		this.prolog = prover.getEngine();
 		try {
 			solution = prolog.query(goal, initialBindings);

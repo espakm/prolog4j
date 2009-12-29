@@ -1,6 +1,7 @@
 package org.prolog4j.jlog;
 
 import org.prolog4j.AbstractProver;
+import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Query;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
@@ -88,6 +89,11 @@ public class JLogProver extends AbstractProver {
 			sb.append(factOrRule).append('\n');
 		}
 		engine.consultSource(sb.toString());
+	}
+
+	@Override
+	protected ConversionPolicy createConversionPolicy() {
+		return new JLogConversionPolicy();
 	}
 
 }

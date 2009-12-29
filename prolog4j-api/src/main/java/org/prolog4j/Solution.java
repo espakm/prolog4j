@@ -26,12 +26,6 @@ public abstract class Solution<S> implements Iterable<S> {
 	 */
 	protected Class<S> clazz;
 	
-	/** Stores whether the next solution has already been fetched or not. */
-	private boolean fetched;
-	
-	/** Stores whether there is another solution or not. */
-	private boolean hasNext;
-	
 	/**
 	 * Returns whether there exists a solution or not. Does not depend on the
 	 * state of the traversal, only one solution should exist.
@@ -133,46 +127,22 @@ public abstract class Solution<S> implements Iterable<S> {
 	public abstract <A> A get(String variable, Class<A> type);
 	
 	/**
-	 * Collects the values of the primary variable into the given collection.
-	 * Returns its parameter.
+	 * Fetches the next solution if there is one.
 	 * 
-	 * @param <C>
-	 *            the type of the collection
-	 * @param collection
-	 *            the collection which will store the solutions
-	 * @return <tt>collection</tt>
+	 * @return <code>true</code> if there was another solution, otherwise
+	 * 		<code>false</code>
 	 */
-	public final <C extends Collection<? super S>> C collect(final C collection) {
-		for (S s : this) {
-			collection.add(s);
-		}
-		return collection;
-	}
-
-	/**
-	 * Collects the values of the specified variables into the given collections.
-	 * The size of the arrays is expected to be the same.
-	 * 
-	 * @param variables the name of the output variables
-	 * @param collections the collections where to store the solutions
-	 */
-	@SuppressWarnings("unchecked")
-	public final void collect(String[] variables, Collection[] collections) {
-		SolutionIterator it = iterator();
-		while (it.hasNext()) {
-			it.next();
-			for (int i = 0; i < variables.length; ++i) {
-				collections[i].add(it.get(variables[i]));
-			}
-		}
-	}
-
+	protected abstract boolean fetch();
+	
 	@Override
 	public SolutionIterator<S> iterator() {
-		fetched = true;
-		hasNext = isSuccess();
 		return new SolutionIterator<S>() {
-
+			/** Stores whether the next solution has already been fetched or not. */
+			private boolean fetched = true;
+			
+			/** Stores whether there is another solution or not. */
+			private boolean hasNext = isSuccess();
+			
 			@Override
 			public boolean hasNext() {
 				if (!fetched) {
@@ -214,6 +184,41 @@ public abstract class Solution<S> implements Iterable<S> {
 	}
 
 	/**
+	 * Collects the values of the primary variable into the given collection.
+	 * Returns its parameter.
+	 * 
+	 * @param <C>
+	 *            the type of the collection
+	 * @param collection
+	 *            the collection which will store the solutions
+	 * @return <tt>collection</tt>
+	 */
+	public final <C extends Collection<? super S>> C collect(final C collection) {
+		for (S s : this) {
+			collection.add(s);
+		}
+		return collection;
+	}
+
+	/**
+	 * Collects the values of the specified variables into the given collections.
+	 * The size of the arrays is expected to be the same.
+	 * 
+	 * @param variables the name of the output variables
+	 * @param collections the collections where to store the solutions
+	 */
+	@SuppressWarnings("unchecked")
+	public final void collect(String[] variables, Collection[] collections) {
+		SolutionIterator it = iterator();
+		while (it.hasNext()) {
+			it.next();
+			for (int i = 0; i < variables.length; ++i) {
+				collections[i].add(it.get(variables[i]));
+			}
+		}
+	}
+
+	/**
 	 * Collects the values of the variables into the given collections.
 	 * 
 	 * @param collections
@@ -250,12 +255,4 @@ public abstract class Solution<S> implements Iterable<S> {
 	 */
 	public abstract List<?>[] toLists();
 
-	/**
-	 * Fetches the next solution if there is one.
-	 * 
-	 * @return <code>true</code> if there was another solution, otherwise
-	 * 		<code>false</code>
-	 */
-	protected abstract boolean fetch();
-	
 }

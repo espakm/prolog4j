@@ -1,13 +1,9 @@
 package org.prolog4j.tuprolog;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.InvalidQuery;
-import org.prolog4j.ProverFactory;
 import org.prolog4j.Query;
 import org.prolog4j.Solution;
 import org.prolog4j.UnknownVariable;
@@ -24,10 +20,11 @@ import alice.tuprolog.Var;
  */
 public class TuPrologQuery extends Query {
 	
-	private static final ConversionPolicy cp = ProverFactory.getConversionPolicy();
-	
 	/** The tuProlog prover used to process this query. */
 	private final TuPrologProver prover;
+	
+	/** The conversion policy of the prover that is used for solving this query. */
+	private final ConversionPolicy cp;
 	
 	/** The tuProlog engine used to process this query. */
 	private final Prolog engine;
@@ -38,12 +35,6 @@ public class TuPrologQuery extends Query {
 	/** The tuProlog variables representing the input variables of the goal. */
 	private Var[] inputVars;
 	
-	/** 
-	 * This field stores those elements of {@link inputVars} that are still not
-	 * bound.
-	 */
-	private List<Var> unboundVars;
-	
 	/**
 	 * Creates a TuProlog query object.
 	 * 
@@ -53,13 +44,16 @@ public class TuPrologQuery extends Query {
 	TuPrologQuery(TuPrologProver prover, String goal) {
 		super(goal);
 		this.prover = prover;
+		this.cp = prover.getConversionPolicy();
 		this.engine = prover.getEngine();
-		inputVars = new Var[getPlaceholderNames().size()];
+		List<PlaceHolder> placeholders = getPlaceholders();
+		int placeholderNo = placeholders.size();
+		inputVars = new Var[placeholderNo];
 		try {
 			Parser parser = new Parser(getGoal());
 			sGoal = (Struct) parser.nextTerm(true);
-			for (int i = 0, index = 0; i < getPlaceholderNames().size(); ++i, ++index) {
-				Var argVar = new Var(getPlaceholderNames().get(i));
+			for (int i = 0, index = 0; i < placeholderNo; ++i, ++index) {
+				Var argVar = new Var(placeholders.get(i).name);
 				Var arg = new Var("J$" + argVar.getOriginalName());
 				sGoal = new Struct(",", new Struct("=", argVar, arg), sGoal);
 				inputVars[index] = arg;
@@ -68,15 +62,17 @@ public class TuPrologQuery extends Query {
 		} catch (InvalidTermException e) {
 			throw new InvalidQuery(goal, e);
 		}
-		unboundVars = new LinkedList<Var>(Arrays.asList(inputVars));
 	}
 
 	@Override
 	public <A> Solution<A> solve(Object... actualArgs) {
+//		prover.reclaimObsoleteFacts();
 		int i = 0;
-		for (Var var: unboundVars) {
+		for (Var var: inputVars) {
+			if (var.isBound()) {
+				continue;
+			}
 			var.free();
-//			engine.unify(var, (Term) prover.getConversionPolicy().convertObject(actualArgs[i++]));
 			engine.unify(var, (Term) cp.convertObject(actualArgs[i++]));
 		}
 		return new TuPrologSolution<A>(prover, sGoal);
@@ -85,22 +81,19 @@ public class TuPrologQuery extends Query {
 	@Override
 	public Query bind(int argument, Object value) {
 		inputVars[argument].free();
-//		engine.unify(inputVars[argument], (Term) prover.getConversionPolicy().convertObject(value));
 		engine.unify(inputVars[argument], (Term) cp.convertObject(value));
-		unboundVars.remove(inputVars[argument]);
 		return this;
 	}
 
 	@Override
 	public Query bind(String variable, Object value) {
-		Iterator<Var> it = unboundVars.iterator();
-		while (it.hasNext()) {
-			Var v = it.next();
+		for (Var v: inputVars) {
+			if (v.isBound()) {
+				continue;
+			}
 			if (v.getName().equals(variable)) {
 				v.free();
-//				engine.unify(v, (Term) prover.getConversionPolicy().convertObject(value));
 				engine.unify(v, (Term) cp.convertObject(value));
-				it.remove();
 				return this;
 			}
 		}

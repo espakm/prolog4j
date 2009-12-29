@@ -7,6 +7,66 @@
 
 Prolog4J Tutorial
 
+  This tutorial contains a fast introduction into the use of Prolog4J.
+  
+* Installation
 
-  Here will be the tutorial.
+  Download the latest stable version of the Prolog4J API and one of the Prolog4J bindings.
+  The bindings are functionally compatible with each other, but there may be differences
+  between their performance. Moreover, the Prolog4J bindings may allow direct access their 
+  wrapped Prolog engine, for the rare case when accessing them through the Prolog4J API
+  is not sufficient for you.
+  
+  Both the Prolog4J API and one Prolog4J binding has to be added to the class path of your
+  project. Note that adding several bindings to the class path will cause an error message
+  when running the application and Prolog4J will not working.
+  
+  If you use Maven, add the following repository into the <<<repositories>>> section of 
+  the <<<pom.xml>>>:
+  
+----------------------------------
+    <repository>
+      <id>dev.inf.unideb.hu</id>
+      <name>Archiva Managed Internal Repository</name>
+      <url>http://dev.inf.unideb.hu:8090/archiva/repository/internal/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+----------------------------------
+  
+  The following dependencies are available:
+
+------------------
+    <dependency>
+      <groupId>org.prolog4j</groupId>
+      <artifactId>prolog4j-api</artifactId>
+      <version>0.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.prolog4j</groupId>
+      <artifactId>prolog4j-tuprolog</artifactId>
+      <version>0.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.prolog4j</groupId>
+      <artifactId>prolog4j-jtrolog</artifactId>
+      <version>0.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.prolog4j</groupId>
+      <artifactId>prolog4j-jlog</artifactId>
+      <version>0.1.2</version>
+    </dependency>
+------------------
+
+  Please note that you always have to use the prolog4j-api, but you have to choose exactly
+  one of the bindings.
+  
+* Usage
+
+  TODO
   
