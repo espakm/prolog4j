@@ -99,7 +99,7 @@ public abstract class AbstractProver implements Prover, Serializable {
 		@Override
 		public <T> void addObjectConverter(Class<T> pattern, Converter<T> converter) {
 			if (delegate == GLOBAL_POLICY) {
-				delegate = createConversionPolicy();
+				delegate = ProverFactory.createConversionPolicy();
 			}
 			delegate.addObjectConverter(pattern, converter);
 		}
@@ -107,7 +107,7 @@ public abstract class AbstractProver implements Prover, Serializable {
 		@Override
 		public void addTermConverter(String pattern, Converter<Object> converter) {
 			if (delegate == GLOBAL_POLICY) {
-				delegate = createConversionPolicy();
+				delegate = ProverFactory.createConversionPolicy();
 			}
 			delegate.addTermConverter(pattern, converter);
 		}
@@ -196,13 +196,6 @@ public abstract class AbstractProver implements Prover, Serializable {
 //		}
 	}
 
-	/**
-	 * Creates a new conversion policy.
-	 * 
-	 * @return the created conversion policy
-	 */
-	protected abstract ConversionPolicy createConversionPolicy();
-	
 	// /**
 	// * Replace this instance with a homonymous (same name) prover returned by
 	// * ProverFactory. Note that this method is only called during

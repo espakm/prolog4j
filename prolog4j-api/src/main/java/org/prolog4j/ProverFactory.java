@@ -255,6 +255,15 @@ public final class ProverFactory {
 	}
 
 	/**
+	 * Creates a new conversion policy.
+	 * 
+	 * @return the created conversion policy
+	 */
+	public static ConversionPolicy createConversionPolicy() {
+		return getIProverFactory().createConversionPolicy();
+	}
+	
+	/**
 	 * Return the {@link IProverFactory} instance in use.
 	 * 
 	 * <p>

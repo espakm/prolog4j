@@ -76,4 +76,11 @@ public interface IProverFactory {
 	 */
 	ConversionPolicy getConversionPolicy();
 
+	/**
+	 * Creates a new conversion policy.
+	 * 
+	 * @return the created conversion policy
+	 */
+	ConversionPolicy createConversionPolicy();
+	
 }
