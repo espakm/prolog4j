@@ -68,26 +68,15 @@ public abstract class ConversionPolicy {
 	}
 	
 	/**
-	 * Registers a new term converter into the policy. The converter will have
-	 * priority over other converters whose pattern matches the same terms.
+	 * Registers a new term converter into the policy. The converter will be
+	 * used for atoms having the given name and compound terms having the
+	 * given functor.
 	 * 
-	 * The matching of the pattern is decided by 
-	 * {@link Prover#match(Object, Object)}.
-	 * 
-	 * @param pattern the pattern to select the converter to use later
+	 * @param functor the functor to select the converter to use later
 	 * @param converter the converter
 	 */
-	public void addTermConverter(String pattern, Converter<Object> converter) {
-		StringBuilder sb = new StringBuilder();
-		StringTokenizer st = new StringTokenizer(pattern, "(),");
-		int i = 0;
-		String functor = st.nextToken();
-		while (st.hasMoreTokens()) {
-			++i;
-			st.nextToken();
-		}
-		String spec = sb.append(functor).append('/').append(i).toString();
-		termPatterns.put(spec, converter);
+	public void addTermConverter(String functor, Converter<Object> converter) {
+		termPatterns.put(functor, converter);
 	}
 
 	/**
@@ -128,10 +117,7 @@ public abstract class ConversionPolicy {
 			return null;
 		}
 		if (isCompound(term)) {
-			String functor = getName(term);
-			StringBuilder specB = new StringBuilder(functor.length() + 2);
-			String spec = specB.append(functor).append('/').append(getArity(term)).toString();
-			Converter converter = termPatterns.get(spec);
+			Converter converter = termPatterns.get(getName(term));
 			if (converter != null) {
 				Object result = converter.convert(term);
 				if (result != null) {

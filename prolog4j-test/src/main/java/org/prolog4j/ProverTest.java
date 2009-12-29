@@ -246,11 +246,13 @@ public class ProverTest {
 				return obj instanceof Human && name.equals(((Human) obj).name);
 			}
 		}
-		cp.addTermConverter("human({})", new Converter<Object>() {
+		cp.addTermConverter("human", new Converter<Object>() {
 			@Override
 			public Object convert(Object term) {
-//				return new Human((String) cp.convertTerm(cp.getArg(term, 0)));
-				return new Human((String) cp.getArg(term, 0));
+				if (cp.getArity(term) == 1) {
+					return new Human((String) cp.getArg(term, 0));
+				}
+				return null;
 			}
 		});
 		Human socrates = p.<Human>solve("H=human(socrates).").get();
