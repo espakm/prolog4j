@@ -1,3 +1,21 @@
+/*
+ * Copyright 2010 by Miklós Espák <espakm@gmail.com>
+ * 
+ * This file is part of Prolog4J.
+ * 
+ * Prolog4J is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Prolog4J is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Prolog4J.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.prolog4j.jtrolog;
 
 import java.util.ArrayList;
@@ -96,7 +114,7 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 	/**
 	 * Constructs a conversion policy for jTrolog.
 	 */
-	public JTrologConversionPolicy() {
+	JTrologConversionPolicy() {
 		addObjectConverter(Long.class, LONG_CONVERTER);
 		addObjectConverter(Float.class, FLOAT_CONVERTER);
 		addObjectConverter(Double.class, DOUBLE_CONVERTER);
@@ -167,11 +185,9 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 				int arity = value.arity;
 				Object[] args = new Object[arity];
 				for (int i = 0; i < arity; ++i) {
-//					args[i] = policy.convertTerm(value.getArg(i).getTerm());
 					args[i] = convertTerm(value.getArg(i));
 				}
 				return new Compound(value.name, args);
-				// return Terms.getInstance().toObject(value);
 			}
 
 			@Override
@@ -191,8 +207,7 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 				return null;
 			}
 		});
-		addTermConverter(jTrolog.terms.StructAtom.class,
-				ATOM_TERM_CONVERTER);
+		addTermConverter(jTrolog.terms.StructAtom.class, ATOM_TERM_CONVERTER);
 	}
 
 	/**
