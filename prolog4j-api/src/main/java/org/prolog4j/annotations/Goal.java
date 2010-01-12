@@ -1,20 +1,25 @@
-/*
- * Copyright 2010 by Miklós Espák <espakm@gmail.com>
+/* 
+ * Copyright (c) 2010 Miklos Espak
+ * All rights reserved.
  * 
- * This file is part of Prolog4J.
+ * Permission is hereby granted, free  of charge, to any person obtaining
+ * a  copy  of this  software  and  associated  documentation files  (the
+ * "Software"), to  deal in  the Software without  restriction, including
+ * without limitation  the rights to  use, copy, modify,  merge, publish,
+ * distribute,  sublicense, and/or sell  copies of  the Software,  and to
+ * permit persons to whom the Software  is furnished to do so, subject to
+ * the following conditions:
  * 
- * Prolog4J is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * The  above  copyright  notice  and  this permission  notice  shall  be
+ * included in all copies or substantial portions of the Software.
  * 
- * Prolog4J is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with Prolog4J.  If not, see <http://www.gnu.org/licenses/>.
+ * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
+ * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
+ * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package org.prolog4j.annotations;
 
@@ -28,13 +33,19 @@ import java.lang.annotation.Target;
  * be applied for a method. The return type of the method can be one of the
  * followings:
  * <ul>
- * <li> <tt>boolean</tt> or <tt>Boolean</tt>: Only the existence of a solution is
- * of interest.</li>
- * <li> <tt>Solution<E></tt>: All the solutions are of interest. E should be the
- * common type of the values of a given variable of the goal. The values of
- * other variables can also be accessed through the solution.</li>
- * <li>Other: Only the first solution is of interest that should be of the
- * specified type.</li>
+ *   <li>
+ *     <tt>boolean</tt> or <tt>Boolean</tt>: Only the existence of a solution is
+ *     of interest.
+ *   </li>
+ *   <li>
+ *     <tt>Solution<E></tt>: All the solutions are of interest. E should be the
+ *     common type of the values of a given variable of the goal. The values of
+ *     other variables can also be accessed through the solution.
+ *   </li>
+ *   <li>
+ *     Other: Only the first solution is of interest that should be of the
+ *     specified type.
+ *   </li>
  * </ul>
  * The argument of the advice is the Prolog goal itself.
  */

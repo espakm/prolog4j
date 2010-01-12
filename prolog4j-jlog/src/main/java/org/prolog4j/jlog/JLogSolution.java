@@ -1,20 +1,25 @@
-/*
- * Copyright 2010 by Miklós Espák <espakm@gmail.com>
+/* 
+ * Copyright (c) 2010 Miklos Espak
+ * All rights reserved.
  * 
- * This file is part of Prolog4J.
+ * Permission is hereby granted, free  of charge, to any person obtaining
+ * a  copy  of this  software  and  associated  documentation files  (the
+ * "Software"), to  deal in  the Software without  restriction, including
+ * without limitation  the rights to  use, copy, modify,  merge, publish,
+ * distribute,  sublicense, and/or sell  copies of  the Software,  and to
+ * permit persons to whom the Software  is furnished to do so, subject to
+ * the following conditions:
  * 
- * Prolog4J is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * The  above  copyright  notice  and  this permission  notice  shall  be
+ * included in all copies or substantial portions of the Software.
  * 
- * Prolog4J is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with Prolog4J.  If not, see <http://www.gnu.org/licenses/>.
+ * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
+ * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
+ * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package org.prolog4j.jlog;
 
@@ -24,9 +29,9 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.prolog4j.ConversionPolicy;
-import org.prolog4j.InvalidQuery;
+import org.prolog4j.InvalidQueryException;
 import org.prolog4j.SolutionIterator;
-import org.prolog4j.UnknownVariable;
+import org.prolog4j.UnknownVariableException;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;
 import ubc.cs.JLog.Parser.SyntaxErrorException;
@@ -71,7 +76,7 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		try {
 			solution = prolog.query(goal, initialBindings);
 		} catch (SyntaxErrorException e) {
-			throw new InvalidQuery(goal, e);
+			throw new InvalidQueryException(goal, e);
 		}
 		success = solution != null;
 		if (!success || solution.size() == 0) {
@@ -82,7 +87,8 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		for (String var: solution.keySet()) {
 			outputVarNames[i++] = var;
 		}
-		defaultOutputVariable = outputVarNames[outputVarNames.length - 1];
+		//defaultOutputVariable = outputVarNames[outputVarNames.length - 1];
+		on(outputVarNames[outputVarNames.length - 1]);
 	}
 
 	@Override
@@ -95,7 +101,7 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 		if (clazz == null) {
 			Object term = solution.get(variable);
 			if (term == null) {
-				throw new UnknownVariable(variable);
+				throw new UnknownVariableException(variable);
 			}
 			return (A) conversionPolicy.convertTerm(term);
 		}
@@ -106,7 +112,7 @@ public class JLogSolution<S> extends org.prolog4j.Solution<S> {
 	public <A> A get(String variable, Class<A> type) {
 		Object term = solution.get(variable);
 		if (term == null) {
-			throw new UnknownVariable(variable);
+			throw new UnknownVariableException(variable);
 		}
 		return (A) conversionPolicy.convertTerm(term, type);
 	}

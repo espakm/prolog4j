@@ -1,22 +1,5 @@
-/*
- * Copyright 2010 by Miklós Espák <espakm@gmail.com>
- * 
- * This file is part of Prolog4J.
- * 
- * Prolog4J is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * Prolog4J is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with Prolog4J.  If not, see <http://www.gnu.org/licenses/>.
- */
 /* 
+ * Copyright (c) 2010 Miklos Espak
  * Copyright (c) 2004-2007 QOS.ch
  * All rights reserved.
  * 
@@ -51,18 +34,12 @@ import java.util.List;
 /**
  * The <code>ProverFactory</code> is a utility class producing Provers for
  * various Prolog APIs, most notably for tuProlog, jTrolog and JLog.
- * 
  * <p>
  * <code>ProverFactory</code> is essentially a wrapper around an
  * {@link IProverFactory} instance bound with <code>ProverFactory</code> at
  * compile time.
- * 
  * <p>
  * Please note that all methods in <code>ProverFactory</code> are static.
- * 
- * @author Ceki G&uuml;lc&uuml;
- * @author Robert Elliot
- * @author Miklós Espák
  */
 public final class ProverFactory {
 
@@ -116,12 +93,10 @@ public final class ProverFactory {
 
 	/**
 	 * Force ProverFactory to consider itself uninitialized.
-	 * 
 	 * <p>
 	 * This method is intended to be called by classes (in the same package) for
 	 * testing purposes. This method is internal. It can be modified, renamed or
 	 * removed at any time without notice.
-	 * 
 	 * <p>
 	 * You are strongly discouraged from calling this method in production code.
 	 */
@@ -221,6 +196,7 @@ public final class ProverFactory {
 
 	/**
 	 * Returns the ProverFactory instance.
+	 * 
 	 * @return the ProverFactory instance
 	 */
 	private static ProverFactoryBinder getSingleton() {
@@ -281,8 +257,7 @@ public final class ProverFactory {
 	}
 	
 	/**
-	 * Return the {@link IProverFactory} instance in use.
-	 * 
+	 * Returns the {@link IProverFactory} instance in use.
 	 * <p>
 	 * IProverFactory instance is bound with this class at compile time.
 	 * 

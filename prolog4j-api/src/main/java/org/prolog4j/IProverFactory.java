@@ -1,22 +1,5 @@
-/*
- * Copyright 2010 by Miklós Espák <espakm@gmail.com>
- * 
- * This file is part of Prolog4J.
- * 
- * Prolog4J is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * Prolog4J is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with Prolog4J.  If not, see <http://www.gnu.org/licenses/>.
- */
 /* 
+ * Copyright (c) 2010 Miklos Espak
  * Copyright (c) 2004-2007 QOS.ch
  * All rights reserved.
  * 
@@ -44,10 +27,9 @@ package org.prolog4j;
 /**
  * <code>IProverFactory</code> instances manufacture {@link Prover} instances by
  * name.
- * 
  * <p>
  * Most users retrieve {@link Prover} instances through the static
- * {@link ProverFactory#getProver(String)} method. An instance of of this
+ * {@link ProverFactory#getProver(String)} method. An instance of this
  * interface is bound internally with {@link ProverFactory} class at compile
  * time.
  */
@@ -61,23 +43,14 @@ public interface IProverFactory {
 	Prover getProver();
 
 	/**
-	 * Return an appropriate {@link Prover} instance as specified by the
-	 * <code>name</code> parameter.
-	 * 
-	 * <p>
-	 * If the name parameter is equal to {@link Prover#ROOT_PROVER_NAME}, that
-	 * is the string value "ROOT" (case insensitive), then the root prover of
-	 * the underlying Prolog system is returned. TODO
-	 * 
+	 * Returns an appropriate {@link Prover} instance as specified by the
+	 * <code>name</code> parameter. It provides the same prover instance
+	 * for the same name whenever you call it.
 	 * <p>
 	 * Null-valued name arguments are considered invalid.
 	 * 
-	 * <p>
-	 * Certain extremely simple Prolog systems, may always return the same
-	 * prover instance regardless of the requested name.
-	 * 
 	 * @param name
-	 *            the name of the Prover to return
+	 *            the name of the prover to return
 	 * @return a prover instance with the specified name
 	 */
 	Prover getProver(String name);
@@ -90,7 +63,7 @@ public interface IProverFactory {
 	 * @return the default conversion policy
 	 */
 	ConversionPolicy getConversionPolicy();
-
+	
 	/**
 	 * Creates a new conversion policy.
 	 * 

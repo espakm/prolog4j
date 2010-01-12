@@ -1,22 +1,5 @@
-/*
- * Copyright 2010 by Miklós Espák <espakm@gmail.com>
- * 
- * This file is part of Prolog4J.
- * 
- * Prolog4J is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * Prolog4J is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with Prolog4J.  If not, see <http://www.gnu.org/licenses/>.
- */
 /* 
+ * Copyright (c) 2010 Miklos Espak
  * Copyright (c) 2004-2007 QOS.ch
  * All rights reserved.
  * 
@@ -44,7 +27,7 @@ package org.prolog4j;
 /**
  * The binding of {@link ProverFactory} class with an actual instance of
  * {@link IProverFactory} is performed using information returned by this class.
- * 
+ * <p>
  * This class is meant to provide a dummy ProverFactoryBinder to the prolog4j-api
  * module. Real implementations are found in each Prolog4J binding project, e.g.
  * prolog4j-tuprolog, prolog4j-jtrolog etc.
@@ -82,6 +65,7 @@ public final class ProverFactoryBinder {
 
 	/**
 	 * The IProverFactory instance returned by the method should always be the same object.
+	 * 
 	 * @return a factory for creating provers
 	 */
 	public IProverFactory getProverFactory() {
@@ -90,6 +74,7 @@ public final class ProverFactoryBinder {
 
 	/**
 	 * Returns the name of the factory prover class.
+	 * 
 	 * @return the name of the factory prover class
 	 */
 	public String getProverFactoryClassName() {

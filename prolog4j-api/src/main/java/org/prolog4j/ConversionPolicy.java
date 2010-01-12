@@ -1,35 +1,67 @@
-/*
- * Copyright 2010 by Miklós Espák <espakm@gmail.com>
+/* 
+ * Copyright (c) 2010 Miklos Espak
+ * All rights reserved.
  * 
- * This file is part of Prolog4J.
+ * Permission is hereby granted, free  of charge, to any person obtaining
+ * a  copy  of this  software  and  associated  documentation files  (the
+ * "Software"), to  deal in  the Software without  restriction, including
+ * without limitation  the rights to  use, copy, modify,  merge, publish,
+ * distribute,  sublicense, and/or sell  copies of  the Software,  and to
+ * permit persons to whom the Software  is furnished to do so, subject to
+ * the following conditions:
  * 
- * Prolog4J is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * The  above  copyright  notice  and  this permission  notice  shall  be
+ * included in all copies or substantial portions of the Software.
  * 
- * Prolog4J is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with Prolog4J.  If not, see <http://www.gnu.org/licenses/>.
+ * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
+ * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
+ * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package org.prolog4j;
 
-import java.lang.reflect.Array;
+//import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
+//import java.util.StringTokenizer;
 
 /**
  * An instance of this class represents how terms are converted to regular Java
  * objects (POJOs) and vice versa. The transformation is performed by 
  * converters. The implementations of the Prolog4J API should provide a fully 
  * functional instance of this class.
- * 
- * TODO
+ * <p>
+ * Prolog terms are converted to regular Java object by <i>term converters</i>.
+ * Unbound variables are always converted to <tt>null</tt>. For bound variables
+ * their value is converted. Terms representing numbers are always converted to
+ * an instance of <tt>java.lang.Number</tt>.
+ * <p>
+ * For other terms the default way of conversion can be redefined. The default
+ * conversion is the following. Atoms are converted to strings, lists to 
+ * <code>java.util.List</code> objects and other compound terms to 
+ * {@link Compound} objects.
+ * <p>
+ * You can redefine this behavior by registering your own term converter to the 
+ * policy. Term converters can be assigned to a string. If an atom with the same
+ * name or a compound term with the same functor has to be converted then this
+ * custom converter will be used. Otherwise, the default converter will be used.
+ * <p>
+ * The conversion of objects to terms is performed in a similar way. <tt>null
+ * </tt> is converted to a new, unbound variable. Other objects will be 
+ * converted to ground terms. <tt>java.lang.Number</tt> objects are converted
+ * to Prolog numbers, <tt>java.lang.String</tt> objects to atoms and 
+ * <tt>java.util.List</tt> objects to Prolog lists. For other objects there
+ * is no default way of conversion.
+ * <p>
+ * You can add your own <i>object converter</i> to the policy assigning it to 
+ * a class. If an object has to be converted to a term, first a converter 
+ * assigned to its class is looked for. If not found, then a converter assigned
+ * to its superclasses and the implemented interfaces are looked for, 
+ * recursively. If none found and there is no default way of conversion, then
+ * an exception is thrown.
  * 
  * @see Converter
  */
@@ -71,24 +103,24 @@ public abstract class ConversionPolicy {
 	}
 	
 	/**
-	 * Registers a new term converter into the policy. The converter will have
-	 * priority over other converters whose pattern matches the same objects.
+	 * Registers a new term converter into the policy. The converter will be
+	 * used to convert terms of the specified class to objects. This method is
+	 * intended to be used by the implementation of the conversion policy
+	 * specific to a particular Prolog implementation.
 	 * 
-	 * The pattern matches a term if the class of the term is a subclass of
-	 * the pattern.
-	 * 
-	 * @param <T> the type of the terms to convert
-	 * @param pattern the pattern to select the converter to use later
+	 * @param <T> the class of the terms to convert
+	 * @param class_ the object that represents the given type
 	 * @param converter the converter
 	 */
-	protected <T> void addTermConverter(Class<T> pattern, Converter<T> converter) {
-		termConverters.put(pattern, converter);
+	protected <T> void addTermConverter(Class<T> class_, Converter<T> converter) {
+		termConverters.put(class_, converter);
 	}
 	
 	/**
 	 * Registers a new term converter into the policy. The converter will be
 	 * used for atoms having the given name and compound terms having the
-	 * given functor.
+	 * given functor. If a converter has already been assigned to the functor,
+	 * the new converter will override it.
 	 * 
 	 * @param functor the functor to select the converter to use later
 	 * @param converter the converter
@@ -98,31 +130,30 @@ public abstract class ConversionPolicy {
 	}
 
 	/**
-	 * Registers a new object converter into the policy. The converter will have
-	 * priority over other converters whose pattern matches the same objects.
+	 * Registers a new object converter into the policy. The converter will be
+	 * used to convert objects of the specified type to terms (subtypes 
+	 * included). If a converter has already been assigned to the type, the new
+	 * converter will override it.
 	 * 
-	 * The pattern matches an object if the class of the object is a subclass of
-	 * the pattern.
-	 * 
-	 * @param <T> the type of the objects to convert
-	 * @param pattern the pattern to select the converter to use later
+	 * @param <T> the type of the terms to convert
+	 * @param class_ the object that represents the given type
 	 * @param converter the converter
 	 */
-	public <T> void addObjectConverter(Class<T> pattern, Converter<T> converter) {
-		objectConverters.put(pattern, converter);
+	public <T> void addObjectConverter(Class<T> class_, Converter<T> converter) {
+		objectConverters.put(class_, converter);
 	}
 	
 	/**
 	 * Converts a term to a regular Java object. If the term is <code>null
 	 * </code> (that represents an unbound Prolog variable) then 
 	 * <code>null</code> is returned.
-	 * 
+	 * <p>
 	 * The method starts to match the term with the patterns of the term 
 	 * converters in their reverse insertion order. If the term matches one
 	 * then it will be converted by the converter assigned to the pattern. If
 	 * the converter returns <code>null</code> then another applicable converter
 	 * will be looked for.
-	 * 
+	 * <p>
 	 * An exception is thrown if there is no applicable converter. (The 
 	 * implementations of the Prolog4J API should prevent this situation.)
 	 * 
@@ -161,13 +192,13 @@ public abstract class ConversionPolicy {
 	 * Converts a term to a regular Java object. If the term is <code>null
 	 * </code> (that represents an unbound Prolog variable) then 
 	 * <code>null</code> is returned.
-	 * 
+	 * <p>
 	 * The method starts to match the term with the patterns of the term 
 	 * converters in their reverse insertion order. If the term matches one
 	 * then it will be converted by the converter assigned to the pattern. If
 	 * the converter returns <code>null</code> then another applicable converter
 	 * will be looked for.
-	 * 
+	 * <p>
 	 * An exception is thrown if there is no applicable converter. (The 
 	 * implementations of the Prolog4J API should prevent this situation.)
 	 * 
@@ -202,14 +233,14 @@ public abstract class ConversionPolicy {
 	 * Converts a regular Java object to a term. The <code>null</code> value
 	 * will be converted to <code>null</code> (that represents an unbound Prolog
 	 * variable).
-	 * 
+	 * <p>
 	 * The method starts to match the class of the object with the patterns of
 	 * the object converters in their reverse insertion order. If the class is
 	 * the subclass of a pattern (equality is allowed) then the object will be
 	 * converted by the converter assigned to the pattern. If the converter
 	 * returns <code>null</code> then another applicable converter will be
 	 * looked for.
-	 * 
+	 * <p>
 	 * An exception is thrown if there is no applicable converter. (The 
 	 * implementations of the Prolog4J API should prevent this situation.)
 	 * 
