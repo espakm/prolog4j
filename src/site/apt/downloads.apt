@@ -1,0 +1,17 @@
+
+Downloads
+
+* Latest version
+
+  The latest binary versions are available here:
+  
+*-------------------+-------------------------------------------------------------------+
+| Prolog4J API      | {{{dist/prolog4j-api-0.2.0.jar}prolog4j-api-0.2.0.jar}}           |
+*-------------------+-------------------------------------------------------------------+
+| tuProlog binding  | {{{dist/prolog4j-tuprolog-0.2.0.jar}prolog4j-tuprolog-0.2.0.jar}} |
+*-------------------+-------------------------------------------------------------------+
+| jTrolog binding   | {{{dist/prolog4j-jtrolog-0.2.0.jar}prolog4j-jtrolog-0.2.0.jar}}   |
+*-------------------+-------------------------------------------------------------------+
+| JLog binding      | {{{dist/prolog4j-tuprolog-0.2.0.jar}prolog4j-jlog-0.2.0.jar}}     |
+*-------------------+-------------------------------------------------------------------+
+

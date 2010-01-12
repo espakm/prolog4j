@@ -29,7 +29,7 @@ About the project
   
   Prolog4J is lightweight in the sense that it does not provide its own set of classes
   for representing terms. Instead, Java objects are converted <directly> to the 
-  representation of the used Prolog binding and vice versa.
+  representation of the used Prolog implementation and vice versa.
   
   The project was motivated partially by {{{http://slf4j.org}SLF4J}}, the "Simple
   Logging Facade for Java". Similarly to SLF4J, Prolog4J also unifies several APIs, and

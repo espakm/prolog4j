@@ -5,9 +5,10 @@
 	<body>
 		<menu name="Project Documentation">
 			<item name="About" href="about.html"/>
-			<item name="Overview" href="overview.html"/>
+<!--			<item name="Overview" href="overview.html"/>-->
 			<item name="Tutorial" href="tutorial.html"/>
-			<item name="FAQ" href="faq.html"/>
+			<item name="Downloads" href="downloads.html"/>
+<!--			<item name="FAQ" href="faq.html"/>-->
 		</menu>
 		<menu ref="reports"/>
 	</body>
