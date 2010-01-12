@@ -3,14 +3,14 @@
   <parent>
     <groupId>org.prolog4j</groupId>
     <artifactId>prolog4j-parent</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
+    <version>0.2.0</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.prolog4j</groupId>
   <artifactId>prolog4j-api</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.3-SNAPSHOT</version>
+  <version>0.2.0</version>
   <name>Prolog4J API</name>
   <description>Easy to use interface over Prolog engines for Java.</description>
   <inceptionYear>2009</inceptionYear>
