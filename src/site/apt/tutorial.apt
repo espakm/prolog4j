@@ -44,22 +44,22 @@ Prolog4J Tutorial
     <dependency>
       <groupId>org.prolog4j</groupId>
       <artifactId>prolog4j-api</artifactId>
-      <version>0.1.2</version>
+      <version>0.2.0</version>
     </dependency>
     <dependency>
       <groupId>org.prolog4j</groupId>
       <artifactId>prolog4j-tuprolog</artifactId>
-      <version>0.1.2</version>
+      <version>0.2.0</version>
     </dependency>
     <dependency>
       <groupId>org.prolog4j</groupId>
       <artifactId>prolog4j-jtrolog</artifactId>
-      <version>0.1.2</version>
+      <version>0.2.0</version>
     </dependency>
     <dependency>
       <groupId>org.prolog4j</groupId>
       <artifactId>prolog4j-jlog</artifactId>
-      <version>0.1.2</version>
+      <version>0.2.0</version>
     </dependency>
 ------------------
 

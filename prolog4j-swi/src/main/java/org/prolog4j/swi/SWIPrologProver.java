@@ -21,106 +21,63 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package org.prolog4j.tuprolog;
+package org.prolog4j.swi;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import jpl.Util;
+
 import org.prolog4j.AbstractProver;
 import org.prolog4j.Query;
-
-import alice.tuprolog.InvalidLibraryException;
-import alice.tuprolog.InvalidTheoryException;
-import alice.tuprolog.Prolog;
-import alice.tuprolog.Theory;
 
 /**
  * Represents a Prolog knowledge base and provides methods for solving queries
  * on it. The prover itself is not responsible for processing the solutions.
  */
-public class TuPrologProver extends AbstractProver {
-
-	// static {
-	// GLOBAL.engine.addWarningListener(new WarningListener() {
-	// public void onWarning(WarningEvent e) {
-	// System.out.println(e.getMsg());
-	// }
-	// });
-	// GLOBAL.engine.addOutputListener(new OutputListener() {
-	// public void onOutput(alice.tuprolog.event.OutputEvent e) {
-	// System.out.println(e.getMsg());
-	// };
-	// });
-	// }
+public class SWIPrologProver extends AbstractProver {
 
 	/** Class version for serialization. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * The tuProlog engine that is used for storing the knowledge base and
-	 * solving queries on it.
+	 * Creates an SWI-Prolog prover.
 	 */
-	private final Prolog engine;
-
-	/**
-	 * Creates a tuProlog prover.
-	 */
-	TuPrologProver() {
+	SWIPrologProver() {
 		super();
-		engine = new Prolog();
-	}
-
-	/**
-	 * Returns the tuProlog engine used by the prover.
-	 * 
-	 * @return the tuProlog engine
-	 */
-	public Prolog getEngine() {
-		return engine;
 	}
 
 	@Override
 	public Query query(String goal) {
-		return new TuPrologQuery(this, goal);
+		return new SWIPrologQuery(this, goal);
 	}
 
 	@Override
 	public void loadLibrary(String className) {
-		try {
-			engine.loadLibrary(className);
-		} catch (InvalidLibraryException e) {
-			throw new RuntimeException(e);
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void loadTheory(InputStream input) throws IOException {
-		try {
-			engine.addTheory(new Theory(input));
-		} catch (InvalidTheoryException e) {
-			e.printStackTrace();
-		}
+		throw new UnsupportedOperationException();
+	}
+
+	public void loadTheory(String filename) {
+		throw new UnsupportedOperationException();
+//		new jpl.Query("consult", new jpl.Term[]{new jpl.Atom(filename)});
 	}
 
 	@Override
 	public void addTheory(String theory) {
-		try {
-			engine.addTheory(new Theory(theory));
-		} catch (InvalidTheoryException e) {
-			e.printStackTrace();
-		}
+		jpl.Query query = new jpl.Query("assertz", new jpl.Term[]{Util.textToTerm(theory)});
+		query.hasSolution();
 	}
 
 	@Override
 	public void addTheory(String... theory) {
-		StringBuilder sb = new StringBuilder();
-		for (String factOrRule : theory) {
-			sb.append(factOrRule).append('\n');
-		}
-		try {
-			engine.addTheory(new Theory(sb.toString()));
-		} catch (InvalidTheoryException e) {
-			e.printStackTrace();
+		for (String clause: theory) {
+			jpl.Query query = new jpl.Query("assertz", new jpl.Term[]{Util.textToTerm(clause)});
+			query.hasSolution();
 		}
 	}
 

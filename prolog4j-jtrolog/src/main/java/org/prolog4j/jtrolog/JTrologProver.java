@@ -23,6 +23,11 @@
  */
 package org.prolog4j.jtrolog;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import org.prolog4j.AbstractProver;
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Query;
@@ -60,7 +65,7 @@ public class JTrologProver extends AbstractProver {
 	private final Prolog engine;
 
 	/**
-	 * Creates a jTrolog prover of the given name.
+	 * Creates a jTrolog prover.
 	 */
 	JTrologProver() {
 		super();
@@ -86,6 +91,21 @@ public class JTrologProver extends AbstractProver {
 			engine.loadLibrary(className);
 		} catch (InvalidLibraryException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void loadTheory(InputStream input) throws IOException {
+		try {
+			StringBuilder sb = new StringBuilder();
+			BufferedReader br = new BufferedReader(new InputStreamReader(input));
+			String line;
+			while ((line = br.readLine()) != null) {
+				sb.append(line).append('\n');
+			}
+			engine.addTheory(sb.toString());
+		} catch (PrologException e) {
+			e.printStackTrace();
 		}
 	}
 

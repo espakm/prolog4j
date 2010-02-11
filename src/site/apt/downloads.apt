@@ -1,17 +1,31 @@
 
 Downloads
 
-* Latest version
-
-  The latest binary versions are available here:
+  The archives of the latest version are available here:
   
-*-------------------+-------------------------------------------------------------------+
-| Prolog4J API      | {{{dist/prolog4j-api-0.2.0.jar}prolog4j-api-0.2.0.jar}}           |
-*-------------------+-------------------------------------------------------------------+
-| tuProlog binding  | {{{dist/prolog4j-tuprolog-0.2.0.jar}prolog4j-tuprolog-0.2.0.jar}} |
-*-------------------+-------------------------------------------------------------------+
-| jTrolog binding   | {{{dist/prolog4j-jtrolog-0.2.0.jar}prolog4j-jtrolog-0.2.0.jar}}   |
-*-------------------+-------------------------------------------------------------------+
-| JLog binding      | {{{dist/prolog4j-tuprolog-0.2.0.jar}prolog4j-jlog-0.2.0.jar}}     |
-*-------------------+-------------------------------------------------------------------+
+*------------------+-----------------------------------------------------------------------------------+
+| Prolog4J API     | {{{dist/prolog4j-api-0.2.0.jar}prolog4j-api-0.2.0.jar}}                           |
+|                  | {{{dist/prolog4j-api-0.2.0-javadoc.jar}prolog4j-api-0.2.0-javadoc.jar}}           |
+|                  | {{{dist/prolog4j-api-0.2.0-sources.jar}prolog4j-api-0.2.0-sources.jar}}           |
+*------------------+-----------------------------------------------------------------------------------+
+| tuProlog binding | {{{dist/prolog4j-tuprolog-0.2.0.jar}prolog4j-tuprolog-0.2.0.jar}}                 |
+|                  | {{{dist/prolog4j-tuprolog-0.2.0-javadoc.jar}prolog4j-tuprolog-0.2.0-javadoc.jar}} |
+|                  | {{{dist/prolog4j-tuprolog-0.2.0-sources.jar}prolog4j-tuprolog-0.2.0-sources.jar}} |
+*------------------+-----------------------------------------------------------------------------------+
+| jTrolog binding  | {{{dist/prolog4j-jtrolog-0.2.0.jar}prolog4j-jtrolog-0.2.0.jar}}                   |
+|                  | {{{dist/prolog4j-jtrolog-0.2.0-javadoc.jar}prolog4j-jtrolog-0.2.0-javadoc.jar}}   |
+|                  | {{{dist/prolog4j-jtrolog-0.2.0-sources.jar}prolog4j-jtrolog-0.2.0-sources.jar}}   |
+*------------------+-----------------------------------------------------------------------------------+
+| JLog binding     | {{{dist/prolog4j-jlog-0.2.0.jar}prolog4j-jlog-0.2.0.jar}}                         |
+|                  | {{{dist/prolog4j-jlog-0.2.0-javadoc.jar}prolog4j-jlog-0.2.0-javadoc.jar}}         |
+|                  | {{{dist/prolog4j-jlog-0.2.0-sources.jar}prolog4j-jlog-0.2.0-sources.jar}}         |
+*------------------+-----------------------------------------------------------------------------------+
 
+  These archives are also available a {{{http://dev.inf.unideb.hu:8090/archiva/repository/internal/}
+  Maven repository}}. See the {{{tutorial.html}tutorial}} for details.
+  
+  The sources of the current development branch are available through the
+  {{{source-repository.html}Subversion repository}}.
+  
+  The archives of previous versions can be found in both repositories.
+  

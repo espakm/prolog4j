@@ -8,12 +8,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.prolog4j</groupId>
-  <artifactId>prolog4j-jlog</artifactId>
+  <artifactId>prolog4j-swi</artifactId>
   <packaging>jar</packaging>
   <version>0.2.1-SNAPSHOT</version>
-  <name>Prolog4J JLog binding</name>
-  <description>Implementation for the Prolog4J API based on JLog</description>
-  <inceptionYear>2009</inceptionYear>
+  <name>Prolog4J SWI-Prolog binding</name>
+  <description>Implementation for the Prolog4J API based on SWI-Prolog</description>
+  <inceptionYear>2010</inceptionYear>
   <url>http://prolog4j.org/</url>
 
   <dependencies>
@@ -22,12 +22,9 @@
       <artifactId>prolog4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>jlog</groupId>
-      <artifactId>jlogic-debug</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>jlog</groupId>
-      <artifactId>builtinsLib</artifactId>
+      <groupId>swi</groupId>
+      <artifactId>jpl</artifactId>
+      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.prolog4j</groupId>
@@ -42,6 +39,19 @@
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>java.library.path</name>
+              <value>target/classes/lib</value>
+            </property>
+          </systemProperties>
+          <testFailureIgnore>true</testFailureIgnore>
+        </configuration>
       </plugin>
     </plugins>
   </build>

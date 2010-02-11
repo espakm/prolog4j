@@ -23,7 +23,8 @@
  */
 package org.prolog4j.jtrolog;
 
-import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -176,16 +177,13 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 			@Override
 			public Object convert(Struct value) {
 				if (isList(value)) {
-					int length = listSize(value);
-					Object[] array = new Object[length];
-					for (int i = 0; i < length; ++i) {
+					List list = new LinkedList();
+					while (value != Term.emptyList) {
 						Term t = value.getArg(0);
-//						array[i] = policy.convertTerm(t.getTerm());
-//						value = (Struct) value.getArg(1).getTerm();
-						array[i] = convertTerm(t);
+						list.add(convertTerm(t));
 						value = (Struct) value.getArg(1);
 					}
-					return array;
+					return list;
 				}
 				int arity = value.arity;
 				Object[] args = new Object[arity];
@@ -197,17 +195,15 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 
 			@Override
 			public <R> R convert(Struct value, java.lang.Class<R> to) {
-				if (isList(value) && to == List.class) {
+				if (isList(value) && Object[].class.isAssignableFrom(to)) {
 					int length = listSize(value);
-					List list = new ArrayList(length);
+					R[] array = (R[]) Array.newInstance(to.getComponentType(), length);
 					for (int i = 0; i < length; ++i) {
 						Term t = value.getArg(0);
-//						list.add(policy.convertTerm(t.getTerm()));
-//						value = (Struct) value.getArg(1).getTerm();
-						list.add(convertTerm(t));
+						array[i] = (R) convertTerm(t);
 						value = (Struct) value.getArg(1);
 					}
-					return (R) list;
+					return to.cast(array);
 				}
 				return null;
 			}

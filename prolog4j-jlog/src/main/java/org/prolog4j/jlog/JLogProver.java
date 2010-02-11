@@ -23,6 +23,11 @@
  */
 package org.prolog4j.jlog;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import org.prolog4j.AbstractProver;
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Query;
@@ -98,6 +103,17 @@ public class JLogProver extends AbstractProver {
 	@Override
 	public void loadLibrary(String className) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void loadTheory(InputStream input) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = new BufferedReader(new InputStreamReader(input));
+		String line;
+		while ((line = br.readLine()) != null) {
+			sb.append(line).append('\n');
+		}
+		engine.consultSource(sb.toString());
 	}
 
 	@Override

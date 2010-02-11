@@ -193,7 +193,7 @@ public abstract class Solution<S> implements Iterable<S> {
 			@Override
 			public S get(String variable) {
 				if (clazz == null) {
-					return Solution.this.get(variable);
+					return Solution.this.<S>get(variable);
 				}
 				return Solution.this.get(variable, clazz);
 			}

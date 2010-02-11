@@ -23,7 +23,8 @@
  */
 package org.prolog4j.jlog;
 
-import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -176,35 +177,26 @@ public class JLogConversionPolicy extends ConversionPolicy {
 		addTermConverter(jList.class, new Converter<jList>() {
 			@Override
 			public Object convert(jList value) {
-				int length = listSize(value);
-				Object[] array = new Object[length];
-				for (int i = 0; i < length; ++i) {
+				List list = new LinkedList();
+				while (value instanceof jListPair) {
 					jListPair listPair = (jListPair) value;
-					array[i] = convertTerm((listPair.getHead().getTerm()));
+					list.add(convertTerm(listPair.getHead().getTerm()));
 					value = (jList) listPair.getTail().getTerm();
 				}
-				return array;
-//				int arity = value.arity;
-//				Object[] args = new Object[arity];
-//				for (int i = 0; i < arity; ++i) {
-////					args[i] = policy.convertTerm(value.getArg(i).getTerm());
-//					args[i] = policy.convertTerm(value.getArg(i));
-//				}
-//				return new Compound(value.name, args);
-//				// return Terms.getInstance().toObject(value);
+				return list;
 			}
 
 			@Override
 			public <R> R convert(jList value, java.lang.Class<R> to) {
-				if (isList(value) && to == List.class) {
+				if (isList(value) && Object[].class.isAssignableFrom(to)) {
 					int length = listSize(value);
-					List list = new ArrayList(length);
+					R[] array = (R[]) Array.newInstance(to.getComponentType(), length);
 					for (int i = 0; i < length; ++i) {
 						jListPair listPair = (jListPair) value;
-						list.add(convertTerm((listPair.getHead().getTerm())));
+						array[i] = (R) convertTerm(listPair.getHead().getTerm());
 						value = (jList) listPair.getTail().getTerm();
 					}
-					return (R) list;
+					return to.cast(array);
 				}
 				return null;
 			}

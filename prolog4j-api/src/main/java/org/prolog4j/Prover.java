@@ -23,6 +23,9 @@
  */
 package org.prolog4j;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * A Prover object represents a Prolog knowledge base, on which you can create
  * and solve queries. The implementations of this interface should not provide
@@ -63,6 +66,14 @@ public interface Prover {
 	 *            the name of the library
 	 */
 	void loadLibrary(String library);
+
+	/**
+	 * Loads a Prolog theory from a stream.
+	 * 
+	 * @param input
+	 *            the stream
+	 */
+	void loadTheory(InputStream input) throws IOException;
 
 	/**
 	 * Adds a Prolog theory to the knowledge base.

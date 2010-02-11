@@ -60,7 +60,7 @@ public class ProverTest {
 		"member(X, [X|_]).",
 		"member(X, [_|L]) :- member(X, L).",
 		"append([], R, R).",
-		"append([H|T], L, [H|R]) :-",
+		"append([H|T], L, [H|R]) :-" +
 		"	append(T, L, R).");
 		
 		p.addTheory(
@@ -185,10 +185,15 @@ public class ProverTest {
 		String sVal = p.<String>solve("X=prolog4j.").get();
 		assertEquals("prolog4j", sVal);
 		
-		Object[] iaVal = p.<Integer[]>solve("X = [0, 1, 2].").get();
-		assertArrayEquals(new Object[]{0, 1, 2}, iaVal);
-		Object[] saVal = p.<Object[]>solve("X = [a, b, c].").get();
-		assertArrayEquals(new Object[]{"a", "b", "c"}, saVal);
+//		Object[] iaVal = p.<Integer[]>solve("X = [0, 1, 2].").get();
+//		assertArrayEquals(new Object[]{0, 1, 2}, iaVal);
+//		Object[] saVal = p.<Object[]>solve("X = [a, b, c].").get();
+//		assertArrayEquals(new Object[]{"a", "b", "c"}, saVal);
+		
+		List<Integer> liVal = p.<List<Integer>>solve("X = [0, 1, 2].").get();
+		assertEquals(Arrays.asList(0, 1, 2), liVal);
+		List<String> lsVal = p.<List<String>>solve("X = [a, b, c].").get();
+		assertEquals(Arrays.asList("a", "b", "c"), lsVal);
 		
 		Object cVal = p.solve("X = functor(arg1, arg2).").get();
 		assertEquals(new Compound("functor", "arg1", "arg2"), cVal);
@@ -218,8 +223,10 @@ public class ProverTest {
 		assertFalse(p.solve("{}=2.", "2").isSuccess());
 		assertFalse(p.solve("{}='2'.", 2).isSuccess());
 
-		assertTrue(p.solve("{}=[0, 1, 2].", (Object) new Integer[]{0, 1, 2}).isSuccess());
-		assertTrue(p.solve("{}=[a, b, c].", (Object) new String[]{"a", "b", "c"}).isSuccess());
+//		assertTrue(p.solve("{}=[0, 1, 2].", (Object) new Integer[]{0, 1, 2}).isSuccess());
+//		assertTrue(p.solve("{}=[a, b, c].", (Object) new String[]{"a", "b", "c"}).isSuccess());
+		assertTrue(p.solve("{}=[0, 1, 2].", Arrays.asList(0, 1, 2)).isSuccess());
+		assertTrue(p.solve("{}=[a, b, c].", Arrays.asList("a", "b", "c")).isSuccess());
 
 		assertTrue(p.solve("{}=f(1, 2).", new Compound("f", 1, 2)).isSuccess());
 	}
@@ -295,32 +302,32 @@ public class ProverTest {
 	
 	/**
 	 * Tests {@link Solution#on(String)} and the conversion of the result 
-	 * into an array.
+	 * into a list.
 	 */
 	@Test
-	public void testTestArrayResult() {
+	public void testTestListResult() {
 		List<String> h1 = Arrays.asList("socrates");
 		List<String> h2 = Arrays.asList("thales", "plato");
 
-		Solution<Object[]> solution = p.solve("append(L1{}, L2{}, L12).", h1, h2);
+		Solution<List<Object>> solution = p.solve("append(L1{}, L2{}, L12).", h1, h2);
 
-		Iterator<Object[]> it = solution.<Object[]>on("L12").iterator();
+		Iterator<List<Object>> it = solution.<List<Object>>on("L12").iterator();
 		assertTrue(it.hasNext());
-		Object[] sol = it.next();
-		assertArrayEquals(new Object[]{"socrates", "thales", "plato"}, sol);
+		List<Object> sol = it.next();
+		assertEquals(Arrays.asList("socrates", "thales", "plato"), sol);
 		assertFalse(it.hasNext());
 	}
 	
 	/**
 	 * Tests {@link Solution#on(String, Class)}.
-	 * Tests converting the result into lists instead of arrays.
+	 * Tests converting the result into arrays instead of lists.
 	 */
 	@Test
-	public void testTestListResult() {
+	public void testTestArrayResult() {
 		List<String> h1 = Arrays.asList("socrates");
 		List<String> h3 = Arrays.asList("socrates", "homeros", "demokritos");
-		for (List<String> humans: p.solve("append(L1{}, L2, L12{}).", h1, h3).
-				on("L2", List.class)) {
+		for (String[] humans: p.solve("append(L1{}, L2, L12{}).", h1, h3).
+				on("L2", String[].class)) {
 			for (String h: humans) {
 				System.out.println(h); // homeros and demokritos
 			}
