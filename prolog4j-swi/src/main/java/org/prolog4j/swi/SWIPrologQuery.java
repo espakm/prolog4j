@@ -71,8 +71,9 @@ public class SWIPrologQuery extends Query {
 		super(goal);
 		this.prover = prover;
 		this.cp = prover.getConversionPolicy();
-		List<PlaceHolder> placeholders = getPlaceholders();
-		int placeholderNo = placeholders.size();
+//		List<PlaceHolder> placeholders = getPlaceholders();
+		List<String> placeholderNames = getPlaceholderNames();
+		int placeholderNo = placeholderNames.size();
 		inputVars = new Variable[placeholderNo];
 
 		try {
@@ -81,7 +82,7 @@ public class SWIPrologQuery extends Query {
 			throw new InvalidQueryException(getGoal());
 		}
 		for (int i = 0, index = 0; i < placeholderNo; ++i, ++index) {
-			Variable argVar = new Variable(placeholders.get(i).name);
+			Variable argVar = new Variable(placeholderNames.get(i));
 			Variable arg = new Variable("J__" + argVar.name());
 			sGoal = new jpl.Compound(",", new Term[]{new jpl.Compound("=", new Term[]{argVar, arg}), sGoal});
 			inputVars[index] = arg;

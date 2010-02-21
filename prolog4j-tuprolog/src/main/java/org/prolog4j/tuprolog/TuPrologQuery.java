@@ -69,14 +69,15 @@ public class TuPrologQuery extends Query {
 		this.prover = prover;
 		this.cp = prover.getConversionPolicy();
 		this.engine = prover.getEngine();
-		List<PlaceHolder> placeholders = getPlaceholders();
-		int placeholderNo = placeholders.size();
+		List<String> placeholderNames = getPlaceholderNames();
+//		List<PlaceHolder> placeholders = getPlaceholders();
+		int placeholderNo = placeholderNames.size();
 		inputVars = new Var[placeholderNo];
 		try {
 			Parser parser = new Parser(getGoal());
 			sGoal = (Struct) parser.nextTerm(true);
 			for (int i = 0, index = 0; i < placeholderNo; ++i, ++index) {
-				Var argVar = new Var(placeholders.get(i).name);
+				Var argVar = new Var(placeholderNames.get(i));
 				Var arg = new Var("J$" + argVar.getOriginalName());
 				sGoal = new Struct(",", new Struct("=", argVar, arg), sGoal);
 				inputVars[index] = arg;

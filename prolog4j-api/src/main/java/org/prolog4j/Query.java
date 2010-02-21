@@ -64,8 +64,8 @@ public abstract class Query {
 	/** The name of the named placeholders of the goal. */
 	private final ArrayList<String> placeholderNames;
 
-	/** The named placeholders of the goal. */
-	private final ArrayList<PlaceHolder> placeholders;
+//	/** The named placeholders of the goal. */
+//	private final ArrayList<PlaceHolder> placeholders;
 
 //	/**
 //	 * Weak references to the objects referred by the query.
@@ -75,54 +75,51 @@ public abstract class Query {
 	/**
 	 * Creates a query object.
 	 * 
-	 * @param goal the Prolog goal
+	 * @param goalPattern the Prolog goal
 	 */
-	protected Query(String goal) {
+	protected Query(final String goalPattern) {
 		placeholderNames = new ArrayList<String>();
-		placeholders = new ArrayList<PlaceHolder>();
-		StringBuilder goalB = new StringBuilder(goal);
+//		placeholders = new ArrayList<PlaceHolder>();
+		StringBuilder goalB = new StringBuilder(goalPattern);
 		String newVarPrefix = null;
-		for (int i = 0, end = 0; true; ++i) {
-			end = goalB.indexOf("{", end);
-			if (end == -1) {
+		for (int i = 0, start = 0; true; ++i) {
+			start = goalB.indexOf("?", start);
+			if (start == -1) {
 				break;
 			}
-			int formatElementEnd = goalB.indexOf("}", end + 1);
-			if (formatElementEnd == -1) {
-				++end;
+			if (start > 0 && goalB.charAt(start - 1) == '\\' &&
+				!(start > 1 && goalB.charAt(start - 2) == '\\')) {
 				continue;
 			}
-			String formatElement = goalB.substring(end + 1, formatElementEnd);
-			int type = validFormat(formatElement);
-			if (type == -1) {
+//			if (start == goalB.length() - 1 || 
+//				!Character.isUpperCase(goalB.charAt(start + 1))) {
+//				continue;
+//			}
+			int end = start + 1;
+			while (end < goalB.length() && Character.isLetterOrDigit(goalB.charAt(end))) {
 				++end;
-				continue;
 			}
-			int start = end - 1;
-			while (start >= 0 && Character.isJavaIdentifierPart(goalB.charAt(start))) {
-				--start;
-			}
-			if (start == end - 1) {
-				if (start >= 0 && goalB.charAt(start) == '\\') {
-					goalB.deleteCharAt(start);
+			if (end == start + 1) {
+				if (start > 0 && goalB.charAt(start - 1) == '\\') {
+					goalB.deleteCharAt(start - 1);
 					continue;
 				}
 				if (newVarPrefix == null) {
-					newVarPrefix = findNewVarPrefix(goal);
+					newVarPrefix = findNewVarPrefix(goalPattern);
 				}
 				String variable = newVarPrefix + i;
 				placeholderNames.add(variable);
-				placeholders.add(new PlaceHolder(variable, type));
-				goalB.replace(end, end + formatElement.length() + 2, variable);
+//				placeholders.add(new PlaceHolder(variable, type));
+				goalB.replace(start, start + 1, variable);
 			} else {
 				placeholderNames.add(goalB.substring(start + 1, end));
-				placeholders.add(new PlaceHolder(goalB.substring(start + 1, end), type));
-				goalB.delete(end, end + formatElement.length() + 2);
+//				placeholders.add(new PlaceHolder(goalB.substring(end + 1, start), type));
+				goalB.delete(start, start + 1);
 			}
 		}
 		this.goal = goalB.toString();
 		placeholderNames.trimToSize();
-		placeholders.trimToSize();
+//		placeholders.trimToSize();
 	}
 	
 	/**
@@ -163,14 +160,14 @@ public abstract class Query {
 		return placeholderNames;
 	}
 
-	/**
-	 * Returns a list with the place holders in the query.
-	 * 
-	 * @return the place holders
-	 */
-	protected List<PlaceHolder> getPlaceholders() {
-		return placeholders;
-	}
+//	/**
+//	 * Returns a list with the place holders in the query.
+//	 * 
+//	 * @return the place holders
+//	 */
+//	protected List<PlaceHolder> getPlaceholders() {
+//		return placeholders;
+//	}
 
 	/**
 	 * Creates a new variable name that does not occurs in the goal.
