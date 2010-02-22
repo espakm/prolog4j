@@ -33,39 +33,11 @@ import java.util.List;
  */
 public abstract class Query {
 
-	/**
-	 * Represents a place holder in a query.
-	 */
-	protected static class PlaceHolder {
-		static final int CONVERT = 0, STRONG = 1, WEAK = 2;
-		
-		/** The name of the place holder. */
-		public final String name;
-		/** The type of the place holder. */
-		public final int type;
-		
-		/**
-		 * Constructs a place holder object.
-		 * 
-		 * @param name the name
-		 * @param type the type
-		 */
-		public PlaceHolder(String name, int type) {
-			super();
-			this.name = name;
-			this.type = type;
-		}
-		
-	}
-	
 	/** The Prolog goal to be solved. */
 	private final String goal;
 	
 	/** The name of the named placeholders of the goal. */
 	private final ArrayList<String> placeholderNames;
-
-//	/** The named placeholders of the goal. */
-//	private final ArrayList<PlaceHolder> placeholders;
 
 //	/**
 //	 * Weak references to the objects referred by the query.
@@ -79,7 +51,6 @@ public abstract class Query {
 	 */
 	protected Query(final String goalPattern) {
 		placeholderNames = new ArrayList<String>();
-//		placeholders = new ArrayList<PlaceHolder>();
 		StringBuilder goalB = new StringBuilder(goalPattern);
 		String newVarPrefix = null;
 		for (int i = 0, start = 0; true; ++i) {
@@ -87,68 +58,40 @@ public abstract class Query {
 			if (start == -1) {
 				break;
 			}
-			if (start > 0 && goalB.charAt(start - 1) == '\\' &&
-				!(start > 1 && goalB.charAt(start - 2) == '\\')) {
+			if (start < goalB.length() - 1 && goalB.charAt(start + 1) == '?') {
+				goalB.deleteCharAt(start);
+				++start;
 				continue;
 			}
-//			if (start == goalB.length() - 1 || 
-//				!Character.isUpperCase(goalB.charAt(start + 1))) {
-//				continue;
-//			}
 			int end = start + 1;
-			while (end < goalB.length() && Character.isLetterOrDigit(goalB.charAt(end))) {
+			while (end < goalB.length() 
+				   && Character.isLetterOrDigit(goalB.charAt(end))) {
 				++end;
 			}
 			if (end == start + 1) {
-				if (start > 0 && goalB.charAt(start - 1) == '\\') {
-					goalB.deleteCharAt(start - 1);
-					continue;
-				}
 				if (newVarPrefix == null) {
 					newVarPrefix = findNewVarPrefix(goalPattern);
 				}
 				String variable = newVarPrefix + i;
 				placeholderNames.add(variable);
-//				placeholders.add(new PlaceHolder(variable, type));
 				goalB.replace(start, start + 1, variable);
 			} else {
 				placeholderNames.add(goalB.substring(start + 1, end));
-//				placeholders.add(new PlaceHolder(goalB.substring(end + 1, start), type));
 				goalB.delete(start, start + 1);
 			}
+			start = end;
 		}
 		this.goal = goalB.toString();
 		placeholderNames.trimToSize();
-//		placeholders.trimToSize();
 	}
 	
-	/**
-	 * Validates the format of the place holder.
-	 * 
-	 * @param formatElement the format element of the place holder 
-	 *             (without the braces)
-	 * @return the type of the format element (-1 if it is invalid)  
-	 */
-	private int validFormat(String formatElement) {
-		if (formatElement.equals("")) {
-			return 0;
-		}
-		if (formatElement.equals("strong")) {
-			return 1;
-		}
-		if (formatElement.equals("weak")) {
-			return 2;
-		}
-		return -1;
-	}
-
 	/**
 	 * Returns the Prolog goal to be solved. The placeholders are removed from
 	 * it, so it may differ from the original goal passed to the constructor.
 	 * 
 	 * @return the Prolog goal to be solved
 	 */
-	protected String getGoal() {
+	protected final String getGoal() {
 		return goal;
 	}
 
@@ -156,7 +99,7 @@ public abstract class Query {
 	 * Returns a list with the name of the place holders in the query.
 	 * @return the placeholderNames
 	 */
-	protected List<String> getPlaceholderNames() {
+	protected final List<String> getPlaceholderNames() {
 		return placeholderNames;
 	}
 
@@ -175,7 +118,7 @@ public abstract class Query {
 	 * @param goal the goal
 	 * @return a new, not conflicting variable name
 	 */
-	private String findNewVarPrefix(String goal) {
+	private String findNewVarPrefix(final String goal) {
 		if (!goal.contains("P4J_")) {
 			return "P4J_";
 		}

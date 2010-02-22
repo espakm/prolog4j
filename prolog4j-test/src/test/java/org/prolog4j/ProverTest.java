@@ -143,9 +143,15 @@ public class ProverTest {
         assertFailure("mortal(?).", "zeus");
         assertSuccess("mortal(?X).", "socrates");
         assertFailure("mortal(?X).", "zeus");
+        assertSuccess("mortal(?LongVariable).", "socrates");
+        assertFailure("mortal(?LongVariable).", "zeus");
+        assertSuccess("_ = 'Question ??Mark'.");
+        assertSuccess("? = '??Mark'.", "?Mark");
+        assertSuccess("'Is it OK??' = ?.", "Is it OK?");
+        assertSuccess("'????' = ?.", "??");
         assertSuccess("member(X, ?).", Arrays.asList(0, 1, 2));
         List<Object> list = new ArrayList<Object>();
-        for (Object o: p.solve("member(X, ?).", Arrays.asList(0, 1, 2)).on("X")) {
+        for (Object o: p.solve("member(X, ?).", Arrays.asList(0, 1, 2))) {
             list.add(o);
         }
         assertEquals(Arrays.asList(0, 1, 2), list);
