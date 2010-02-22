@@ -23,7 +23,6 @@
  */
 package org.prolog4j;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -70,6 +69,46 @@ public class ProverTest {
     }
 
     /**
+     * Asserts that the goal has a solution for the given arguments.
+     * 
+	 * @param goal the Prolog goal
+	 * @param args the actual arguments of the goal
+     */
+    public final void assertSuccess(final String goal, final Object... args) {
+    	assertSuccess(p.solve(goal, args));
+    }
+    
+    /**
+     * Asserts that there is a solution. Equivalent with
+     * <code>assertTrue(solution.isSuccess());</code>.
+     * 
+     * @param solution the solution
+     */
+    public final void assertSuccess(final Solution<?> solution) {
+    	assertTrue(solution.isSuccess());
+    }
+    
+    /**
+     * Asserts that the goal has no solution for the given arguments.
+     * 
+	 * @param goal the Prolog goal
+	 * @param args the actual arguments of the goal
+     */
+    public final void assertFailure(final String goal, final Object... args) {
+    	assertFailure(p.solve(goal, args));
+    }
+
+    /**
+     * Asserts that there is no solution. Equivalent with
+     * <code>assertFalse(solution.isSuccess());</code>.
+     * 
+     * @param solution the solution
+     */
+    public final void assertFailure(final Solution<?> solution) {
+    	assertFalse(solution.isSuccess());
+    }
+
+    /**
      * Tests {@link InvalidQueryException}.
      */
     @Test(expected = InvalidQueryException.class)
@@ -90,8 +129,8 @@ public class ProverTest {
      */
     @Test
     public void testIsSuccess() {
-        assertTrue(p.solve("mortal(socrates).").isSuccess());
-        assertFalse(p.solve("mortal(zeus).").isSuccess());
+        assertSuccess("mortal(socrates).");
+        assertFailure("mortal(zeus).");
     }
 
     /**
@@ -100,14 +139,14 @@ public class ProverTest {
      */
     @Test
     public void testPlaceHolders() {
-        assertTrue(p.solve("mortal(?).", "socrates").isSuccess());
-        assertFalse(p.solve("mortal(?).", "zeus").isSuccess());
-        assertTrue(p.solve("mortal(?X).", "socrates").isSuccess());
-        assertFalse(p.solve("mortal(?X).", "zeus").isSuccess());
-        assertTrue(p.solve("member(X, ?).", Arrays.asList(0, 1, 2)).isSuccess());
-        List<Integer> list = new ArrayList<Integer>();
-        for (Integer i: p.solve("member(X, ?).", Arrays.asList(0, 1, 2)).<Integer>on("X")) {
-            list.add(i);
+        assertSuccess("mortal(?).", "socrates");
+        assertFailure("mortal(?).", "zeus");
+        assertSuccess("mortal(?X).", "socrates");
+        assertFailure("mortal(?X).", "zeus");
+        assertSuccess("member(X, ?).", Arrays.asList(0, 1, 2));
+        List<Object> list = new ArrayList<Object>();
+        for (Object o: p.solve("member(X, ?).", Arrays.asList(0, 1, 2)).on("X")) {
+            list.add(o);
         }
         assertEquals(Arrays.asList(0, 1, 2), list);
     }
@@ -151,8 +190,7 @@ public class ProverTest {
     @Test
     public void testIsMember() {
         List<String> philosophers = Arrays.asList("socrates", "plato");
-        Solution<String> solution = p.solve("member(X, ?List).", philosophers);
-        assertTrue(solution.isSuccess());
+        assertSuccess("member(X, ?List).", philosophers);
     }
 
     /**
@@ -207,28 +245,28 @@ public class ProverTest {
         System.out.println("ProverTest.testObjectConverters()");
         System.out.println(List[].class.getSuperclass());
         System.out.println(List.class.getSuperclass());
-        assertTrue(p.solve("?=1.", 1).isSuccess());
-        assertFalse(p.solve("?=1.", 1.0).isSuccess());
-        assertFalse(p.solve("?=1.", 2).isSuccess());
-//        assertTrue(p.solve("?=1L.", 1L).isSuccess());
-//        assertTrue(p.solve("?=1.0f.", 1.0f).isSuccess());
-        assertTrue(p.solve("?=1.0.", 1.0).isSuccess());
-        assertFalse(p.solve("?=1.0.", 1).isSuccess());
-        assertFalse(p.solve("?=1.0.", 2.0).isSuccess());
-        assertTrue(p.solve("?=prolog4j.", "prolog4j").isSuccess());
-        assertTrue(p.solve("?='Prolog4J'.", "Prolog4J").isSuccess());
-        assertFalse(p.solve("?=prolog4j.", "Prolog4j").isSuccess());
-        assertFalse(p.solve("?=prolog4j.", "'prolog4j'").isSuccess());
-        assertTrue(p.solve("?='2'.", "2").isSuccess());
-        assertFalse(p.solve("?=2.", "2").isSuccess());
-        assertFalse(p.solve("?='2'.", 2).isSuccess());
+        assertSuccess("?=1.", 1);
+        assertFailure("?=1.", 1.0);
+        assertFailure("?=1.", 2);
+//        assertSuccess("?=1L.", 1L);
+//        assertSuccess("?=1.0f.", 1.0f);
+        assertSuccess("?=1.0.", 1.0);
+        assertFailure("?=1.0.", 1);
+        assertFailure("?=1.0.", 2.0);
+        assertSuccess("?=prolog4j.", "prolog4j");
+        assertSuccess("?='Prolog4J'.", "Prolog4J");
+        assertFailure("?=prolog4j.", "Prolog4j");
+        assertFailure("?=prolog4j.", "'prolog4j'");
+        assertSuccess("?='2'.", "2");
+        assertFailure("?=2.", "2");
+        assertFailure("?='2'.", 2);
 
-//        assertTrue(p.solve("?=[0, 1, 2].", (Object) new Integer[]{0, 1, 2}).isSuccess());
-//        assertTrue(p.solve("?=[a, b, c].", (Object) new String[]{"a", "b", "c"}).isSuccess());
-        assertTrue(p.solve("?=[0, 1, 2].", Arrays.asList(0, 1, 2)).isSuccess());
-        assertTrue(p.solve("?=[a, b, c].", Arrays.asList("a", "b", "c")).isSuccess());
+//        assertSuccess("?=[0, 1, 2].", (Object) new Integer[]{0, 1, 2});
+//        assertSuccess("?=[a, b, c].", (Object) new String[]{"a", "b", "c"});
+        assertSuccess("?=[0, 1, 2].", Arrays.asList(0, 1, 2));
+        assertSuccess("?=[a, b, c].", Arrays.asList("a", "b", "c"));
 
-        assertTrue(p.solve("?=f(1, 2).", new Compound("f", 1, 2)).isSuccess());
+        assertSuccess("?=f(1, 2).", new Compound("f", 1, 2));
     }
 
     /**
@@ -253,10 +291,10 @@ public class ProverTest {
             }
         });
         Human socrates = new Human("socrates");
-        assertTrue(p.solve("?=human(socrates).", socrates).isSuccess());
-        assertTrue(p.solve("?=human(_).", socrates).isSuccess());
-        assertFalse(p.solve("?=human(socrates, plato).", socrates).isSuccess());
-        assertFalse(p.solve("?=socrates.", socrates).isSuccess());
+        assertSuccess("?=human(socrates).", socrates);
+        assertSuccess("?=human(_).", socrates);
+        assertFailure("?=human(socrates, plato).", socrates);
+        assertFailure("?=socrates.", socrates);
     }
 
     /**
@@ -394,7 +432,7 @@ public class ProverTest {
      */
     @Test
     public void testFormatElements() {
-        assertTrue(p.solve("member(?, [1, 2, 3]).", 1).isSuccess());
+        assertSuccess("member(?, [1, 2, 3]).", 1);
     }
 
 //    /**
@@ -402,6 +440,6 @@ public class ProverTest {
 //     */
 //    @Test(expected = InvalidQueryException.class)
 //    public void testFormatElements2() {
-//        assertTrue(p.solve("member({xy}, [1, 2, 3]).", 1).isSuccess());
+//        assertSuccess("member({xy}, [1, 2, 3]).", 1);
 //    }
 }
