@@ -224,6 +224,22 @@ public class ProverTest {
      * Tests the default term converters added to the prover.
      */
     @Test
+    public void testTermPattern() {
+        final ConversionPolicy cp = ProverFactory.getConversionPolicy();
+        assertSuccess("? = a.", cp.term("a"));
+        assertSuccess("? = 1.", cp.term("1"));
+        assertSuccess("? = 1.", cp.term("?", 1));
+        assertSuccess("? = cpd(a).", cp.term("cpd(a)"));
+        assertSuccess("? = cpd(a).", cp.term("cpd(?)", "a"));
+        assertSuccess("? = [a, b, c].", cp.term("[a, b, c]"));
+        assertSuccess("? = [a, b, c].", cp.term("[?, b, c]", "a"));
+        assertSuccess("? = [a, b, c].", cp.term("[?, ?, c]", "a", "b"));
+    }
+    
+    /**
+     * Tests the default term converters added to the prover.
+     */
+    @Test
     public void testTermConverters() {
         int iVal = p.<Integer>solve("X=1.").get();
         assertEquals(1, iVal);
@@ -338,24 +354,6 @@ public class ProverTest {
         assertEquals(new Human("socrates"), socrates);
     }
 
-    /**
-     * Tests the default term converters added to the prover.
-     */
-    @Test
-    public void testTermPattern() {
-        final ConversionPolicy cp = ProverFactory.getConversionPolicy();
-        assertSuccess("? = a.", cp.term("a"));
-        assertSuccess("? = 1.", cp.term("1"));
-        assertSuccess("? = 1.", cp.term("?", 1));
-        assertSuccess("? = cpd(a).", cp.term("cpd(a)"));
-        assertSuccess("? = cpd(a).", cp.term("cpd(?)", "a"));
-        assertSuccess("? = [a, b, c].", cp.term("[a, b, c]"));
-        assertSuccess("? = [a, b, c].", cp.term("[?, b, c]", "a"));
-        assertSuccess("? = [a, b, c].", cp.term("[?, ?, c]", "a", "b"));
-        // TODO
-//        Object o2 = cp.convertTerm("[a, b, c]");
-    }
-    
     /**
      * Tests {@link Solution#on(String)} and the conversion of the result 
      * into a list.

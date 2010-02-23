@@ -24,6 +24,7 @@
 package org.prolog4j.jlog;
 
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -292,12 +293,17 @@ public class JLogConversionPolicy extends ConversionPolicy {
 	public Object term(String name, Object... args) {
 		TermPattern tp = tp(name);
 		List<String> placeholderNames = tp.placeholderNames;
-		String s = tp.pattern;
+//		String s = tp.pattern;
+//		for (int i = 0; i < placeholderNames.size(); ++i) {
+//			s = s.replaceAll(placeholderNames.get(i), ((jTerm) convertObject(args[i])).toString());
+//		}
+//		pParseStream parser = prologAPI.getParser(s + ".");
+		Map<String, jTerm> map = new HashMap<String, jTerm>();
 		for (int i = 0; i < placeholderNames.size(); ++i) {
-			s = s.replaceAll(placeholderNames.get(i), ((jTerm) convertObject(args[i])).toString());
+			map.put(placeholderNames.get(i), (jTerm) convertObject(args[i]));
 		}
-		pParseStream parser = prologAPI.getParser(s + ".");
-		return parser.parseTerm();
+		pParseStream parser = prologAPI.getParser(tp.pattern + ".");
+		return replacePlaceholders(parser.parseTerm(), map);
 	}
 	
 	private jTerm replacePlaceholders(jTerm t, Map<String, jTerm> args) {
@@ -306,8 +312,7 @@ public class JLogConversionPolicy extends ConversionPolicy {
 			if (t2 != null) {
 				return t2;
 			}
-		}
-		else if (t instanceof jPredicate) {
+		} else if (t instanceof jPredicate) {
 			jPredicate s = (jPredicate) t;
 			boolean change = false;
 			Vector args2 = new Vector(s.getArity());
