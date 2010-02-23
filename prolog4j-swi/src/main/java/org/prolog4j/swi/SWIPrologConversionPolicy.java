@@ -211,17 +211,16 @@ public class SWIPrologConversionPolicy extends ConversionPolicy {
 
 	@Override
 	public Object term(String name) {
-		return new Atom(name);
+		return Util.textToTerm(name);
 	}
 
 	@Override
 	public Object term(String name, Object... args) {
-		Term[] tArgs = new Term[args.length];
-		for (int i = 0; i < tArgs.length; ++i) {
-			tArgs[i] = (Term) convertObject(args[i]);
-//			tArgs[i] = (Term) args[i];
+		Term[] args2 = new Term[args.length];
+		for (int i = 0; i < args2.length; ++i) {
+			args2[i] = (Term) convertObject(args[i]);
 		}
-		return new jpl.Compound(name, tArgs);
+		return Util.textToTerm(name).putParams(args2);
 	}
 
 	@Override

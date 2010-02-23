@@ -24,7 +24,9 @@
 package org.prolog4j;
 
 //import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 //import java.util.StringTokenizer;
 
@@ -362,11 +364,74 @@ public abstract class ConversionPolicy {
 	/**
 	 * Creates a compound term according to the actual implementation.
 	 * 
-	 * @param functor the functor of the compound term
-	 * @param args the arguments of the compound term
-	 * @return the created compound term
+	 * @param pattern the pattern
+	 * @param args the arguments of the pattern
+	 * @return the created term
 	 */
-	public abstract Object term(String functor, Object... args);
+	public abstract Object term(String pattern, Object... args);
+	
+	protected class TermPattern {
+		public String pattern;
+		public List<String> placeholderNames;
+		public TermPattern(String pattern, List<String> placeholderNames) {
+			this.pattern = pattern;
+			this.placeholderNames = placeholderNames;
+		}
+	}
+	
+	protected TermPattern tp(String pattern, Object... args) {
+		ArrayList<String> placeholderNames = new ArrayList<String>();
+		StringBuilder goalB = new StringBuilder(pattern);
+		String newVarPrefix = null;
+		for (int i = 0, start = 0; true; ++i) {
+			start = goalB.indexOf("?", start);
+			if (start == -1) {
+				break;
+			}
+			if (start < goalB.length() - 1 && goalB.charAt(start + 1) == '?') {
+				goalB.deleteCharAt(start);
+				++start;
+				continue;
+			}
+			int end = start + 1;
+			while (end < goalB.length() 
+				   && Character.isLetterOrDigit(goalB.charAt(end))) {
+				++end;
+			}
+			if (end == start + 1) {
+				if (newVarPrefix == null) {
+					newVarPrefix = findNewVarPrefix(pattern);
+				}
+				String variable = newVarPrefix + i;
+				placeholderNames.add(variable);
+				goalB.replace(start, start + 1, variable);
+			} else {
+				placeholderNames.add(goalB.substring(start + 1, end));
+				goalB.delete(start, start + 1);
+			}
+			start = end;
+		}
+		placeholderNames.trimToSize();
+		return new TermPattern(goalB.toString(), placeholderNames);
+	}
+
+	/**
+	 * Creates a new variable name that does not occurs in the pattern.
+	 * 
+	 * @param pattern the pattern
+	 * @return a new, not conflicting variable name
+	 */
+	private String findNewVarPrefix(final String pattern) {
+		if (!pattern.contains("P4J_")) {
+			return "P4J_";
+		}
+		for (int i = 0; true; ++i) {
+			String s = String.valueOf(i);
+			if (!pattern.contains(s)) {
+				return "P4J_" + s;
+			}
+		}
+	}
 
 //	public abstract Term pattern(String term);
 

@@ -211,6 +211,13 @@ public class ProverTest {
             list.add(s);
         }
         assertEquals(Arrays.asList("socrates", "plato"), list);
+
+        Solution<String> solution2 = p.solve("member(X, ?List).", philosophers);
+        list.clear();
+        for (String s: solution2.on("X", String.class)) {
+            list.add(s);
+        }
+        assertEquals(Arrays.asList("socrates", "plato"), list);
     }
     
     /**
@@ -291,9 +298,7 @@ public class ProverTest {
         cp.addObjectConverter(Human.class, new Converter<Human>() {
             @Override
             public Object convert(Human human) {
-//                return cp.compound("human", human.name);
-                return cp.term("human", cp.convertObject(human.name));
-//                return cp.term("human({})", human.name);
+                return cp.term("human(?)", human.name);
             }
         });
         Human socrates = new Human("socrates");
@@ -337,9 +342,16 @@ public class ProverTest {
      * Tests the default term converters added to the prover.
      */
     @Test
-    public void testStringTermConverters() {
+    public void testTermPattern() {
         final ConversionPolicy cp = ProverFactory.getConversionPolicy();
-        Object o = cp.term("[a, b, c]");
+        assertSuccess("? = a.", cp.term("a"));
+        assertSuccess("? = 1.", cp.term("1"));
+        assertSuccess("? = 1.", cp.term("?", 1));
+        assertSuccess("? = cpd(a).", cp.term("cpd(a)"));
+        assertSuccess("? = cpd(a).", cp.term("cpd(?)", "a"));
+        assertSuccess("? = [a, b, c].", cp.term("[a, b, c]"));
+        assertSuccess("? = [a, b, c].", cp.term("[?, b, c]", "a"));
+        assertSuccess("? = [a, b, c].", cp.term("[?, ?, c]", "a", "b"));
         // TODO
 //        Object o2 = cp.convertTerm("[a, b, c]");
     }
@@ -409,7 +421,6 @@ public class ProverTest {
         romansExpected.add("iulius");
         assertEquals(romansExpected, romans);
     }
-    
     
     /**
      * Tests the dynamic assertion of theories.

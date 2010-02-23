@@ -24,19 +24,24 @@
 package org.prolog4j.jtrolog;
 
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import jTrolog.engine.Prolog;
+import jTrolog.parser.Parser;
 import jTrolog.terms.Int;
 import jTrolog.terms.Struct;
 import jTrolog.terms.StructAtom;
 import jTrolog.terms.Term;
+import jTrolog.terms.Var;
 
 import org.prolog4j.Compound;
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Converter;
+import org.prolog4j.InvalidQueryException;
 
 /**
  * jTrolog implementation of the conversion policy.
@@ -289,16 +294,53 @@ public class JTrologConversionPolicy extends ConversionPolicy {
 
 	@Override
 	public Object term(String name) {
-		return new StructAtom(name);
+		try {
+			Parser parser = new Parser(name);
+			return parser.nextTerm(false);
+		} catch (Exception e) {
+			throw new InvalidQueryException(name, e);
+		}
 	}
 
 	@Override
 	public Object term(String name, Object... args) {
-		Term[] tArgs = new Term[args.length];
-		for (int i = 0; i < tArgs.length; ++i) {
-			tArgs[i] = (Term) convertObject(args[i]);
+		TermPattern tp = tp(name);
+		Map<String, Term> map = new HashMap<String, Term>();
+		List<String> placeholderNames = tp.placeholderNames;
+		for (int i = 0; i < placeholderNames.size(); ++i) {
+			map.put(placeholderNames.get(i), (Term) convertObject(args[i]));
 		}
-		return new Struct(name, tArgs);
+		try {
+			Parser parser = new Parser(tp.pattern);
+			Term sGoal = parser.nextTerm(false);
+			return replacePlaceholders(sGoal, map);
+		} catch (Exception e) {
+			throw new InvalidQueryException(tp.pattern, e);
+		}
+	}
+	
+	private Term replacePlaceholders(Term t, Map<String, Term> args) {
+		if (t instanceof Var) {
+			Term t2 = args.get(((Var) t).toString());
+			if (t2 != null) {
+				return t2;
+			}
+		} else if (t instanceof Struct) {
+			Struct s = (Struct) t;
+			boolean change = false;
+			Term[] args2 = new Term[s.arity];
+			for (int i = 0; i < args2.length; ++i) {
+				Term arg = s.getArg(i);
+				args2[i] = replacePlaceholders(arg, args);
+				if (args2[i] != arg) {
+					change = true;
+				}
+			}
+			if (change) {
+				return new Struct(s.name, args2);
+			}
+		}
+		return t;
 	}
 
 	@Override

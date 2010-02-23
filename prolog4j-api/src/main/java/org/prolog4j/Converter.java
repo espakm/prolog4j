@@ -52,10 +52,7 @@ public abstract class Converter<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <R> R convert(T object, Class<R> to) {
-		if (to == Object.class) {
-			return (R) convert(object);
-		}
-		return null;
+		return to.cast(convert(object));
 	}
 	
 }

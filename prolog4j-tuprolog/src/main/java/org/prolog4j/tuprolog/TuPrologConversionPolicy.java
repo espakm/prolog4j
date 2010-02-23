@@ -24,17 +24,23 @@
 package org.prolog4j.tuprolog;
 
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.prolog4j.Compound;
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Converter;
+import org.prolog4j.InvalidQueryException;
 
 import alice.tuprolog.Int;
+import alice.tuprolog.InvalidTermException;
+import alice.tuprolog.Parser;
 import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
+import alice.tuprolog.Var;
 
 /**
  * tuProlog implementation of the conversion policy.
@@ -198,6 +204,9 @@ public class TuPrologConversionPolicy extends ConversionPolicy {
 					}
 					return to.cast(array);
 				}
+				if (value.isAtom() && to == String.class) {
+					return to.cast(value.getName());
+				}
 				return null;
 			}
 		});
@@ -228,17 +237,57 @@ public class TuPrologConversionPolicy extends ConversionPolicy {
 
 	@Override
 	public Object term(String name) {
-		return new Struct(name);
+		try {
+			Parser parser = new Parser(name);
+			Term sGoal = parser.nextTerm(false);
+			sGoal.resolveTerm();
+			return sGoal;
+		} catch (Throwable e) {
+			throw new InvalidQueryException(name, e);
+		}
 	}
 
 	@Override
 	public Object term(String name, Object... args) {
-		Term[] tArgs = new Term[args.length];
-		for (int i = 0; i < tArgs.length; ++i) {
-			tArgs[i] = (Term) convertObject(args[i]);
-//			tArgs[i] = (Term) args[i];
+		TermPattern tp = tp(name);
+		Map<String, Term> map = new HashMap<String, Term>();
+		List<String> placeholderNames = tp.placeholderNames;
+		for (int i = 0; i < placeholderNames.size(); ++i) {
+			map.put(placeholderNames.get(i), (Term) convertObject(args[i]));
 		}
-		return new Struct(name, tArgs);
+		try {
+			Parser parser = new Parser(tp.pattern);
+			Term sGoal = parser.nextTerm(false);
+			sGoal.resolveTerm();
+			return replacePlaceholders(sGoal, map);
+		} catch (InvalidTermException e) {
+			throw new InvalidQueryException(tp.pattern, e);
+		}
+	}
+	
+	private Term replacePlaceholders(Term t, Map<String, Term> args) {
+		if (t instanceof Var) {
+			Term t2 = args.get(((Var) t).getName());
+			if (t2 != null) {
+				return t2;
+			}
+		}
+		else if (t instanceof Struct && t.isCompound()) {
+			Struct s = (Struct) t;
+			boolean change = false;
+			Term[] args2 = new Term[s.getArity()];
+			for (int i = 0; i < args2.length; ++i) {
+				Term arg = s.getArg(i);
+				args2[i] = replacePlaceholders(arg, args);
+				if (args2[i] != arg) {
+					change = true;
+				}
+			}
+			if (change) {
+				return new Struct(s.getName(), args2);
+			}
+		}
+		return t;
 	}
 
 //	@Override

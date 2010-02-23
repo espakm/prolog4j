@@ -27,13 +27,20 @@ import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Vector;
 
 import org.prolog4j.Compound;
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Converter;
 
+import ubc.cs.JLog.Foundation.jKnowledgeBase;
+import ubc.cs.JLog.Foundation.jPrologAPI;
+import ubc.cs.JLog.Foundation.jPrologServices;
 import ubc.cs.JLog.Foundation.jUnifiedVector;
+import ubc.cs.JLog.Parser.pOperatorRegistry;
+import ubc.cs.JLog.Parser.pParseStream;
+import ubc.cs.JLog.Parser.pPredicateRegistry;
 import ubc.cs.JLog.Terms.iName;
 import ubc.cs.JLog.Terms.iNameArity;
 import ubc.cs.JLog.Terms.jAtom;
@@ -45,12 +52,26 @@ import ubc.cs.JLog.Terms.jNullList;
 import ubc.cs.JLog.Terms.jPredicate;
 import ubc.cs.JLog.Terms.jReal;
 import ubc.cs.JLog.Terms.jTerm;
+import ubc.cs.JLog.Terms.jVariable;
 
 /**
  * JLog implementation of the conversion policy.
  */
 public class JLogConversionPolicy extends ConversionPolicy {
 
+	private static class PrologAPI extends jPrologAPI {
+		public PrologAPI() {
+			super("");
+		}
+		public pParseStream getParser(String s) {
+			return new pParseStream(s, 
+					prolog.getKnowledgeBase(), 
+					prolog.getPredicateRegistry(), 
+					prolog.getOperatorRegistry());
+		}
+	}
+	private static final PrologAPI prologAPI = new PrologAPI();
+	
 	/** Converts an Integer object to a term. */
 	private static final Converter<Integer> INTEGER_CONVERTER = new Converter<Integer>() {
 		@Override
@@ -230,7 +251,7 @@ public class JLogConversionPolicy extends ConversionPolicy {
 	 * Determines whether a term is a list or not.
 	 * 
 	 * @param term the term
-	 * @return <code>true</code> if the term is a list, otherwise <code>false</code>
+	 * @return <tt>true</tt> if the term is a list, otherwise <tt>false</tt>
 	 */
 	private static boolean isList(jTerm term) {
 		return term instanceof jList;
@@ -263,19 +284,47 @@ public class JLogConversionPolicy extends ConversionPolicy {
 
 	@Override
 	public Object term(String name) {
-		return new jAtom(name);
+		pParseStream parser = prologAPI.getParser(name + ".");
+		return parser.parseTerm();
 	}
 
 	@Override
 	public Object term(String name, Object... args) {
-		if (args.length == 0) {
-			return new jAtom(name);
+		TermPattern tp = tp(name);
+		List<String> placeholderNames = tp.placeholderNames;
+		String s = tp.pattern;
+		for (int i = 0; i < placeholderNames.size(); ++i) {
+			s = s.replaceAll(placeholderNames.get(i), ((jTerm) convertObject(args[i])).toString());
 		}
-		Vector tArgs = new Vector(args.length);
-		for (Object arg: args) {
-			tArgs.add(convertObject(arg));
+		pParseStream parser = prologAPI.getParser(s + ".");
+		return parser.parseTerm();
+	}
+	
+	private jTerm replacePlaceholders(jTerm t, Map<String, jTerm> args) {
+		if (t instanceof jVariable) {
+			jTerm t2 = args.get(((jVariable) t).getName());
+			if (t2 != null) {
+				return t2;
+			}
 		}
-		return new jPredicate(name, new jCompoundTerm(tArgs));
+		else if (t instanceof jPredicate) {
+			jPredicate s = (jPredicate) t;
+			boolean change = false;
+			Vector args2 = new Vector(s.getArity());
+			jCompoundTerm arguments = s.getArguments();
+			for (int i = 0; i < args2.size(); ++i) {
+				jTerm arg = arguments.elementAt(i);
+				jTerm arg2 = replacePlaceholders(arg, args);
+				args2.set(i, arg2);
+				if (arg2 != arg) {
+					change = true;
+				}
+			}
+			if (change) {
+				return new jPredicate(s.getName(), new jCompoundTerm(args2));
+			}
+		}
+		return t;
 	}
 
 	@Override
