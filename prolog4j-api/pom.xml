@@ -16,6 +16,19 @@
   <inceptionYear>2009</inceptionYear>
   <url>http://prolog4j.org/</url>
 
+  <dependencies>
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm-commons</artifactId>
+      <version>3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm-util</artifactId>
+      <version>3.1</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -43,8 +56,32 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.2</version>
+        <configuration>
+          <archive>
+<!--            <manifestEntries>-->
+              <!--Bundle-Version>${project.version}</Bundle-Version-->
+              <!--Bundle-Description>${project.description}</Bundle-Description-->
+              <!--Implementation-Version>${project.version}</Implementation-Version-->
+<!--              <Premain-Class>la4j.lib.Bootstrap</Premain-Class>-->
+<!--              <Agent-Class>la4j.lib.Bootstrap</Agent-Class>-->
+<!--              <Can-Redefine-Classes>true</Can-Redefine-Classes>-->
+<!--              <Can-Retransform-Classes>true</Can-Retransform-Classes>-->
+<!--              <Can-Set-Native-Method-Prefix>false</Can-Set-Native-Method-Prefix>-->
+              <!--Boot-Class-Path>target/L4AJ-0.0.2-SNAPSHOT.jar</Boot-Class-Path-->
+<!--            </manifestEntries>-->
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
         <executions>
           <execution>
+          	<id>ptr</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+          <execution>
+          	<id>def</id>
             <goals>
               <goal>test-jar</goal>
             </goals>
