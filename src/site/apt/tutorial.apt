@@ -61,6 +61,11 @@ Prolog4J Tutorial
       <artifactId>prolog4j-jlog</artifactId>
       <version>0.2.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.prolog4j</groupId>
+      <artifactId>prolog4j-swi</artifactId>
+      <version>0.2.0</version>
+    </dependency>
 ------------------
 
   Please note that you always have to use the prolog4j-api, but you have to choose exactly
@@ -142,8 +147,8 @@ public class Test {
   You can pass Java objects to a Prolog query as arguments. The arguments can be
   specified as additional arguments to the <<<solve>>> method, simply. The places
   of the goal where the arguments has to be substituted into can be denoted by
-  <place holders>. A place holder is a pair of curly braces, eventually preceded
-  by a variable name.
+  <place holders>. A place holder is denoted by a question mark, eventually 
+  followed by a variable name.
   
   The arguments of the goal get bound to the place holders in the order of their
   appearance. If you do not want to bind a value to a place holder, you can simply
@@ -165,7 +170,7 @@ public class Test {
     }
     
     public static Solution<String> likes(String x, String y) {
-        return p.solve("likes(X{}, {}).", x, y).on("X");
+        return p.solve("likes(?X, ?).", x, y).on("X");
     }
     
     public static void main(String[] args) {
@@ -175,6 +180,11 @@ public class Test {
         Solution<String> sol = likes(null, "peter");
         for (String who: sol) {
             System.out.printf("%s likes peter.", who);
+        }
+        // Who does Peter like?
+        sol = likes("peter", null);
+        for (String who: sol) {
+            System.out.printf("Peter likes %s.", who);
         }
     }
 }
@@ -199,7 +209,7 @@ public class Test {
     private static final Query LIKES;
     static {
         p.loadTheory("likes.pl");
-        LIKES = p.query("likes(X{}, Y{}).");
+        LIKES = p.query("likes(?X, ?Y).");
     }
     
     public static Solution<String> likes(String x, String y) {
@@ -238,7 +248,7 @@ public class Test {
     private static final Query LIKES_PETER;
     static {
         p.loadTheory("likes.pl");
-        LIKES_PETER = p.query("likes(X{}, Y{}).");
+        LIKES_PETER = p.query("likes(?X, ?Y).");
         LIKES_PETER.bind("X", "peter");
     }
     
@@ -334,7 +344,7 @@ public class Test {
 			}
 		});
 		Human plato = new Human("plato");
-		System.out.println(p.solve("{}=human(plato).", plato).isSuccess()); // true
+		System.out.println(p.solve("?=human(plato).", plato).isSuccess()); // true
 	}
 }
 ------------------------
