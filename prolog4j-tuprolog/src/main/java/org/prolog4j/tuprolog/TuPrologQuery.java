@@ -23,7 +23,9 @@
  */
 package org.prolog4j.tuprolog;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.InvalidQueryException;
@@ -57,6 +59,9 @@ public class TuPrologQuery extends Query {
 
 	/** The tuProlog variables representing the input variables of the goal. */
 	private Var[] inputVars;
+	
+	/** Contains the variables explicitly bound through the bind methods. */
+	private Set<Var> explicitlyBoundVars = new HashSet<Var>();
 	
 	/**
 	 * Creates a TuProlog query object.
@@ -93,7 +98,7 @@ public class TuPrologQuery extends Query {
 //		prover.reclaimObsoleteFacts();
 		int i = 0;
 		for (Var var: inputVars) {
-			if (var.isBound()) {
+			if (explicitlyBoundVars.contains(var)) {
 				continue;
 			}
 			var.free();
@@ -105,6 +110,7 @@ public class TuPrologQuery extends Query {
 	@Override
 	public Query bind(int argument, Object value) {
 		inputVars[argument].free();
+		explicitlyBoundVars.add(inputVars[argument]);
 		engine.unify(inputVars[argument], (Term) cp.convertObject(value));
 		return this;
 	}
@@ -112,11 +118,12 @@ public class TuPrologQuery extends Query {
 	@Override
 	public Query bind(String variable, Object value) {
 		for (Var v: inputVars) {
-			if (v.isBound()) {
-				continue;
-			}
+//			if (v.isBound()) {
+//				continue;
+//			}
 			if (v.getName().equals(variable)) {
 				v.free();
+				explicitlyBoundVars.add(v);
 				engine.unify(v, (Term) cp.convertObject(value));
 				return this;
 			}

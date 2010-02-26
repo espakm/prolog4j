@@ -58,12 +58,20 @@ public @interface Goal {
      */
     String value();
 
-    /**
-     * If there are more output variables in the goal, their names can be
-     * specified by this annotations. If the return type is denoted by
-     * {@link org.prolog4j.annotations.Out @Out}, its name is <i>not</i>
-     * required to be specified here.
-     */
-    String[] out() default { };
+//    /**
+//     * If there are more output variables in the goal, their names can be
+//     * specified by this annotations. If the return type is denoted by
+//     * {@link org.prolog4j.annotations.Out @Out}, its name is <i>not</i>
+//     * required to be specified here.
+//     */
+////    String[] out() default { };
+//    String out() default "";
 
+    /**
+     * By default, goals are stored as precompiled Query objects in static
+     * fields of the class. If <tt>cache</tt> is set to <tt>false</tt>, no
+     * such field will be generated.
+     */
+    boolean cache() default true;
+    
 }

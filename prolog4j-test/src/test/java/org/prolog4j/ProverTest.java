@@ -37,6 +37,7 @@ import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.prolog4j.annotations.Goal;
 
 /**
  * JUnit test for Prolog4J API and bindings.
@@ -190,6 +191,13 @@ public class ProverTest {
         }
     }
 
+    @Test
+    public void testQuery() {
+    	Query q = p.query("member(?, [1, 2, 3]).");
+    	assertFailure(q.solve(4));
+    	assertSuccess(q.solve(1));
+    }
+    
     /**
      * Tests the correct behavior of the member/2 predicate.
      */
@@ -199,6 +207,17 @@ public class ProverTest {
         assertSuccess("member(X, ?List).", philosophers);
     }
 
+    /**
+     * Tests {@link Solution#on(String)}.
+     */
+    @Test
+    public void testTestGet() {
+    	Solution<Object> solve = p.solve("member(X, [2, 3, 4]), member(Y, [5, 6, 7]).");
+    	assertEquals(solve.get("X"), 2);
+    	Solution<Object> solve2 = p.solve("member(X, [2, 3, 4]), member(Y, [5, 6, 7]).");
+    	assertEquals(solve.get("Y"), 5);
+    }
+    
     /**
      * Tests {@link Solution#on(String)}.
      */

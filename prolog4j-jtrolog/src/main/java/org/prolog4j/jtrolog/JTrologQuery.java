@@ -107,15 +107,16 @@ public class JTrologQuery extends Query {
 	@Override
 	public <A> Solution<A> solve(Object... actualArgs) {
 		int i = 0;
+		Struct g = sGoal;
 		for (Var var: unboundVars) {
-			sGoal = new Struct(
+			g = new Struct(
 						",", 
 						new Term[]{
 								new Struct("=", new Term[]{var, 
 										(Term) cp.convertObject(actualArgs[i++])}),
-								sGoal});
+								g});
 		}
-		return new JTrologSolution<A>(prover, sGoal, defaultVarName, outputVarNames);
+		return new JTrologSolution<A>(prover, g, defaultVarName, outputVarNames);
 	}
 
 	@Override

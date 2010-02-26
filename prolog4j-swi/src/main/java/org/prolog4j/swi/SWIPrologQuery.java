@@ -95,15 +95,16 @@ public class SWIPrologQuery extends Query {
 //		prover.reclaimObsoleteFacts();
 		int i = 0;
 //		for (Variable var: unboundVars) {
+		jpl.Term g = sGoal;
 		for (String ph: getPlaceholderNames()) {
-			sGoal = new jpl.Compound(
+			g = new jpl.Compound(
 						",", 
 						new Term[]{
 								new jpl.Compound("=", new Term[]{new Variable(ph), 
 										(Term) cp.convertObject(actualArgs[i++])}),
-								sGoal});
+								g});
 		}
-		return new SWIPrologSolution<A>(prover, sGoal);
+		return new SWIPrologSolution<A>(prover, g);
 	}
 
 	@Override
