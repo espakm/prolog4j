@@ -37,7 +37,6 @@ import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.prolog4j.annotations.Goal;
 
 /**
  * JUnit test for Prolog4J API and bindings.
@@ -444,7 +443,6 @@ public class ProverTest {
      */
     @Test
     public void testWeakFacts() {
-        System.out.println("ProverTest.assertWeakTest()");
         // TODO
         p.assertz("roman2(michelangelo).");
         p.assertz("roman2(davinci).");
