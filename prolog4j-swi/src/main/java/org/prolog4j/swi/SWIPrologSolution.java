@@ -77,8 +77,6 @@ public class SWIPrologSolution<S> extends Solution<S> {
 	SWIPrologSolution(Prover prover, Term goal) {
 		this.prover = prover;
 		this.cp = prover.getConversionPolicy();
-		System.out.println("SWIPrologSolution.SWIPrologSolution()");
-		System.out.println(goal);
 		query = new jpl.Query(goal);
 		success = query.hasMoreSolutions();
 		if (!success) {
