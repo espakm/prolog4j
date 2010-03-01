@@ -15,7 +15,7 @@ import org.objectweb.asm.util.ASMifierClassVisitor;
 class GoalTransformer implements ClassFileTransformer {
 
 	private static final Pattern excludePattern = 
-		Pattern.compile("^(sun/|java/|javax/|alice/).*");
+		Pattern.compile("^(sun/|java/|javax/|alice/|ubc/cs/JLog/).*");
 
 	@Override
 	public byte[] transform(ClassLoader loader, String className,
@@ -37,11 +37,11 @@ class GoalTransformer implements ClassFileTransformer {
 				cv = new GoalAdapter(cv, cName, theoryVisitor);
 			}
 			cr.accept(cv, 0);
-//			if (className.equals("org/prolog4j/GoalTest")) {
-//				ClassReader cr2 = new ClassReader(cw.toByteArray());
-////				cr.accept(new ASMifierClassVisitor(new PrintWriter(System.out)), 0);
-//				cr2.accept(new ASMifierClassVisitor(new PrintWriter(System.out)), 0);
-//			}
+			if (className.equals("org/prolog4j/JLogGoalTest")) {
+				ClassReader cr2 = new ClassReader(cw.toByteArray());
+//				cr.accept(new ASMifierClassVisitor(new PrintWriter(System.out)), 0);
+				cr2.accept(new ASMifierClassVisitor(new PrintWriter(System.out)), 0);
+			}
 		}
 		catch (Throwable t) {
 			t.printStackTrace();

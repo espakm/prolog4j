@@ -79,16 +79,10 @@ public class GoalTest {
     	assertFalse(solution.isSuccess());
     }
 
-//	private static final Prover P4J_PROVER = ProverFactory.getProver("org.prolog4j.GoalTest");
-//	private static Query P4J_GOAL_1 = P4J_PROVER.query("membr(?X, ?).").bind("X", 1);
 	
-	private static Prover pp = ProverFactory.getProver("org.prolog4j.GoalTest");
-	private static Query qq = pp.query("membr(?, ?).");
-	
-//	@Goal("membr(?, ?).")
+	@Goal("membr(?, ?).")
 	public Solution member(Object o, List<?> list) {
-		return qq.solve(o, list);
-//		return null;
+		return null;
 	}
 	
 	@Goal("? = 1, ? = 2, ? = 3.")
@@ -113,20 +107,17 @@ public class GoalTest {
 
 	@Goal("membr(?, [1, 2, 3]).")
 	public Boolean goalBoolean2(Object o) {
-		return ProverFactory.getProver("GoalTest").solve("fsa.", o).isSuccess();
+		return null;
 	}
 	
-//	@Goal(value = "member(?, [2, 3, 4]).", cache = false)
 	@Goal(cache = false, value = "member(?, [2, 3, 4]).")
 	public Solution goalPrecompiled(Object o) {
-		return qq.solve(o);
-//		return $P4J_member1.solve(o);
+		return null;
 	}
 
 	@Goal(value = "member(X, [2, 3, 4]).")
 	public Object goalOut() {
 		return null;
-//		return $P4J_member1.solve(o);
 	}
 
 	@Goal(value = "member(X, [2, 3, 4]).")

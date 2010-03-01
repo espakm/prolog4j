@@ -35,13 +35,9 @@ import org.prolog4j.Compound;
 import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Converter;
 
-import ubc.cs.JLog.Foundation.jKnowledgeBase;
 import ubc.cs.JLog.Foundation.jPrologAPI;
-import ubc.cs.JLog.Foundation.jPrologServices;
 import ubc.cs.JLog.Foundation.jUnifiedVector;
-import ubc.cs.JLog.Parser.pOperatorRegistry;
 import ubc.cs.JLog.Parser.pParseStream;
-import ubc.cs.JLog.Parser.pPredicateRegistry;
 import ubc.cs.JLog.Terms.iName;
 import ubc.cs.JLog.Terms.iNameArity;
 import ubc.cs.JLog.Terms.jAtom;
@@ -71,7 +67,14 @@ public class JLogConversionPolicy extends ConversionPolicy {
 					prolog.getOperatorRegistry());
 		}
 	}
-	private static final PrologAPI prologAPI = new PrologAPI();
+	private static final PrologAPI prologAPI;
+//	private static final jPrologAPI jprologAPI;
+	static {
+//		jprologAPI = new jPrologAPI("");
+		prologAPI = new PrologAPI();
+//		prologAPI = null;
+//		jprologAPI = null;
+	}
 	
 	/** Converts an Integer object to a term. */
 	private static final Converter<Integer> INTEGER_CONVERTER = new Converter<Integer>() {

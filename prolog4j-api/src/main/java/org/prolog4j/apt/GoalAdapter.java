@@ -4,6 +4,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -22,6 +23,7 @@ import com.sun.org.apache.bcel.internal.generic.LLOAD;
 class GoalAdapter extends ClassAdapter {
 
 	String className, classDesc;
+	private AnnotationNode theoryAnn;
 	private Set<String> goalMethods;
 	LinkedList<GoalVisitor> goalVisitors;
 	private int lastProcessedQuery;
@@ -31,6 +33,7 @@ class GoalAdapter extends ClassAdapter {
 		super(cv);
 		this.className = className;
 		this.classDesc = className.replace('.', '/');
+		this.theoryAnn = ta.theoryAnn;
 		this.goalVisitors = ta.goalVisitors;
 		this.goalMethods = ta.goalMethods;
 	}
@@ -223,6 +226,21 @@ class GoalAdapter extends ClassAdapter {
 		mv.visitLdcInsn(className);
 		mv.visitMethodInsn(INVOKESTATIC, "org/prolog4j/ProverFactory", "getProver", "(Ljava/lang/String;)Lorg/prolog4j/Prover;");
 		mv.visitFieldInsn(PUTSTATIC, classDesc, "$P4J_PROVER", "Lorg/prolog4j/Prover;");
+		if (theoryAnn != null) {
+			List values = theoryAnn.values;
+			Object val = values.get(1);
+			if (val instanceof String) {
+				mv.visitFieldInsn(GETSTATIC, classDesc, "$P4J_PROVER", "Lorg/prolog4j/Prover;");
+				mv.visitLdcInsn(val);
+				mv.visitMethodInsn(INVOKEINTERFACE, "org/prolog4j/Prover", "addTheory", "(Ljava/lang/String;)V");
+			} else if (val instanceof List) {
+				for (Object o: (List) val) {
+					mv.visitFieldInsn(GETSTATIC, classDesc, "$P4J_PROVER", "Lorg/prolog4j/Prover;");
+					mv.visitLdcInsn(o);
+					mv.visitMethodInsn(INVOKEINTERFACE, "org/prolog4j/Prover", "addTheory", "(Ljava/lang/String;)V");
+				}
+			}
+		}
 		for (int i = 0; i < goalVisitors.size(); ++i) {
 			AnnotationNode an = goalVisitors.get(i).goalAnnotation;
 			mv.visitFieldInsn(GETSTATIC, classDesc, "$P4J_PROVER", "Lorg/prolog4j/Prover;");

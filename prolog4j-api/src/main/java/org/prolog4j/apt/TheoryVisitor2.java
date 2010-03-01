@@ -57,6 +57,7 @@ class TheoryVisitor2 extends LazyClassVisitor {
 
 	private String className;
 	
+	AnnotationNode theoryAnn;
 	Set<String> goalMethods = new HashSet<String>();
 	LinkedList<GoalVisitor> goalVisitors = new LinkedList<GoalVisitor>();
 	
@@ -67,7 +68,8 @@ class TheoryVisitor2 extends LazyClassVisitor {
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		if (desc.equals("Lorg/prolog4j/annotations/Theory;")) {
-			return new TheoryVisitor(className);
+//			return new TheoryVisitor(className);
+			return theoryAnn = new AnnotationNode(desc);
 		}
 		return null;
 	}
