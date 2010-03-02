@@ -29,7 +29,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.prolog4j.AbstractProver;
-import org.prolog4j.ConversionPolicy;
 import org.prolog4j.Query;
 
 import ubc.cs.JLog.Foundation.jPrologAPI;

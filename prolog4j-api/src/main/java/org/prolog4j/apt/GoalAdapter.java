@@ -5,20 +5,15 @@ import static org.objectweb.asm.Opcodes.*;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
-import org.prolog4j.apt.TheoryVisitor2.GoalVisitor;
-
-import com.sun.org.apache.bcel.internal.generic.LLOAD;
+import org.prolog4j.apt.P4JAnnotationVisitor.GoalVisitor;
 
 class GoalAdapter extends ClassAdapter {
 
@@ -29,10 +24,10 @@ class GoalAdapter extends ClassAdapter {
 	private int lastProcessedQuery;
 	private boolean clinit;
 	
-	public GoalAdapter(ClassVisitor cv, String className, TheoryVisitor2 ta) {
+	public GoalAdapter(ClassVisitor cv, String internalClassName, P4JAnnotationVisitor ta) {
 		super(cv);
-		this.className = className;
-		this.classDesc = className.replace('.', '/');
+		this.classDesc = internalClassName;
+		this.className = internalClassName.replace('/', '.');;
 		this.theoryAnn = ta.theoryAnn;
 		this.goalVisitors = ta.goalVisitors;
 		this.goalMethods = ta.goalMethods;
@@ -96,8 +91,6 @@ class GoalAdapter extends ClassAdapter {
 		MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
 		mv.visitCode();
 		int stack = 6, locals = 1;
-//		Label l0 = new Label();
-//		mv.visitLabel(l0);
 		AnnotationNode an = gv.goalAnnotation;
 		Boolean cacheB = (Boolean) getValue(an, "cache");
 		boolean cache = cacheB == null ? true : cacheB;
@@ -178,9 +171,8 @@ class GoalAdapter extends ClassAdapter {
 			}
 			mv.visitInsn(returnType.getOpcode(IRETURN));
 		}
-//		Label l1 = new Label();
-//		mv.visitLabel(l1);
 		mv.visitMaxs(stack, locals);
+//		mv.visitMaxs(0, locals);
 		mv.visitEnd();
 		return mv;
 	}
@@ -210,19 +202,20 @@ class GoalAdapter extends ClassAdapter {
 					"$P4J_GOAL_" + i, "Lorg/prolog4j/Query;", 
 					null, null);
 		}
-		if (!clinit) {
-			MethodVisitor mv = visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
+		if (clinit == false) {
+			MethodVisitor mv = super.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
 			mv.visitCode();
-			insertStaticInitialization(mv);
+			int stack = insertStaticInitialization(mv);
 			mv.visitInsn(RETURN);
-			mv.visitMaxs(2, 0);
+			mv.visitMaxs(stack, 0);
 			mv.visitEnd();
 		}
 
 		super.visitEnd();
 	}
 
-	private void insertStaticInitialization(MethodVisitor mv) {
+	private int insertStaticInitialization(MethodVisitor mv) {
+		int stack = 2;
 		mv.visitLdcInsn(className);
 		mv.visitMethodInsn(INVOKESTATIC, "org/prolog4j/ProverFactory", "getProver", "(Ljava/lang/String;)Lorg/prolog4j/Prover;");
 		mv.visitFieldInsn(PUTSTATIC, classDesc, "$P4J_PROVER", "Lorg/prolog4j/Prover;");
@@ -234,11 +227,27 @@ class GoalAdapter extends ClassAdapter {
 				mv.visitLdcInsn(val);
 				mv.visitMethodInsn(INVOKEINTERFACE, "org/prolog4j/Prover", "addTheory", "(Ljava/lang/String;)V");
 			} else if (val instanceof List) {
-				for (Object o: (List) val) {
-					mv.visitFieldInsn(GETSTATIC, classDesc, "$P4J_PROVER", "Lorg/prolog4j/Prover;");
-					mv.visitLdcInsn(o);
-					mv.visitMethodInsn(INVOKEINTERFACE, "org/prolog4j/Prover", "addTheory", "(Ljava/lang/String;)V");
+				List list = (List) val;
+				mv.visitFieldInsn(GETSTATIC, classDesc, "$P4J_PROVER", "Lorg/prolog4j/Prover;");
+				int argNo = list.size();
+				if (argNo < 6) {
+					mv.visitInsn(ICONST_0 + argNo);
+				} else {
+					mv.visitIntInsn(BIPUSH, argNo);
 				}
+				mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
+				for (int i = 0; i < argNo; ++i) {
+					mv.visitInsn(DUP);
+					if (i < 6) {
+						mv.visitInsn(ICONST_0 + i);
+					} else {
+						mv.visitIntInsn(BIPUSH, i);
+					}
+					mv.visitLdcInsn(list.get(i));
+					mv.visitInsn(AASTORE);
+				}
+				mv.visitMethodInsn(INVOKEINTERFACE, "org/prolog4j/Prover", "addTheory", "([Ljava/lang/String;)V");
+				stack = 5;
 			}
 		}
 		for (int i = 0; i < goalVisitors.size(); ++i) {
@@ -248,6 +257,7 @@ class GoalAdapter extends ClassAdapter {
 			mv.visitMethodInsn(INVOKEINTERFACE, "org/prolog4j/Prover", "query", "(Ljava/lang/String;)Lorg/prolog4j/Query;");
 			mv.visitFieldInsn(PUTSTATIC, classDesc, "$P4J_GOAL_" + i, "Lorg/prolog4j/Query;");
 		}
+		return stack;
 	}
 
 	private Object getValue(AnnotationNode an, String name) {

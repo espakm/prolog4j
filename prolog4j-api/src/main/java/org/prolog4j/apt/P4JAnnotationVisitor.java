@@ -11,7 +11,10 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.EmptyVisitor;
 import org.objectweb.asm.tree.AnnotationNode;
 
-class TheoryVisitor2 extends LazyClassVisitor {
+/**
+ * The class explores a class for Prolog4J annotations and collects them.
+ */
+class P4JAnnotationVisitor extends LazyClassVisitor {
 
 	public final class GoalVisitor extends EmptyVisitor {
 		public AnnotationNode goalAnnotation;
@@ -55,16 +58,10 @@ class TheoryVisitor2 extends LazyClassVisitor {
 		}
 	}
 
-	private String className;
-	
 	AnnotationNode theoryAnn;
 	Set<String> goalMethods = new HashSet<String>();
 	LinkedList<GoalVisitor> goalVisitors = new LinkedList<GoalVisitor>();
 	
-	public TheoryVisitor2(String className) {
-		this.className = className;
-	}
-
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		if (desc.equals("Lorg/prolog4j/annotations/Theory;")) {
