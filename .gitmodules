@@ -1,0 +1,3 @@
+[submodule "site"]
+	path = site
+	url = ssh://espakm@dev.inf.unideb.hu/gitroot/prolog4j
