@@ -4,7 +4,7 @@
   <groupId>org.prolog4j</groupId>
   <artifactId>prolog4j-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.2.1</version>
+  <version>0.2.1-SNAPSHOT</version>
   <description>Easy to use interface over Prolog engines for Java.</description>
   <name>Prolog4J</name>
   <inceptionYear>2009</inceptionYear>

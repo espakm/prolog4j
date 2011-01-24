@@ -3,14 +3,14 @@
   <parent>
     <groupId>org.prolog4j</groupId>
     <artifactId>prolog4j-parent</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.prolog4j</groupId>
   <artifactId>prolog4j-test</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.1</version>
+  <version>0.2.1-SNAPSHOT</version>
   <name>Prolog4J tests</name>
   <description>Common unit tests for the implementations of the Prolog4J API</description>
   <inceptionYear>2009</inceptionYear>

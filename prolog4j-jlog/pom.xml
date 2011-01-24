@@ -3,14 +3,14 @@
   <parent>
     <groupId>org.prolog4j</groupId>
     <artifactId>prolog4j-parent</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.prolog4j</groupId>
   <artifactId>prolog4j-jlog</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.1</version>
+  <version>0.2.1-SNAPSHOT</version>
   <name>Prolog4J JLog binding</name>
   <description>Implementation for the Prolog4J API based on JLog</description>
   <inceptionYear>2009</inceptionYear>
@@ -32,7 +32,7 @@
     <dependency>
       <groupId>org.prolog4j</groupId>
       <artifactId>prolog4j-test</artifactId>
-      <version>0.2.1</version>
+      <version>0.2.1-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
