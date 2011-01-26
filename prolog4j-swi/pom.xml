@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.prolog4j</groupId>
       <artifactId>prolog4j-test</artifactId>
-      <version>0.2.1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -38,6 +38,7 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
       </plugin>
       <plugin>
