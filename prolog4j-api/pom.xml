@@ -7,14 +7,10 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.prolog4j</groupId>
   <artifactId>prolog4j-api</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.1-SNAPSHOT</version>
   <name>Prolog4J API</name>
   <description>Easy to use interface over Prolog engines for Java.</description>
-  <inceptionYear>2009</inceptionYear>
-  <url>http://prolog4j.org/</url>
 
   <dependencies>
     <dependency>
@@ -34,6 +30,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
         <executions>
           <execution>
             <phase>process-classes</phase>
@@ -50,25 +47,14 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.2</version>
         <configuration>
           <archive>
-<!--            <manifestEntries>-->
-              <!--Bundle-Version>${project.version}</Bundle-Version-->
-              <!--Bundle-Description>${project.description}</Bundle-Description-->
-              <!--Implementation-Version>${project.version}</Implementation-Version-->
-<!--              <Premain-Class>la4j.lib.Bootstrap</Premain-Class>-->
-<!--              <Agent-Class>la4j.lib.Bootstrap</Agent-Class>-->
-<!--              <Can-Redefine-Classes>true</Can-Redefine-Classes>-->
-<!--              <Can-Retransform-Classes>true</Can-Retransform-Classes>-->
-<!--              <Can-Set-Native-Method-Prefix>false</Can-Set-Native-Method-Prefix>-->
-              <!--Boot-Class-Path>target/L4AJ-0.0.2-SNAPSHOT.jar</Boot-Class-Path-->
-<!--            </manifestEntries>-->
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
