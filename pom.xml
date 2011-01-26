@@ -10,6 +10,12 @@
   <inceptionYear>2009</inceptionYear>
   <url>http://prolog4j.org/</url>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>6</version>
+  </parent>
+
   <modules>
     <module>build-tools</module>
     <module>prolog4j-api</module>
@@ -56,9 +62,9 @@
     <!--url>https://dev.inf.unideb.hu/gf/project/prolog4j/scmsvn/</url-->
     <!--connection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk</connection-->
     <!--developerConnection>scm:svn:https://dev.inf.unideb.hu/svn/prolog4j/trunk</developerConnection-->
-    <connection>scm:git:git://git@github.com/espakm/prolog4j.git</connection>
-    <url>scm:git:git://git@github.com/espakm/prolog4j.git</url>
-    <developerConnection>scm:git:git://git@github.com/espakm/prolog4j.git</developerConnection>	
+    <connection>scm:git:git://git@github.com:espakm/prolog4j.git</connection>
+    <developerConnection>scm:git:git://git@github.com:espakm/prolog4j.git</developerConnection>	
+    <url>git@github.com:espakm/prolog4j.git</url>
   </scm>
 
   <mailingLists>
@@ -319,16 +325,6 @@
   </reporting>
 
   <distributionManagement>
-    <repository>
-      <id>archiva.internal</id>
-      <name>Internal Release Repository</name>
-      <url>http://dev.inf.unideb.hu:8090/archiva/repository/internal/</url>
-    </repository>
-    <snapshotRepository>
-      <id>archiva.snapshots</id>
-      <name>Internal Snapshot Repository</name>
-      <url>http://dev.inf.unideb.hu:8090/archiva/repository/snapshots/</url>
-    </snapshotRepository>
     <site>
       <id>gh-pages</id>
       <!-- This gets automatically pushed to the gh-pages branch. -->
