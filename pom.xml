@@ -66,18 +66,11 @@
 
   <mailingLists>
     <mailingList>
-      <name>Developer List</name>
-      <archive>http://dev.inf.unideb.hu/mailman/private/prolog4j-devel/</archive>
-      <post>prolog4j-devel@dev.inf.unideb.hu</post>
-      <subscribe>prolog4j-devel-subscribe@dev.inf.unideb.hu</subscribe>
-      <unsubscribe>prolog4j-devel-unsubscribe@dev.inf.unideb.hu</unsubscribe>
-    </mailingList>
-    <mailingList>
       <name>User List</name>
-      <archive>http://dev.inf.unideb.hu/mailman/private/prolog4j-users/</archive>
-      <post>prolog4j-users@dev.inf.unideb.hu</post>
-      <subscribe>prolog4j-users-subscribe@dev.inf.unideb.hu</subscribe>
-      <unsubscribe>prolog4j-users-unsubscribe@dev.inf.unideb.hu</unsubscribe>
+      <archive>http://groups.google.com/group/prolog4j-users/topics</archive>
+      <post>prolog4j-users@googlegroups.com</post>
+      <subscribe>prolog4j-users+subscribe@googlegroups.com</subscribe>
+      <unsubscribe>prolog4j-users+unsubscribe@googlegroups.com</unsubscribe>
     </mailingList>
   </mailingLists>
 
