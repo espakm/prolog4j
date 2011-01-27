@@ -1,1 +1,8 @@
 target
+/build-tools/site
+/prolog4j-api/site
+/prolog4j-jlog/site
+/prolog4j-jtrolog/site
+/prolog4j-swi/site
+/prolog4j-test/site
+/prolog4j-tuprolog/site
