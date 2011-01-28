@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Premain-Class: org.prolog4j.apt.Bootstrap
-Created-By: 1.6.0_06 (Sun Microsystems Inc.)
