@@ -1,0 +1,26 @@
+-classpath
+'/home/espakm/workspace-prolog4j-git4/prolog4j/target/classes:/home/espakm/workspace-prolog4j-git4/prolog4j/target/test-classes:/home/espakm/workspace-prolog4j-git4/prolog4j/build-tools/target/classes:/home/espakm/workspace-prolog4j-git4/prolog4j/build-tools/target/test-classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-api/target/classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-api/target/test-classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-test/target/classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-test/target/test-classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-tuprolog/target/classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-tuprolog/target/test-classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-jtrolog/target/classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-jtrolog/target/test-classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-jlog/target/classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-jlog/target/test-classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-swi/target/classes:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-swi/target/test-classes:/home/espakm/.m2/repository/it/unibo/tuProlog/tuProlog/2.1.1/tuProlog-2.1.1.jar:/home/espakm/.m2/repository/asm/asm-commons/3.1/asm-commons-3.1.jar:/home/espakm/.m2/repository/jtrolog/jtrolog/2.1/jtrolog-2.1.jar:/home/espakm/.m2/repository/org/swi-prolog/jpl/3.0.0/jpl-3.0.0.jar:/home/espakm/.m2/repository/asm/asm/3.1/asm-3.1.jar:/home/espakm/.m2/repository/net/sf/jlogic/jlog/1.3.6/jlog-1.3.6.jar:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-api/target/classes:/home/espakm/.m2/repository/asm/asm-tree/3.1/asm-tree-3.1.jar:/home/espakm/.m2/repository/junit/junit/4.6/junit-4.6.jar:/home/espakm/.m2/repository/org/prolog4j/prolog4j-test/0.2.1-SNAPSHOT/prolog4j-test-0.2.1-SNAPSHOT-tests.jar:/home/espakm/.m2/repository/asm/asm-util/3.1/asm-util-3.1.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-test/src/test/java:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-tuprolog/src/test/java:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-jtrolog/src/test/java:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-jlog/src/test/java:/home/espakm/workspace-prolog4j-git4/prolog4j/prolog4j-swi/src/test/java'
+-author
+-bottom
+'Copyright &#169; 2009-2011. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'/home/espakm/workspace-prolog4j-git4/prolog4j/target/site/testapidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Prolog4J 0.2.1-SNAPSHOT Test API'
+-link
+'../apidocs'
+-link
+'http://java.sun.com/javase/6/docs/api'
+-use
+-version
+-windowtitle
+'Prolog4J 0.2.1-SNAPSHOT Test API'
